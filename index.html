@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ku">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -138,7 +138,7 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: rgba(9, 5, 20, 0.95); 
+            background: rgba(9, 5, 20, 0.96); 
             backdrop-filter: blur(10px);
             box-sizing: border-box;
             padding: 20px;
@@ -182,96 +182,90 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        .join-btn {
+            background: #0098ea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
-</head>
-<body>
 
-    <div class="header" id="mainHeader">
-        <div class="rank">ChubbyX Balance</div>
-        <div class="coin-count" id="score">0</div>
-    </div>
+    <!-- 🌐 بارکردنی کتێبخانەکانی فایەربەیس بە فەرمی -->
+    <script type="module">
+        import { initializeApp } from "https://gstatic.com";
+        import { getFirestore, doc, setDoc, getDoc } from "https://gstatic.com";
 
-    <div class="coin-container" id="mainGameContainer">
-        <div class="tap-zone" id="tapCoin"></div>
-        
-        <div class="energy-container">
-            <div class="energy-text">⚡ <span id="energyText">500</span>/500</div>
-            <div class="energy-bar-bg">
-                <div class="energy-bar-fill" id="energyFill"></div>
-            </div>
-        </div>
-    </div>
+        // 🔥 زانیاری بەستنەوەی فەرمی پڕۆژەکەت
+        const firebaseConfig = {
+            apiKey: "AIzaSyCp--Gof48EWzxWSkiFB8B6mW-Qcsdaolw",
+            authDomain: "://firebaseapp.com",
+            projectId: "chubbyx-db",
+            storageBucket: "chubbyx-db.firebasestorage.app",
+            messagingSenderId: "469899376640",
+            appId: "1:469899376640:web:dba28ce4d30c8c01ed0ae5"
+        };
 
-    <div id="settingsPage" class="page">
-        <div class="page-header">
-            <h2>ڕێکخستنەکان (Settings)</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
-        <div class="item-list">
-            <div>دەنگەکانی ناو یاری (Sound Effects)</div>
-            <button class="action-btn" onclick="alert('سستمەکە چالاکە')">On</button>
-        </div>
-    </div>
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    <div id="tasksPage" class="page">
-        <div class="page-header">
-            <h2>ئەرکەکان (Tasks)</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
-        <div class="item-list">
-            <div>عەینەکردنی چەناڵی تێلیگرام (+1,000 CHUB)</div>
-            <button class="action-btn" onclick="addCoins(1000)">Check</button>
-        </div>
-    </div>
-
-    <div id="invitePage" class="page">
-        <div class="page-header">
-            <h2>داوەتکردنی هاوڕێیان</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
-        <p>بۆ هەر هاوڕێیەک کە داوەتی دەکەیت ٥,٠٠٠ سکە وەربگرە!</p>
-        <button class="action-btn" style="width:100%; padding:15px; font-size:16px; background: #7b2cbf;" onclick="alert('لینکەکە کۆپی بوو!')">کۆپیکردنی لینی داوەتکردن 🔗</button>
-    </div>
-
-    <div id="gamesPage" class="page">
-        <div class="page-header">
-            <h2>یارییەکان (Mini Games)</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
-        <div class="item-list">
-            <div>یاری کەرەوزی خێرا (Jar Jar Mod)</div>
-            <button class="action-btn" style="background:#00f0ff; color:black;" onclick="alert('بەم زووانە بەردەست دەبێت!')">Start 🎮</button>
-        </div>
-    </div>
-
-    <div id="walletPage" class="page">
-        <div class="page-header">
-            <h2>جزدان (Wallet)</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
-        <p>جزدانی خۆت ببەستەوە بۆ کاتی ئێردرۆپ:</p>
-        <button class="action-btn" style="width:100%; background:#0098ea; padding:15px;" onclick="alert('سیستەمی TON بەم زووانە دەبەسرێتەوە')">Connect TON Wallet 💎</button>
-    </div>
-
-    <div class="nav-bar">
-        <!-- 🪙 لێرەدا تابی یەکەم ناونیشانەکەی فێکس کراوەتەوە تا بگەڕێتەوە سەر شاشەی ئەسڵی -->
-        <div class="nav-item active" id="btn-tap" onclick="showMainGame()"><span>🪙</span>Tap</div>
-        <div class="nav-item" id="btn-settings" onclick="openPage('settingsPage', 'btn-settings')"><span>📱</span>Settings</div>
-        <div class="nav-item" id="btn-tasks" onclick="openPage('tasksPage', 'btn-tasks')"><span>📋</span>Tasks</div>
-        <div class="nav-item" id="btn-invite" onclick="openPage('invitePage', 'btn-invite')"><span>👥</span>Friends</div>
-        <div class="nav-item" id="btn-games" onclick="openPage('gamesPage', 'btn-games')"><span>🎮</span>Games</div>
-        <div class="nav-item" id="btn-wallet" onclick="openPage('walletPage', 'btn-wallet')"><span>💼</span>Wallet</div>
-    </div>
-
-    <script>
         let count = 0;
         let energy = 500;
         const maxEnergy = 500;
+        let userId = "user_" + Math.floor(Math.random() * 100000); 
+        let taskCompleted = false;
 
         const scoreDisplay = document.getElementById('score');
         const tapCoin = document.getElementById('tapCoin');
         const energyText = document.getElementById('energyText');
         const energyFill = document.getElementById('energyFill');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const referrerId = urlParams.get('ref');
+
+        async function loadUserData() {
+            try {
+                const docRef = doc(db, "players", userId);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    count = docSnap.data().coins || 0;
+                    taskCompleted = docSnap.data().tgTask || false;
+                    scoreDisplay.innerText = count;
+                    if(taskCompleted) {
+                        document.getElementById('taskBtnGroup').innerHTML = '<span style="color:#22c55e; font-weight:bold;">Completed ✓</span>';
+                    }
+                } else {
+                    await setDoc(docRef, { coins: 0, username: userId, tgTask: false, invitedBy: referrerId || null });
+                    
+                    if (referrerId) {
+                        const refRef = doc(db, "players", referrerId);
+                        const refSnap = await getDoc(refRef);
+                        if (refSnap.exists()) {
+                            let currentRefCoins = refSnap.data().coins || 0;
+                            await setDoc(refRef, { coins: currentRefCoins + 5000 }, { merge: true });
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Error loading data: ", e);
+            }
+        }
+        loadUserData();
+
+        async function saveCoinsToDB() {
+            try {
+                await setDoc(doc(db, "players", userId), { coins: count }, { merge: true });
+            } catch (e) {
+                console.error("Error saving data: ", e);
+            }
+        }
 
         tapCoin.addEventListener('click', () => {
             if (energy > 0) {
@@ -279,6 +273,7 @@
                 energy -= 1; 
                 scoreDisplay.innerText = count;
                 updateEnergyUI();
+                saveCoinsToDB(); 
             }
         });
 
@@ -296,4 +291,14 @@
             energyFill.style.width = percentage + '%';
         }
 
-        function openPage(pageId, btnId) {
+        window.openPage = function(pageId, btnId) {
+            closeAllPages();
+            document.getElementById(pageId).style.display = 'block';
+            document.getElementById('mainGameContainer').style.display = 'none';
+            document.getElementById('mainHeader').style.display = 'none';
+            document.querySelectorAll('.nav-bar .nav-item').forEach(item => item.classList.remove('active'));
+            document.getElementById(btnId).classList.add('active');
+        }
+
+        window.showMainGame = function() {
+            closeAllPages();
