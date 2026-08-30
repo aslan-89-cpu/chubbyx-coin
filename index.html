@@ -6,7 +6,6 @@
     <title>ChubbyX Coin</title>
     <style>
         body {
-            /* 🌌 وێنەی باگراوندی مۆرە نوێیەکە */
             background: url('image_l86T2P.png') no-repeat center center fixed;
             background-size: cover;
             color: white;
@@ -22,7 +21,6 @@
             -webkit-user-select: none;
         }
 
-        /* بەشی سەرەوەی خاڵەکان */
         .header {
             margin-top: 40px;
             text-align: center;
@@ -46,7 +44,6 @@
             letter-spacing: 1px;
         }
 
-        /* 🎯 بازنەی تەپ-تەپ لە ناوەڕاست */
         .coin-container {
             flex: 1;
             display: flex;
@@ -57,7 +54,6 @@
             gap: 20px; 
         }
         
-        /* 🪙 قەبارەی سکە زێڕینەکە لێرەدا بە زۆر فێکس کراوە بۆ ئەوەی ڕێک بێت */
         .tap-zone {
             width: 140px !important; 
             height: 140px !important;
@@ -74,7 +70,6 @@
             transform: scale(0.92) !important; 
         }
 
-        /* ⚡ شێوازی هێڵی وزە */
         .energy-container {
             width: 220px;
             text-align: center;
@@ -101,7 +96,6 @@
             transition: width 0.1s ease;
         }
 
-        /* مێنیۆی خوارەوە */
         .nav-bar {
             width: 100%;
             background: rgba(13, 8, 27, 0.95);
@@ -130,7 +124,6 @@
             margin-bottom: 4px;
         }
 
-        /* لاپەڕەکانی تری ناو یارییەکە */
         .page {
             display: none;
             position: fixed;
@@ -197,14 +190,13 @@
         }
     </style>
 
-    <!-- 🌐 بارکردنی کتێبخانەکانی فایەربەیس بڵاوکراوە -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getFirestore, doc, setDoc, getDoc } from "https://gstatic.com";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCp--Gof48EWzxWSkiFB8B6mW-Qcsdaolw",
-            authDomain: "chubbyx-db.firebaseapp.com",
+            authDomain: "://firebaseapp.com",
             projectId: "chubbyx-db",
             storageBucket: "chubbyx-db.firebasestorage.app",
             messagingSenderId: "469899376640",
@@ -302,3 +294,11 @@
         window.showMainGame = function() {
             closeAllPages();
             document.getElementById('mainGameContainer').style.display = 'flex';
+            document.getElementById('mainHeader').style.display = 'block';
+            document.querySelectorAll('.nav-bar .nav-item').forEach(item => item.classList.remove('active'));
+        }
+
+        function closeAllPages() {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.style.display = 'none');
+        }
