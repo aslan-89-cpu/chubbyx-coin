@@ -54,7 +54,6 @@
             gap: 25px; 
         }
         
-        /* 🪙 سکە خڕە پێوانە گەورە و جوانەکەت */
         .tap-zone {
             width: 185px !important; 
             height: 185px !important;
@@ -260,12 +259,18 @@
             energyFill.style.width = percentage + '%';
         }
 
+        document.querySelectorAll('.nav-bar .nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+
         function openPage(pageId, btnId) {
             const pages = document.querySelectorAll('.page');
             for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
+            
             document.getElementById(pageId).style.display = 'block';
             document.getElementById('mainGameContainer').style.display = 'none';
             document.getElementById('mainHeader').style.display = 'none';
+            
             const navItems = document.querySelectorAll('.nav-bar .nav-item');
             for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
             document.getElementById(btnId).classList.add('active');
@@ -274,8 +279,10 @@
         function showMainGame() {
             const pages = document.querySelectorAll('.page');
             for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
+            
             document.getElementById('mainGameContainer').style.display = 'flex';
             document.getElementById('mainHeader').style.display = 'block';
+            
             const navItems = document.querySelectorAll('.nav-bar .nav-item');
             for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
         }
