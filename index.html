@@ -6,7 +6,7 @@
     <title>ChubbyX Coin</title>
     <style>
         body {
-            /* وێنە گەورە تەکنەلۆژییەکە لێرە دەبێتە باگراوندی جێگیری یارییەکە */
+            /* 🌌 وێنە گەورەکەت لێرە بە فەرمی دەکرێتە باگراوندی گشتی بۆ تەواوی شاشەکە */
             background: url('image_okKb6u.png.jpeg') no-repeat center center fixed;
             background-size: cover;
             color: white;
@@ -27,8 +27,8 @@
             margin-top: 40px;
             text-align: center;
             z-index: 5;
-            background: rgba(13, 8, 27, 0.6);
-            padding: 10px 20px;
+            background: rgba(13, 8, 27, 0.5);
+            padding: 10px 30px;
             border-radius: 15px;
             backdrop-filter: blur(5px);
         }
@@ -45,7 +45,7 @@
             letter-spacing: 1px;
         }
 
-        /* 🎯 دروستکردنی بازنەیەکی بچووک لە ناوەندی شاشەکە تەنها بۆ تەپ-تەپ */
+        /* 🎯 لۆجیکی جیاکردنەوە: بازنەی تەپ-تەپ بە بچووکی لە ناوەڕاست */
         .coin-container {
             flex: 1;
             display: flex;
@@ -54,20 +54,22 @@
             z-index: 1;
         }
         
-        /* ئەم فەرمانە تەنها بازنەیەکی بچووک لە ناوەڕاستی سکە زێڕینەکە دەبڕێت بۆ کلیلکردن */
+        /* لێرەدا قەبارەی تەپ-تەپەکە کراوەتە بازنەیەکی بچووکی ٢٠٠ پێکسڵی جێگیر */
         .tap-zone {
-            width: 160px; /* قەبارەی بازنە بچووکەکەی ناوەڕاست */
-            height: 160px;
+            width: 200px; 
+            height: 200px;
             border-radius: 50%;
             cursor: pointer;
-            background: rgba(234, 179, 8, 0.01); /* شاراوەیە و ڕێک دەچێتە سەر سکە زێڕینەکە */
-            box-shadow: 0 0 20px rgba(234, 179, 8, 0.4);
+            /* وێنەی سکە زێڕینەکەت لێرەدا دەبێتە دوگمە بچووکەکە */
+            background: url('chubbyx_coin.png') no-repeat center center;
+            background-size: contain;
+            box-shadow: 0 0 30px rgba(234, 179, 8, 0.5);
             transition: transform 0.05s ease;
         }
         
-        /* کاتێک دەست لە بازنە بچووکەکە دەدەیت کەمێک دەچێتە ناوەوە */
+        /* کاتێک دەستی لێدەدەیت کەمێک دێت و دەچێت */
         .tap-zone:active {
-            transform: scale(0.90);
+            transform: scale(0.92);
         }
 
         /* مێنیۆی خوارەوە */
@@ -157,7 +159,7 @@
         <div class="coin-count" id="score">0</div>
     </div>
 
-    <!-- 📌 تەنها ئەم بازنە بچووکەی ناوەڕاست دەبێتە دوگمەی تەپ-تەپ لەسەر سکەکە -->
+    <!-- 📌 ئێستا تەنها ئەم بازنە بچووکە لە ناوەڕاستدا دەبێتە شوێنی تەپ تەپ لەسەر باگراوندەکە -->
     <div class="coin-container">
         <div class="tap-zone" id="tapCoin"></div>
     </div>
@@ -220,6 +222,7 @@
             scoreDisplay.innerText = count;
         });
 
+        // لۆجیکی کردنەوەی لاپەڕەکان
         function openPage(pageId) {
             closeAllPages();
             document.getElementById(pageId).style.display = 'block';
