@@ -6,7 +6,6 @@
     <title>ChubbyX Coin</title>
     <style>
         body {
-            /* 🌌 لێرەدا ناوی فایلی باگراوەندە مۆرەکەت ڕێکخراوە ڕێک وەک سەر گیتھەبەکەت */
             background: #090514 url('image.png.jpeg') no-repeat center center fixed;
             background-size: cover;
             color: white;
@@ -55,21 +54,23 @@
             gap: 25px; 
         }
         
-        /* 🪙 لێرەدا بە زوومکردنی وێنەکە بە ڕێژەی %145، بە تەواوی پاشبنەما ڕەشەکەمان شاردووەتەوە تا تەنها سکە زەردەکە بازنەکە پڕ بکاتەوە */
+        /* 🪙 لێرەدا ستایلی بازنەکە جێگیرە، بەڵام گۆڕانکاری لە قەبارەی وێنەی ناوەوەیدا دەکرێت */
         .tap-zone {
             width: 175px !important; 
             height: 175px !important;
             border-radius: 50%;
             cursor: pointer;
-            background: url('image_okKb6u.png.jpeg') no-repeat center center !important;
-            background-size: 145% 145% !important; /* زوومکردنی ناوەوەی وێنەکە بۆ لابردنی لێوارە ڕەشەکان */
+            background: url('image_okKb6u.png.jpeg') no-repeat center 47% !important;
+            background-size: 135% 135% !important; 
             box-shadow: 0 0 35px rgba(234, 179, 8, 0.6); 
             -webkit-tap-highlight-color: transparent;
-            transition: transform 0.05s ease-in-out;
+            transition: background-size 0.05s ease-in-out !important; /* تەنها وێنەی ناوەوە دەجوڵێنێت */
+            will-change: background-size;
         }
         
-        .tap-zone:active {
-            transform: scale(0.92) !important;
+        /* ✨ کاتێک تاپ دەکرێت، تەنها وێنەی ناوەوەی بازنەکە بچووک دەبێتەوە (پاش و پێش دەکات) */
+        .tap-zone.tapped {
+            background-size: 120% 120% !important; /* وێنەکە دەچێتە دواوە */
         }
 
         .energy-container {
@@ -245,6 +246,12 @@
                 scoreDisplay.innerText = count;
                 updateEnergyUI();
                 localStorage.setItem('chubby_coins', count); 
+
+                // کارپێکردنی جووڵەی پاش و پێشی وێنەی ناوەوە
+                tapCoin.classList.add('tapped');
+                setTimeout(() => {
+                    tapCoin.classList.remove('tapped');
+                }, 60);
             }
         });
 
@@ -283,8 +290,3 @@
             document.getElementById('mainHeader').style.display = 'block';
             
             const navItems = document.querySelectorAll('.nav-bar .nav-item');
-            for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
-        }
-    </script>
-</body>
-</html>
