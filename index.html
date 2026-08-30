@@ -54,28 +54,32 @@
             justify-content: center;
             align-items: center;
             z-index: 1;
-            gap: 20px;
+            gap: 25px; /* بۆشایی زیاتر لە نێوان سکەکە و هێڵی وزە */
         }
         
+        /* 🟡 لێرەدا قەبارەی سکە گەورەکەت بە تەواوی ڕێکخراوە بۆ قەبارەیەکی مامناوەند و شیک */
         .tap-zone {
-            width: 140px; 
-            height: 140px;
+            width: 220px; 
+            height: 220px;
             border-radius: 50%;
             cursor: pointer;
             background: url('chubbyx_coin.png') no-repeat center center;
             background-size: contain;
             box-shadow: 0 0 35px rgba(234, 179, 8, 0.7); 
-            transition: transform 0.05s ease;
+            /* جوڵەی پاش و پێش لێرەدا زۆر کەم و نەرم کراوەتەوە */
+            transition: transform 0.05s ease-in-out;
         }
         
+        /* کاتێک دەستی لێدەدەیت تەنها کەمێک دەجوڵێت نەک بە توندی */
         .tap-zone:active {
-            transform: scale(0.92);
+            transform: scale(0.97);
         }
 
-        /* ⚡ شێوازی هێڵی وزە (Energy Bar Style) */
+        /* ⚡ شێوازی هێڵی وزە */
         .energy-container {
-            width: 200px;
+            width: 220px;
             text-align: center;
+            margin-top: 10px;
         }
         .energy-text {
             font-size: 14px;
@@ -92,9 +96,9 @@
             overflow: hidden;
         }
         .energy-bar-fill {
-            width: 100%; /* سەرەتا ۱۰۰٪ پڕە */
+            width: 100%; 
             height: 100%;
-            background: linear-gradient(90px, #eab308, #ffeb3b);
+            background: linear-gradient(90deg, #eab308, #ffeb3b);
             border-radius: 10px;
             transition: width 0.1s ease;
         }
@@ -189,9 +193,10 @@
 
     <!-- 📌 سکە زێڕینەکە و هێڵی وزە لە ناوەڕاستدا -->
     <div class="coin-container">
+        <!-- لێرەدا قەبارەی کێشەدارەکە لابراوە و خراوەتە ژێر کۆنترۆڵی جێگیرەوە -->
         <div class="tap-zone" id="tapCoin"></div>
         
-        <!-- ⚡ ئەم بەشە بۆ پیشاندانی وزەیە -->
+        <!-- ⚡ بەشی پیشاندانی وزە -->
         <div class="energy-container">
             <div class="energy-text">⚡ <span id="energyText">500</span>/500</div>
             <div class="energy-bar-bg">
@@ -275,16 +280,14 @@
         tapCoin.addEventListener('click', () => {
             if (energy > 0) {
                 count += 1;
-                energy -= 1; // لەگەڵ هەر کلیکێک ۱ وزە کەم دەکات
+                energy -= 1; 
                 
                 scoreDisplay.innerText = count;
                 updateEnergyUI();
-            } else {
-                alert('وزەت نەماوە! کەمێک چاوەڕێ بکە تا پڕ دەبێتەوە.');
             }
         });
 
-        // لۆجیکی پڕبوونەوەی خۆکاری وزە (هەر چرکەیەک ٣ وزە زیاد دەکات)
+        // پڕبوونەوەی خۆکاری وزە
         setInterval(() => {
             if (energy < maxEnergy) {
                 energy += 3;
@@ -297,10 +300,4 @@
             energyText.innerText = energy;
             const percentage = (energy / maxEnergy) * 100;
             energyFill.style.width = percentage + '%';
-        }
-
-        // لۆجیکی کردنەوەی لاپەڕەکان
-        function openPage(pageId) {
-            closeAllPages();
-            document.getElementById(pageId).style.display = 'block';
         }
