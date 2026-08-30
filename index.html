@@ -6,6 +6,7 @@
     <title>ChubbyX Coin</title>
     <style>
         body {
+            /* 🌌 وێنەی باگراوندی مۆرە نوێیەکە */
             background: url('image_l86T2P.png') no-repeat center center fixed;
             background-size: cover;
             color: white;
@@ -56,27 +57,26 @@
             gap: 20px; 
         }
         
-        /* 🪙 سکە زێڕینەکە لێرەدا کراوە بە ١٣٠ پێکسڵ کە زۆر بچووک و فێکسە */
+        /* 🪙 قەبارەی سکە زێڕینەکە لێرەدا بە زۆر فێکس کراوە بۆ ئەوەی ڕێک بێت */
         .tap-zone {
-            width: 130px !important; 
-            height: 130px !important;
+            width: 140px !important; 
+            height: 140px !important;
             border-radius: 50%;
             cursor: pointer;
             background: url('chubbyx_coin.png') no-repeat center center !important;
             background-size: contain !important;
-            box-shadow: 0 0 30px rgba(234, 179, 8, 0.6); 
+            box-shadow: 0 0 35px rgba(234, 179, 8, 0.6); 
             transition: transform 0.05s ease-in-out;
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* 💥 تەنها کەمێک کلیک پێوە دیار دەبێت و نالەرزێت */
         .tap-zone:active {
             transform: scale(0.92) !important; 
         }
 
         /* ⚡ شێوازی هێڵی وزە */
         .energy-container {
-            width: 200px;
+            width: 220px;
             text-align: center;
         }
         .energy-text {
@@ -254,6 +254,7 @@
     </div>
 
     <div class="nav-bar">
+        <!-- 🪙 لێرەدا تابی یەکەم ناونیشانەکەی فێکس کراوەتەوە تا بگەڕێتەوە سەر شاشەی ئەسڵی -->
         <div class="nav-item active" id="btn-tap" onclick="showMainGame()"><span>🪙</span>Tap</div>
         <div class="nav-item" id="btn-settings" onclick="openPage('settingsPage', 'btn-settings')"><span>📱</span>Settings</div>
         <div class="nav-item" id="btn-tasks" onclick="openPage('tasksPage', 'btn-tasks')"><span>📋</span>Tasks</div>
