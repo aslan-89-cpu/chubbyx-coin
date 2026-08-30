@@ -6,9 +6,8 @@
     <title>ChubbyX Coin</title>
     <style>
         body {
-            /* 🌌 باگراوندێکی مۆری جێگیر + لینکی وێنەیەکی دیزاین بۆ ئەوەی ڕەش نەبێت */
-            background: #090514 url('https://unsplash.com') no-repeat center center fixed;
-            background-size: cover;
+            /* 🌌 باگراوندێکی جێگیری مۆری تاریک بە کۆد بۆ ئەوەی پێویستی بە لۆدینی دەرەکی نەبێت */
+            background: #090514 linear-gradient(180deg, #090514 0%, #1c0f3a 100%) no-repeat center center fixed;
             color: white;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -26,7 +25,7 @@
             margin-top: 40px;
             text-align: center;
             z-index: 5;
-            background: rgba(13, 8, 27, 0.8);
+            background: rgba(13, 8, 27, 0.85);
             padding: 10px 30px;
             border-radius: 15px;
             border: 1px solid #7b2cbf;
@@ -52,28 +51,28 @@
             justify-content: center;
             align-items: center;
             z-index: 1;
-            gap: 20px; 
+            gap: 25px; 
         }
         
-        /* 🪙 دروستکردنی سکەیەکی زێڕینی نیۆنی گەش بە کۆد بۆ ئەوەی بە هیچ شێوەیەک ون نەبێت */
+        /* 🪙 سکەیەکی زێڕینی درەوشاوە بە کۆدی CSS بۆ ئەوەی هەمیشە دیار بێت */
         .tap-zone {
-            width: 140px !important; 
-            height: 140px !important;
+            width: 150px !important; 
+            height: 150px !important;
             border-radius: 50%;
             cursor: pointer;
             background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%) !important;
-            border: 5px solid #ffffff;
-            box-shadow: 0 0 35px rgba(255, 224, 102, 0.8), inset 0 0 15px rgba(0,0,0,0.3); 
-            transition: transform 0.05s ease-in-out;
+            border: 4px solid #ffffff;
+            box-shadow: 0 0 35px rgba(255, 224, 102, 0.8); 
             -webkit-tap-highlight-color: transparent;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 40px;
+            font-size: 50px;
+            transition: transform 0.05s ease;
         }
         
         .tap-zone:active {
-            transform: scale(0.92) !important; 
+            transform: scale(0.92) !important;
         }
 
         .energy-container {
@@ -137,8 +136,7 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: rgba(9, 5, 20, 0.98); 
-            backdrop-filter: blur(10px);
+            background: #090514; 
             box-sizing: border-box;
             padding: 20px;
             padding-top: 60px; 
@@ -182,10 +180,6 @@
             cursor: pointer;
         }
     </style>
-
-    <!-- 🌐 بەستنەوەی فایەربەیس بە کۆنترین و جێگیرترین شێواز (Compat SDK) -->
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
 </head>
 <body>
 
@@ -195,7 +189,6 @@
     </div>
 
     <div class="coin-container" id="mainGameContainer">
-        <!-- 🪙 لێرەدا سکەیەکی زێڕینی ڕووناک بە ئیمۆجی دەر دەکەوێت بۆ ئەوەی ڕەش نەبێت -->
         <div class="tap-zone" id="tapCoin">🪙</div>
         
         <div class="energy-container">
@@ -269,20 +262,32 @@
     </div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCp--Gof48EWzxWSkiFB8B6mW-Qcsdaolw",
-            authDomain: "://firebaseapp.com",
-            projectId: "chubbyx-db",
-            storageBucket: "chubbyx-db.firebasestorage.app",
-            messagingSenderId: "469899376640",
-            appId: "1:469899376640:web:dba28ce4d30c8c01ed0ae5"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        let count = 0;
+        // 🛠️ سیستمی نوێی ناوخۆیی زۆر جێگیر بەبێ بەکارهێنانی فایەربەیسی بلۆککراو
+        let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         let energy = 500;
         const maxEnergy = 500;
-        let userId = "user_" + Math.floor(Math.random() * 100000); 
-        let taskCompleted = false;
+        let taskCompleted = localStorage.getItem('chubby_task') === 'true';
+
+        const scoreDisplay = document.getElementById('score');
+        const tapCoin = document.getElementById('tapCoin');
+        const energyText = document.getElementById('energyText');
+        const energyFill = document.getElementById('energyFill');
+
+        scoreDisplay.innerText = count;
+        if(taskCompleted) {
+            document.getElementById('taskBtnGroup').innerHTML = '<span style="color:#22c55e; font-weight:bold;">Completed ✓</span>';
+        }
+
+        tapCoin.addEventListener('click', () => {
+            if (energy > 0) {
+                count += 1;
+                energy -= 1; 
+                scoreDisplay.innerText = count;
+                updateEnergyUI();
+                localStorage.setItem('chubby_coins', count); // سەیڤکردنی دەستبەجێ لە مۆبایلەکەدا
+            }
+        });
+
+        setInterval(() => {
+            if (energy < maxEnergy) {
+                energy += 3;
