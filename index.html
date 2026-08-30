@@ -6,8 +6,7 @@
     <title>ChubbyX Coin</title>
     <style>
         body {
-            /* 🌌 وێنەی باگراوندی گشتی بۆ تەواوی شاشەکە */
-            background: url('image_okKb6u.png.jpeg') no-repeat center center fixed;
+            background: url('image_l86T2P.png') no-repeat center center fixed;
             background-size: cover;
             color: white;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -27,7 +26,7 @@
             margin-top: 40px;
             text-align: center;
             z-index: 5;
-            background: rgba(13, 8, 27, 0.6);
+            background: rgba(13, 8, 27, 0.65);
             padding: 10px 30px;
             border-radius: 15px;
             border: 1px solid #7b2cbf;
@@ -54,32 +53,31 @@
             justify-content: center;
             align-items: center;
             z-index: 1;
-            gap: 25px; /* بۆشایی زیاتر لە نێوان سکەکە و هێڵی وزە */
+            gap: 20px; 
         }
         
-        /* 🟡 لێرەدا قەبارەی سکە گەورەکەت بە تەواوی ڕێکخراوە بۆ قەبارەیەکی مامناوەند و شیک */
+        /* 🪙 سکە زێڕینەکە لێرەدا کراوە بە ١٣٠ پێکسڵ کە زۆر بچووک و فێکسە */
         .tap-zone {
-            width: 220px; 
-            height: 220px;
+            width: 130px !important; 
+            height: 130px !important;
             border-radius: 50%;
             cursor: pointer;
-            background: url('chubbyx_coin.png') no-repeat center center;
-            background-size: contain;
-            box-shadow: 0 0 35px rgba(234, 179, 8, 0.7); 
-            /* جوڵەی پاش و پێش لێرەدا زۆر کەم و نەرم کراوەتەوە */
+            background: url('chubbyx_coin.png') no-repeat center center !important;
+            background-size: contain !important;
+            box-shadow: 0 0 30px rgba(234, 179, 8, 0.6); 
             transition: transform 0.05s ease-in-out;
+            -webkit-tap-highlight-color: transparent;
         }
         
-        /* کاتێک دەستی لێدەدەیت تەنها کەمێک دەجوڵێت نەک بە توندی */
+        /* 💥 تەنها کەمێک کلیک پێوە دیار دەبێت و نالەرزێت */
         .tap-zone:active {
-            transform: scale(0.97);
+            transform: scale(0.92) !important; 
         }
 
         /* ⚡ شێوازی هێڵی وزە */
         .energy-container {
-            width: 220px;
+            width: 200px;
             text-align: center;
-            margin-top: 10px;
         }
         .energy-text {
             font-size: 14px;
@@ -113,7 +111,7 @@
             padding: 15px 0;
             position: absolute;
             bottom: 0;
-            z-index: 5;
+            z-index: 20; 
         }
         .nav-item {
             font-size: 12px;
@@ -140,9 +138,11 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: #090514;
+            background: rgba(9, 5, 20, 0.95); 
+            backdrop-filter: blur(10px);
             box-sizing: border-box;
             padding: 20px;
+            padding-top: 60px; 
             padding-bottom: 90px;
             overflow-y: auto;
             z-index: 10;
@@ -186,17 +186,14 @@
 </head>
 <body>
 
-    <div class="header">
+    <div class="header" id="mainHeader">
         <div class="rank">ChubbyX Balance</div>
         <div class="coin-count" id="score">0</div>
     </div>
 
-    <!-- 📌 سکە زێڕینەکە و هێڵی وزە لە ناوەڕاستدا -->
-    <div class="coin-container">
-        <!-- لێرەدا قەبارەی کێشەدارەکە لابراوە و خراوەتە ژێر کۆنترۆڵی جێگیرەوە -->
+    <div class="coin-container" id="mainGameContainer">
         <div class="tap-zone" id="tapCoin"></div>
         
-        <!-- ⚡ بەشی پیشاندانی وزە -->
         <div class="energy-container">
             <div class="energy-text">⚡ <span id="energyText">500</span>/500</div>
             <div class="energy-bar-bg">
@@ -205,11 +202,10 @@
         </div>
     </div>
 
-    <!-- لاپەڕەی ڕێکخستنەکان (Settings) -->
     <div id="settingsPage" class="page">
         <div class="page-header">
             <h2>ڕێکخستنەکان (Settings)</h2>
-            <button class="close-btn" onclick="closePage('settingsPage')">X</button>
+            <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
         <div class="item-list">
             <div>دەنگەکانی ناو یاری (Sound Effects)</div>
@@ -217,11 +213,10 @@
         </div>
     </div>
 
-    <!-- لاپەڕەی ئەرکەکان (Tasks) -->
     <div id="tasksPage" class="page">
         <div class="page-header">
             <h2>ئەرکەکان (Tasks)</h2>
-            <button class="close-btn" onclick="closePage('tasksPage')">X</button>
+            <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
         <div class="item-list">
             <div>عەینەکردنی چەناڵی تێلیگرام (+1,000 CHUB)</div>
@@ -232,7 +227,7 @@
     <div id="invitePage" class="page">
         <div class="page-header">
             <h2>داوەتکردنی هاوڕێیان</h2>
-            <button class="close-btn" onclick="closePage('invitePage')">X</button>
+            <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
         <p>بۆ هەر هاوڕێیەک کە داوەتی دەکەیت ٥,٠٠٠ سکە وەربگرە!</p>
         <button class="action-btn" style="width:100%; padding:15px; font-size:16px; background: #7b2cbf;" onclick="alert('لینکەکە کۆپی بوو!')">کۆپیکردنی لینی داوەتکردن 🔗</button>
@@ -241,7 +236,7 @@
     <div id="gamesPage" class="page">
         <div class="page-header">
             <h2>یارییەکان (Mini Games)</h2>
-            <button class="close-btn" onclick="closePage('gamesPage')">X</button>
+            <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
         <div class="item-list">
             <div>یاری کەرەوزی خێرا (Jar Jar Mod)</div>
@@ -252,18 +247,19 @@
     <div id="walletPage" class="page">
         <div class="page-header">
             <h2>جزدان (Wallet)</h2>
-            <button class="close-btn" onclick="closePage('walletPage')">X</button>
+            <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
         <p>جزدانی خۆت ببەستەوە بۆ کاتی ئێردرۆپ:</p>
         <button class="action-btn" style="width:100%; background:#0098ea; padding:15px;" onclick="alert('سیستەمی TON بەم زووانە دەبەسرێتەوە')">Connect TON Wallet 💎</button>
     </div>
 
     <div class="nav-bar">
-        <div class="nav-item active" onclick="openPage('settingsPage')"><span>📱</span>Settings</div>
-        <div class="nav-item" onclick="openPage('tasksPage')"><span>📋</span>Tasks</div>
-        <div class="nav-item" onclick="openPage('invitePage')"><span>👥</span>Friends</div>
-        <div class="nav-item" onclick="openPage('gamesPage')"><span>🎮</span>Games</div>
-        <div class="nav-item" onclick="openPage('walletPage')"><span>💼</span>Wallet</div>
+        <div class="nav-item active" id="btn-tap" onclick="showMainGame()"><span>🪙</span>Tap</div>
+        <div class="nav-item" id="btn-settings" onclick="openPage('settingsPage', 'btn-settings')"><span>📱</span>Settings</div>
+        <div class="nav-item" id="btn-tasks" onclick="openPage('tasksPage', 'btn-tasks')"><span>📋</span>Tasks</div>
+        <div class="nav-item" id="btn-invite" onclick="openPage('invitePage', 'btn-invite')"><span>👥</span>Friends</div>
+        <div class="nav-item" id="btn-games" onclick="openPage('gamesPage', 'btn-games')"><span>🎮</span>Games</div>
+        <div class="nav-item" id="btn-wallet" onclick="openPage('walletPage', 'btn-wallet')"><span>💼</span>Wallet</div>
     </div>
 
     <script>
@@ -276,18 +272,15 @@
         const energyText = document.getElementById('energyText');
         const energyFill = document.getElementById('energyFill');
 
-        // لۆجیکی کلیک و کەمبوونەوەی وزە
         tapCoin.addEventListener('click', () => {
             if (energy > 0) {
                 count += 1;
                 energy -= 1; 
-                
                 scoreDisplay.innerText = count;
                 updateEnergyUI();
             }
         });
 
-        // پڕبوونەوەی خۆکاری وزە
         setInterval(() => {
             if (energy < maxEnergy) {
                 energy += 3;
@@ -301,3 +294,5 @@
             const percentage = (energy / maxEnergy) * 100;
             energyFill.style.width = percentage + '%';
         }
+
+        function openPage(pageId, btnId) {
