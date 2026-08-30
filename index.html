@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
-    <!-- 🚀 بارکردنی کتێبخانەکانی فەرمی Firebase بۆ بەستنەوەی داتابەیس -->
+    <!-- 🚀 ١. لێرەدا سکڕێپتی فەرمی تلێگراممان گەڕاندووەتەوە بۆ کارکردنی دوگمەکان -->
+    <script src="https://telegram.org"></script>
+    <!-- 🚀 ٢. بارکردنی فەرمی Firebase بۆ بەستنەوەی داتابەیسەکەت -->
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
     <style>
@@ -23,6 +25,7 @@
             user-select: none;
             -webkit-user-select: none;
         }
+
         .header {
             margin-top: 40px;
             text-align: center;
@@ -45,6 +48,7 @@
             color: #d8bbff; 
             letter-spacing: 1px;
         }
+
         .coin-container {
             flex: 1;
             display: flex;
@@ -54,6 +58,8 @@
             z-index: 1;
             gap: 25px; 
         }
+        
+        /* 🪙 گەڕاندنەوەی قەبارە گەورە و خڕە بێ کێشەکەی سکە زەردەکە */
         .tap-zone {
             width: 185px !important; 
             height: 185px !important;
@@ -65,9 +71,11 @@
             -webkit-tap-highlight-color: transparent;
             transition: transform 0.05s ease-in-out;
         }
+        
         .tap-zone:active {
             transform: scale(0.92) !important;
         }
+
         .energy-container {
             width: 220px;
             text-align: center;
@@ -93,6 +101,7 @@
             border-radius: 10px;
             transition: width 0.1s ease;
         }
+
         .nav-bar {
             width: 100%;
             background: rgba(13, 8, 27, 0.95);
@@ -120,6 +129,7 @@
             font-size: 24px;
             margin-bottom: 4px;
         }
+
         .page {
             display: none;
             position: fixed;
@@ -152,6 +162,7 @@
             cursor: pointer;
             font-weight: bold;
         }
+
         .task-item {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid #7b2cbf;
@@ -179,27 +190,27 @@
             text-align: center;
             margin-top: 20px;
         }
+
         #gameArea {
-            width: 300px;
-            height: 350px;
+            width: 100%;
+            max-width: 300px;
+            height: 320px;
             background: rgba(13, 8, 27, 0.6);
             border: 2px solid #7b2cbf;
             border-radius: 12px;
             margin: 10px auto;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(5px);
         }
         #playerBucket {
-            width: 65px;
-            height: 65px;
+            width: 60px;
+            height: 60px;
             background: url('image_okKb6u.png.jpeg') no-repeat center center;
             background-size: contain;
             position: absolute;
             bottom: 10px;
-            left: 115px;
+            left: 120px;
             border-radius: 50%;
-            transition: left 0.1s ease;
         }
         .falling-star {
             width: 25px;
@@ -208,31 +219,32 @@
             clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
             position: absolute;
             top: -30px;
-            box-shadow: 0 0 10px #ffeb3b;
         }
         .game-controls {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-top: 15px;
+            gap: 15px;
+            margin-top: 10px;
         }
         .move-btn {
             background: #7b2cbf;
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 10px;
-            font-size: 18px;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
         }
     </style>
 </head>
 <body>
+
     <div class="header" id="mainHeader">
         <div class="rank">ChubbyX Balance</div>
         <div class="coin-count" id="score">0</div>
     </div>
+
     <div class="coin-container" id="mainGameContainer">
         <div class="tap-zone" id="tapCoin"></div>
         <div class="energy-container">
@@ -241,7 +253,9 @@
                 <div class="energy-bar-fill" id="energyFill"></div>
             </div>
         </div>
-    </div><div id="settingsPage" class="page">
+    </div>
+
+    <div id="settingsPage" class="page">
         <div class="page-header">
             <h2>Settings</h2>
             <button class="close-btn" onclick="showMainGame()">X</button>
@@ -282,7 +296,7 @@
             <button class="close-btn" onclick="showMainGame(); stopCatchGame();">X</button>
         </div>
         <div style="text-align: center;">
-            <p>Move Chubby to catch falling stars!</p>
+            <p>Catch stars with Chubby!</p>
             <div id="gameArea">
                 <div id="playerBucket"></div>
             </div>
@@ -296,182 +310,3 @@
 
     <div id="walletPage" class="page">
         <div class="page-header">
-            <h2>Wallet</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
-        <p style="padding: 10px;">Connect your TON wallet for the upcoming airdrop.</p>
-    </div>
-
-    <div class="nav-bar">
-        <div class="nav-item" id="btn-settings" onclick="openPage('settingsPage', 'btn-settings')"><span>📱</span>Settings</div>
-        <div class="nav-item" id="btn-tasks" onclick="openPage('tasksPage', 'btn-tasks')"><span>📋</span>Tasks</div>
-        <div class="nav-item" id="btn-invite" onclick="openPage('invitePage', 'btn-invite')"><span>👥</span>Friends</div>
-        <div class="nav-item" id="btn-games" onclick="openPage('gamesPage', 'btn-games'); startCatchGame();"><span>🎮</span>Games</div>
-        <div class="nav-item" id="btn-wallet" onclick="openPage('walletPage', 'btn-wallet')"><span>💼</span>Wallet</div>
-    </div>
-
-    <script>
-        // 🔑 بەستنەوەی ڕاستەقینەی کلیلەکانی داتابەیسەکەت لە فایربەیس
-        const firebaseConfig = {
-            apiKey: "AIzaSyCp--GoF48EWzWXSkIFbB8b6mW-Qcsdaow",
-            authDomain: "://firebaseapp.com",
-            projectId: "chubbyx-db",
-            storageBucket: "chubbyx-db.firebasestorage.app",
-            messagingSenderId: "469899376640",
-            appId: "1:469899376640:web:dba28ce4d30c8c01ed00e5",
-            measurementId: "G-C9PB5K43ET"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        let userId = localStorage.getItem('chubby_userId') || 'user_' + Math.floor(Math.random() * 1000000);
-        localStorage.setItem('chubby_userId', userId);
-        document.getElementById('refLink').innerText = "https://t.me" + userId;
-
-        let count = 0;
-        let energy = 500;
-        const maxEnergy = 500;
-
-        const scoreDisplay = document.getElementById('score');
-        const tapCoin = document.getElementById('tapCoin');
-        const energyText = document.getElementById('energyText');
-        const energyFill = document.getElementById('energyFill');
-
-        // 📥 خوێندنەوەی باڵانسی ڕاستەقینە لە داتابەیسەکەتەوە
-        db.collection("users").doc(userId).get().then((doc) => {
-            if (doc.exists) {
-                count = doc.data().coins || 0;
-            } else {
-                db.collection("users").doc(userId).set({ coins: 0, completedTasks: [] });
-            }
-            scoreDisplay.innerText = count;
-        });
-
-        tapCoin.addEventListener('click', () => {
-            if (energy > 0) {
-                count += 1;
-                energy -= 1; 
-                scoreDisplay.innerText = count;
-                updateEnergyUI();
-                
-                // 💾 نوێکردنەوەی سکەکان لەسەر داتابەیسی Firebase Firestore
-                db.collection("users").doc(userId).update({ coins: count });
-            }
-        });
-
-        setInterval(() => {
-            if (energy < maxEnergy) {
-                energy += 3;
-                if (energy > maxEnergy) energy = maxEnergy;
-                updateEnergyUI();
-            }
-        }, 1000);
-
-        function updateEnergyUI() {
-            energyText.innerText = energy;
-            const percentage = (energy / maxEnergy) * 100;
-            energyFill.style.width = percentage + '%';
-        }
-
-        // 📋 سیستەمی ئەرکە ڕاستەقینەکان بە پاشەکەوت لە داتابەیس
-        function completeTask(taskId, reward, btn) {
-            db.collection("users").doc(userId).get().then((doc) => {
-                let completed = doc.data().completedTasks || [];
-                if (!completed.includes(taskId)) {
-                    count += reward;
-                    completed.push(taskId);
-                    scoreDisplay.innerText = count;
-                    db.collection("users").doc(userId).update({
-                        coins: count,
-                        completedTasks: completed
-                    });
-                    btn.innerText = "Completed";
-                    btn.style.background = "#555";
-                    btn.disabled = true;
-                }
-            });
-        }
-
-        function copyRef() {
-            navigator.clipboard.writeText(document.getElementById('refLink').innerText);
-            alert("Referral Link copied!");
-        }
-
-        const player = document.getElementById('playerBucket');
-        const gameArea = document.getElementById('gameArea');
-        let playerLeft = 115;
-        let gameInterval, starInterval;
-
-        function movePlayer(dir) {
-            playerLeft += dir;
-            if (playerLeft < 0) playerLeft = 0;
-            if (playerLeft > 235) playerLeft = 235;
-            player.style.left = playerLeft + 'px';
-        }
-
-        function startCatchGame() {
-            stopCatchGame();
-            playerLeft = 115;
-            player.style.left = playerLeft + 'px';
-            starInterval = setInterval(createStar, 1200);
-            gameInterval = setInterval(updateStars, 50);
-        }
-
-        function stopCatchGame() {
-            clearInterval(starInterval);
-            clearInterval(gameInterval);
-            document.querySelectorAll('.falling-star').forEach(s => s.remove());
-        }
-
-        function createStar() {
-            const star = document.createElement('div');
-            star.classList.add('falling-star');
-            star.style.left = Math.floor(Math.random() * 270) + 'px';
-            star.style.top = '-30px';
-            gameArea.appendChild(star);
-        }
-
-        function updateStars() {
-            const stars = document.querySelectorAll('.falling-star');
-            stars.forEach(star => {
-                let top = parseInt(star.style.top);
-                top += 5;
-                star.style.top = top + 'px';
-                if (top > 280 && top < 330) {
-                    let starLeft = parseInt(star.style.left);
-                    if (starLeft > playerLeft - 20 && starLeft < playerLeft + 60) {
-                        count += 10;
-                        scoreDisplay.innerText = count;
-                        db.collection("users").doc(userId).update({ coins: count });
-                        star.remove();
-                    }
-                }
-                if (top > 350) star.remove();
-            });
-        }
-
-        function openPage(pageId, btnId) {
-            const pages = document.querySelectorAll('.page');
-            for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
-            if(pageId !== 'gamesPage') stopCatchGame();
-            document.getElementById(pageId).style.display = 'block';
-            document.getElementById('mainGameContainer').style.display = 'none';
-            document.getElementById('mainHeader').style.display = 'none';
-            const navItems = document.querySelectorAll('.nav-bar .nav-item');
-            for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
-            document.getElementById(btnId).classList.add('active');
-        }
-
-        function showMainGame() {
-            const pages = document.querySelectorAll('.page');
-            for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
-            stopCatchGame();
-            document.getElementById('mainGameContainer').style.display = 'flex';
-            document.getElementById('mainHeader').style.display = 'block';
-            const navItems = document.querySelectorAll('.nav-bar .nav-item');
-            for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
-        }
-    </script>
-</body>
-</html>
