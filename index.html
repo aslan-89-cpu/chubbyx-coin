@@ -197,15 +197,14 @@
         }
     </style>
 
-    <!-- 🌐 بارکردنی کتێبخانەکانی فایەربەیس بە فەرمی -->
+    <!-- 🌐 بارکردنی کتێبخانەکانی فایەربەیس بڵاوکراوە -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getFirestore, doc, setDoc, getDoc } from "https://gstatic.com";
 
-        // 🔥 زانیاری بەستنەوەی فەرمی پڕۆژەکەت
         const firebaseConfig = {
             apiKey: "AIzaSyCp--Gof48EWzxWSkiFB8B6mW-Qcsdaolw",
-            authDomain: "://firebaseapp.com",
+            authDomain: "chubbyx-db.firebaseapp.com",
             projectId: "chubbyx-db",
             storageBucket: "chubbyx-db.firebasestorage.app",
             messagingSenderId: "469899376640",
@@ -302,3 +301,4 @@
 
         window.showMainGame = function() {
             closeAllPages();
+            document.getElementById('mainGameContainer').style.display = 'flex';
