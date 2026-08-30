@@ -55,14 +55,14 @@
             gap: 25px; 
         }
         
-        /* 🪙 لێرەدا تەنها قەبارەی وێنەکە گەورە کراوە و کشانی لایەکانی ڕێکخراوە بۆ بنبڕکردنی پاڵکەوتنەکە */
+        /* 🪙 لێرەدا قەبارەکە لەسەر 185px هێڵدراوەتەوە، بەڵام بە شێوازی contain ڕێگری لە پاڵکەوتن و پانبوونەوەی کراوە */
         .tap-zone {
             width: 185px !important; 
             height: 185px !important;
             border-radius: 50%;
             cursor: pointer;
             background: url('image_okKb6u.png.jpeg') no-repeat center center !important;
-            background-size: 110% 100% !important; /* ڕێکخستنی پانی بۆ ڕێگری لە پاڵکەوتنی وێنەکە */
+            background-size: contain !important; /* 👈 وێنەکە بە خڕی و ڕێکی ڕادەگرێت بەبێ ئەوەی لێکی بکشێنێت */
             box-shadow: 0 0 35px rgba(234, 179, 8, 0.6); 
             -webkit-tap-highlight-color: transparent;
             transition: transform 0.05s ease-in-out;
