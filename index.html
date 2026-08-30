@@ -6,6 +6,7 @@
     <title>ChubbyX Coin</title>
     <style>
         body {
+            /* 🌌 لێرەدا ناوی فایلی باگراوەندە مۆرەکەت ڕێکخراوە ڕێک وەک سەر گیتھەبەکەت */
             background: #090514 url('image.png.jpeg') no-repeat center center fixed;
             background-size: cover;
             color: white;
@@ -54,33 +55,21 @@
             gap: 25px; 
         }
         
-        /* 🪙 قاڵبی بازنەیی دەرەوە بۆ پاراستنی لێدانی دوگمەکە */
+        /* 🪙 لێرەدا قەبارەی بازنەکە گەورەکراوە بۆ 180px و لێوارە ڕەشەکان بە زوومکردنی ناوەوە شاردراونەتەوە */
         .tap-zone {
-            width: 155px; 
-            height: 155px;
+            width: 180px !important; 
+            height: 180px !important;
             border-radius: 50%;
             cursor: pointer;
+            background: url('image_okKb6u.png.jpeg') no-repeat center center !important;
+            background-size: 150% 150% !important; /* زوومکردنی ناوەوە بۆ شاردنەوەی بەشە ڕەشەکان */
             box-shadow: 0 0 35px rgba(234, 179, 8, 0.6); 
-            border: 3px solid #eab308;
-            overflow: hidden; /* ڕێگری دەکات لە دەرچوونی لێوارە ڕەشەکان */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: black;
             -webkit-tap-highlight-color: transparent;
             transition: transform 0.05s ease-in-out;
         }
         
-        /* 📸 چارەسەری یەکجاری بۆ پان نەبوونەوەی وێنە زەردەکە */
-        .tap-zone img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* وێنەکە وەک خۆی دەهێڵێتەوە بێ کشان و لێکدران */
-            transform: scale(1.15); /* کەمێک زووم بۆ شاردنەوەی لێوارە ڕەشەکان */
-        }
-        
         .tap-zone:active {
-            transform: scale(0.92);
+            transform: scale(0.92) !important;
         }
 
         .energy-container {
@@ -179,10 +168,7 @@
     </div>
 
     <div class="coin-container" id="mainGameContainer">
-        <!-- لێرەدا تاپ زۆنەکە کرا بە تاگی img بۆ ڕێگری لە شێوانی وێنەکە -->
-        <div class="tap-zone" id="tapCoin">
-            <img src="image_okKb6u.png.jpeg" alt="Coin">
-        </div>
+        <div class="tap-zone" id="tapCoin"></div>
         
         <div class="energy-container">
             <div class="energy-text">⚡ <span id="energyText">500</span>/500</div>
@@ -252,7 +238,6 @@
 
         scoreDisplay.innerText = count;
 
-        // گۆڕینی لێدان بۆ click ی سادە بەبێ هۆکاری تێکچوونی دوگمەکانی تر
         tapCoin.addEventListener('click', () => {
             if (energy > 0) {
                 count += 1;
@@ -295,3 +280,11 @@
             for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
             
             document.getElementById('mainGameContainer').style.display = 'flex';
+            document.getElementById('mainHeader').style.display = 'block';
+            
+            const navItems = document.querySelectorAll('.nav-bar .nav-item');
+            for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
+        }
+    </script>
+</body>
+</html>
