@@ -1,295 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChubbyX Coin</title>
-    <style>
-        body {
-            /* 🌌 گەڕانەوەی وێنەی باگراوندە مۆرەکەت بە شێوازێکی جێگیر */
-            background: #090514 url('image_l86T2P.png') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
-        }
+[11:02 PM, 8/30/2026] No Need: <button class="coinBtn" id="coinBtn" aria-label="Tap ChubbyX Coin">
+  <svg viewBox="0 0 300 300" class="chubbyCoin">
 
-        .header {
-            margin-top: 40px;
-            text-align: center;
-            z-index: 5;
-            background: rgba(13, 8, 27, 0.85);
-            padding: 10px 30px;
-            border-radius: 15px;
-            border: 1px solid #7b2cbf;
-            backdrop-filter: blur(5px);
-        }
-        .coin-count {
-            font-size: 48px;
-            font-weight: bold;
-            color: #00f0ff; 
-            text-shadow: 0px 4px 15px rgba(0, 240, 255, 0.6);
-            margin: 5px 0;
-        }
-        .rank {
-            font-size: 14px;
-            color: #d8bbff; 
-            letter-spacing: 1px;
-        }
+    <!-- Golden coin -->
+    <circle cx="150" cy="150" r="137"
+            fill="url(#gold)"
+            stroke="#ffe36b"
+            stroke-width="7"/>
 
-        .coin-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1;
-            gap: 20px; 
-        }
-        
-        /* 🪙 گەڕانەوەی وێنەی سکە زێڕینە ئەسڵییەکەت بە قەبارەیەکی بچووک و فێکسکراوی ١٤٠ پێکسڵ */
-        .tap-zone {
-            width: 140px !important; 
-            height: 140px !important;
-            border-radius: 50%;
-            cursor: pointer;
-            background: url('chubbyx_coin.png') no-repeat center center !important;
-            background-size: contain !important;
-            box-shadow: 0 0 35px rgba(234, 179, 8, 0.6); 
-            -webkit-tap-highlight-color: transparent;
-            transition: transform 0.05s ease-in-out;
-        }
-        
-        /* کاریگەری تەپ‌تەپی زۆر نەرم بەبێ لەرینەوەی توند */
-        .tap-zone:active {
-            transform: scale(0.93) !important;
-        }
+    <circle cx="150" cy="150" r="119"
+            fill="none"
+            stroke="#b87812"
+            stroke-width="5"/>
 
-        .energy-container {
-            width: 220px;
-            text-align: center;
-        }
-        .energy-text {
-            font-size: 14px;
-            color: #eab308;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .energy-bar-bg {
-            width: 100%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            border: 1px solid #7b2cbf;
-            overflow: hidden;
-        }
-        .energy-bar-fill {
-            width: 100%; 
-            height: 100%;
-            background: linear-gradient(90deg, #eab308, #ffeb3b);
-            border-radius: 10px;
-            transition: width 0.1s ease;
-        }
+    <!-- Chubby body -->
+    <ellipse cx="150" cy="151" rx="68" ry="73"
+             fill="#c88d52"/>
 
-        .nav-bar {
-            width: 100%;
-            background: rgba(13, 8, 27, 0.95);
-            border-top: 2px solid #7b2cbf; 
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
-            position: absolute;
-            bottom: 0;
-            z-index: 20; 
-        }
-        .nav-item {
-            font-size: 12px;
-            color: #9d4edd;
-            cursor: pointer;
-            text-align: center;
-            flex: 1;
-        }
-        .nav-item.active {
-            color: #00f0ff; 
-            font-weight: bold;
-        }
-        .nav-item span {
-            display: block;
-            font-size: 24px;
-            margin-bottom: 4px;
-        }
+    <!-- Head -->
+    <ellipse cx="150" cy="103" rx="62" ry="55"
+             fill="#d5a067"/>
 
-        .page {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: #090514; 
-            box-sizing: border-box;
-            padding: 20px;
-            padding-top: 60px; 
-            padding-bottom: 90px;
-            overflow-y: auto;
-            z-index: 30;
-        }
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #7b2cbf;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .close-btn {
-            background: #7b2cbf; 
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .item-list {
-            background: #180e29;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #3c1661;
-        }
-        .action-btn {
-            background: #9d4edd; 
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
+    <!-- Ears -->
+    <circle cx="112" cy="58" r="17" fill="#b87943"/>
+    <circle cx="188" cy="58" r="17" fill="#b87943"/>
 
-    <div class="header" id="mainHeader">
-        <div class="rank">ChubbyX Balance</div>
-        <div class="coin-count" id="score">0</div>
-    </div>
+    <!-- Eyes -->
+    <ellipse cx="128" cy="101" …
+[11:02 PM, 8/30/2026] No Need: .coinBtn{
+    width:300px;
+    height:300px;
+    border:0;
+    padding:0;
+    background:transparent;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    filter:drop-shadow(0 0 30px #d99a20);
+    transition:transform .1s;
+}
 
-    <div class="coin-container" id="mainGameContainer">
-        <div class="tap-zone" id="tapCoin"></div>
-        
-        <div class="energy-container">
-            <div class="energy-text">⚡ <span id="energyText">500</span>/500</div>
-            <div class="energy-bar-bg">
-                <div class="energy-bar-fill" id="energyFill"></div>
-            </div>
-        </div>
-    </div>
+.chubbyCoin{
+    width:100%;
+    height:100%;
+}
 
-    <div id="settingsPage" class="page">
-        <div class="page-header">
-            <h2>Settings</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
-        <div class="item-list">
-            <div>Game Sound Effects</div>
-            <button class="action-btn" onclick="alert('Sound is active')">On</button>
-        </div>
-    </div>
-
-    <div id="tasksPage" class="page">
-        <div class="page-header">
-            <h2>Tasks</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
-        <div class="item-list">
-            <div>Join Telegram Channel (+1,000 CHUB)</div>
-            <div id="taskBtnGroup">
-                <button class="action-btn" style="background:#0098ea;" onclick="openTelegramChannel()">Join</button>
-                <button class="action-btn" onclick="checkTelegramTask()">Check</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="invitePage" class="page">
-        <div class="page-header">
-            <h2>Invite Friends</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
-        <p>Get 5,000 coins for each friend you invite!</p>
-        <button class="action-btn" style="width:100%; padding:15px; font-size:16px; background: #7b2cbf;" onclick="copyInviteLink()">Copy Invite Link 🔗</button>
-    </div>
-
-    <div id="gamesPage" class="page">
-        <div class="page-header">
-            <h2>Mini Games</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
-        <div class="item-list">
-            <div>Fast Tap Game (Jar Jar Mod)</div>
-            <button class="action-btn" style="background:#00f0ff; color:black;" onclick="alert('Coming soon!')">Start 🎮</button>
-        </div>
-    </div>
-
-    <div id="walletPage" class="page">
-        <div class="page-header">
-            <h2>Wallet</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
-        <p>Connect your wallet for the upcoming airdrop:</p>
-        <button class="action-btn" style="width:100%; background:#0098ea; padding:15px;" onclick="alert('TON Wallet connection coming soon')">Connect TON Wallet 💎</button>
-    </div>
-
-    <div class="nav-bar">
-        <div class="nav-item" id="btn-settings" onclick="openPage('settingsPage', 'btn-settings')"><span>📱</span>Settings</div>
-        <div class="nav-item" id="btn-tasks" onclick="openPage('tasksPage', 'btn-tasks')"><span>📋</span>Tasks</div>
-        <div class="nav-item" id="btn-invite" onclick="openPage('invitePage', 'btn-invite')"><span>👥</span>Friends</div>
-        <div class="nav-item" id="btn-games" onclick="openPage('gamesPage', 'btn-games')"><span>🎮</span>Games</div>
-        <div class="nav-item" id="btn-wallet" onclick="openPage('walletPage', 'btn-wallet')"><span>💼</span>Wallet</div>
-    </div>
-
-    <script>
-        // 🛠️ لۆجیکی پاشەکەوتکردنی ناوخۆیی بە بێ پێویستی بە هێڵی دەرەکی
-        let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        let energy = 500;
-        const maxEnergy = 500;
-        let taskCompleted = localStorage.getItem('chubby_task') === 'true';
-
-        const scoreDisplay = document.getElementById('score');
-        const tapCoin = document.getElementById('tapCoin');
-        const energyText = document.getElementById('energyText');
-        const energyFill = document.getElementById('energyFill');
-
-        scoreDisplay.innerText = count;
-        if(taskCompleted) {
-            document.getElementById('taskBtnGroup').innerHTML = '<span style="color:#22c55e; font-weight:bold;">Completed ✓</span>';
-        }
-
-        tapCoin.addEventListener('click', () => {
-            if (energy > 0) {
-                count += 1;
-                energy -= 1; 
-                scoreDisplay.innerText = count;
-                updateEnergyUI();
-                localStorage.setItem('chubby_coins', count); 
-            }
-        });
-
-        setInterval(() => {
-            if (energy < maxEnergy) {
-                energy += 3;
-                if (energy > maxEnergy) energy = maxEnergy;
-                updateEnergyUI();
-            }
-        }, 1000);
+.coinBtn:active{
+    transform:scale(.93);
+}
