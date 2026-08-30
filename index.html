@@ -67,7 +67,7 @@
         }
         
         .tap-zone:active {
-            transform: scale(0.92) !important; 
+            transform: scale(0.94) !important; 
         }
 
         .energy-container {
@@ -190,7 +190,6 @@
         }
     </style>
 
-    <!-- 🌐 بەستنەوەی فەرمی و جێگیری فایەربەیس بە شێوازی سەلامەت -->
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
 </head>
@@ -275,7 +274,6 @@
     </div>
 
     <script>
-        // 🔥 لۆجیکی نوێی جێگیری فایەربەیس بۆ ڕێگری لە شاشەی ڕەش
         const firebaseConfig = {
             apiKey: "AIzaSyCp--Gof48EWzxWSkiFB8B6mW-Qcsdaolw",
             authDomain: "://firebaseapp.com",
@@ -297,3 +295,6 @@
         const scoreDisplay = document.getElementById('score');
         const tapCoin = document.getElementById('tapCoin');
         const energyText = document.getElementById('energyText');
+        const energyFill = document.getElementById('energyFill');
+
+        const urlParams = new URLSearchParams(window.location.search);
