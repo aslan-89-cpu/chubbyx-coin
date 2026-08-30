@@ -190,10 +190,92 @@
         }
     </style>
 
-    <script type="module">
-        import { initializeApp } from "https://gstatic.com";
-        import { getFirestore, doc, setDoc, getDoc } from "https://gstatic.com";
+    <!-- 🌐 بەستنەوەی فەرمی و جێگیری فایەربەیس بە شێوازی سەلامەت -->
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
+</head>
+<body>
 
+    <div class="header" id="mainHeader">
+        <div class="rank">ChubbyX Balance</div>
+        <div class="coin-count" id="score">0</div>
+    </div>
+
+    <div class="coin-container" id="mainGameContainer">
+        <div class="tap-zone" id="tapCoin"></div>
+        
+        <div class="energy-container">
+            <div class="energy-text">⚡ <span id="energyText">500</span>/500</div>
+            <div class="energy-bar-bg">
+                <div class="energy-bar-fill" id="energyFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsPage" class="page">
+        <div class="page-header">
+            <h2>Settings</h2>
+            <button class="close-btn" onclick="showMainGame()">X</button>
+        </div>
+        <div class="item-list">
+            <div>Game Sound Effects</div>
+            <button class="action-btn" onclick="alert('Sound is active')">On</button>
+        </div>
+    </div>
+
+    <div id="tasksPage" class="page">
+        <div class="page-header">
+            <h2>Tasks</h2>
+            <button class="close-btn" onclick="showMainGame()">X</button>
+        </div>
+        <div class="item-list">
+            <div>Join Telegram Channel (+1,000 CHUB)</div>
+            <div class="btn-group" id="taskBtnGroup">
+                <button class="join-btn" onclick="openTelegramChannel()">Join</button>
+                <button class="action-btn" onclick="checkTelegramTask()">Check</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="invitePage" class="page">
+        <div class="page-header">
+            <h2>Invite Friends</h2>
+            <button class="close-btn" onclick="showMainGame()">X</button>
+        </div>
+        <p>Get 5,000 coins for each friend you invite!</p>
+        <button class="action-btn" style="width:100%; padding:15px; font-size:16px; background: #7b2cbf;" onclick="copyInviteLink()">Copy Invite Link 🔗</button>
+    </div>
+
+    <div id="gamesPage" class="page">
+        <div class="page-header">
+            <h2>Mini Games</h2>
+            <button class="close-btn" onclick="showMainGame()">X</button>
+        </div>
+        <div class="item-list">
+            <div>Fast Tap Game (Jar Jar Mod)</div>
+            <button class="action-btn" style="background:#00f0ff; color:black;" onclick="alert('Coming soon!')">Start 🎮</button>
+        </div>
+    </div>
+
+    <div id="walletPage" class="page">
+        <div class="page-header">
+            <h2>Wallet</h2>
+            <button class="close-btn" onclick="showMainGame()">X</button>
+        </div>
+        <p>Connect your wallet for the upcoming airdrop:</p>
+        <button class="action-btn" style="width:100%; background:#0098ea; padding:15px;" onclick="alert('TON Wallet connection coming soon')">Connect TON Wallet 💎</button>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item" id="btn-settings" onclick="openPage('settingsPage', 'btn-settings')"><span>📱</span>Settings</div>
+        <div class="nav-item" id="btn-tasks" onclick="openPage('tasksPage', 'btn-tasks')"><span>📋</span>Tasks</div>
+        <div class="nav-item" id="btn-invite" onclick="openPage('invitePage', 'btn-invite')"><span>👥</span>Friends</div>
+        <div class="nav-item" id="btn-games" onclick="openPage('gamesPage', 'btn-games')"><span>🎮</span>Games</div>
+        <div class="nav-item" id="btn-wallet" onclick="openPage('walletPage', 'btn-wallet')"><span>💼</span>Wallet</div>
+    </div>
+
+    <script>
+        // 🔥 لۆجیکی نوێی جێگیری فایەربەیس بۆ ڕێگری لە شاشەی ڕەش
         const firebaseConfig = {
             apiKey: "AIzaSyCp--Gof48EWzxWSkiFB8B6mW-Qcsdaolw",
             authDomain: "://firebaseapp.com",
@@ -203,8 +285,8 @@
             appId: "1:469899376640:web:dba28ce4d30c8c01ed0ae5"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
         let count = 0;
         let energy = 500;
@@ -215,90 +297,3 @@
         const scoreDisplay = document.getElementById('score');
         const tapCoin = document.getElementById('tapCoin');
         const energyText = document.getElementById('energyText');
-        const energyFill = document.getElementById('energyFill');
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const referrerId = urlParams.get('ref');
-
-        async function loadUserData() {
-            try {
-                const docRef = doc(db, "players", userId);
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    count = docSnap.data().coins || 0;
-                    taskCompleted = docSnap.data().tgTask || false;
-                    scoreDisplay.innerText = count;
-                    if(taskCompleted) {
-                        document.getElementById('taskBtnGroup').innerHTML = '<span style="color:#22c55e; font-weight:bold;">Completed ✓</span>';
-                    }
-                } else {
-                    await setDoc(docRef, { coins: 0, username: userId, tgTask: false, invitedBy: referrerId || null });
-                    
-                    if (referrerId) {
-                        const refRef = doc(db, "players", referrerId);
-                        const refSnap = await getDoc(refRef);
-                        if (refSnap.exists()) {
-                            let currentRefCoins = refSnap.data().coins || 0;
-                            await setDoc(refRef, { coins: currentRefCoins + 5000 }, { merge: true });
-                        }
-                    }
-                }
-            } catch (e) {
-                console.error("Error loading data: ", e);
-            }
-        }
-        loadUserData();
-
-        async function saveCoinsToDB() {
-            try {
-                await setDoc(doc(db, "players", userId), { coins: count }, { merge: true });
-            } catch (e) {
-                console.error("Error saving data: ", e);
-            }
-        }
-
-        tapCoin.addEventListener('click', () => {
-            if (energy > 0) {
-                count += 1;
-                energy -= 1; 
-                scoreDisplay.innerText = count;
-                updateEnergyUI();
-                saveCoinsToDB(); 
-            }
-        });
-
-        setInterval(() => {
-            if (energy < maxEnergy) {
-                energy += 3;
-                if (energy > maxEnergy) energy = maxEnergy;
-                updateEnergyUI();
-            }
-        }, 1000);
-
-        function updateEnergyUI() {
-            energyText.innerText = energy;
-            const percentage = (energy / maxEnergy) * 100;
-            energyFill.style.width = percentage + '%';
-        }
-
-        window.openPage = function(pageId, btnId) {
-            closeAllPages();
-            document.getElementById(pageId).style.display = 'block';
-            document.getElementById('mainGameContainer').style.display = 'none';
-            document.getElementById('mainHeader').style.display = 'none';
-            document.querySelectorAll('.nav-bar .nav-item').forEach(item => item.classList.remove('active'));
-            document.getElementById(btnId).classList.add('active');
-        }
-
-        window.showMainGame = function() {
-            closeAllPages();
-            document.getElementById('mainGameContainer').style.display = 'flex';
-            document.getElementById('mainHeader').style.display = 'block';
-            document.querySelectorAll('.nav-bar .nav-item').forEach(item => item.classList.remove('active'));
-        }
-
-        function closeAllPages() {
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(page => page.style.display = 'none');
-        }
