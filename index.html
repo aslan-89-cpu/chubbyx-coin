@@ -156,6 +156,28 @@
             cursor: pointer;
             font-weight: bold;
         }
+
+        .task-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #7b2cbf;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .task-btn {
+            background: #00f0ff;
+            color: #090514;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -188,7 +210,10 @@
             <h2>Tasks</h2>
             <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
-        <p style="padding: 10px;">Tasks are coming soon!</p>
+        <div class="task-item">
+            <div>📢 Join Telegram Channel<br><small style="color:#00f0ff">+5,000 CHUB</small></div>
+            <a href="https://t.me" target="_blank" class="task-btn" onclick="completeTask(5000, this)">Join Channel</a>
+        </div>
     </div>
 
     <div id="invitePage" class="page">
@@ -196,7 +221,11 @@
             <h2>Invite Friends</h2>
             <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
-        <p style="padding: 10px;">Invite friends feature coming soon!</p>
+        <p>Invite your friends to get 5,000 CHUB!</p>
+        <div class="invite-box">
+            <p style="color:#00f0ff; font-size:14px;">https://t.me_bot?start=ref</p>
+            <button class="task-btn" onclick="alert('Link copied!')">Copy Link</button>
+        </div>
     </div>
 
     <div id="gamesPage" class="page">
@@ -259,33 +288,19 @@
             energyFill.style.width = percentage + '%';
         }
 
-        document.querySelectorAll('.nav-bar .nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
+        function completeTask(reward, element) {
+            count += reward;
+            scoreDisplay.innerText = count;
+            localStorage.setItem('chubby_coins', count);
+            setTimeout(() => {
+                element.innerText = "Completed";
+                element.style.background = "#555";
+                element.style.pointerEvents = "none";
+            }, 1000);
+        }
 
         function openPage(pageId, btnId) {
             const pages = document.querySelectorAll('.page');
             for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
             
             document.getElementById(pageId).style.display = 'block';
-            document.getElementById('mainGameContainer').style.display = 'none';
-            document.getElementById('mainHeader').style.display = 'none';
-            
-            const navItems = document.querySelectorAll('.nav-bar .nav-item');
-            for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
-            document.getElementById(btnId).classList.add('active');
-        }
-
-        function showMainGame() {
-            const pages = document.querySelectorAll('.page');
-            for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
-            
-            document.getElementById('mainGameContainer').style.display = 'flex';
-            document.getElementById('mainHeader').style.display = 'block';
-            
-            const navItems = document.querySelectorAll('.nav-bar .nav-item');
-            for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
-        }
-    </script>
-</body>
-</html>
