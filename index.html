@@ -6,8 +6,9 @@
     <title>ChubbyX Coin</title>
     <style>
         body {
-            /* 🌌 باگراوندێکی جێگیری مۆری تاریک بە کۆد بۆ ئەوەی پێویستی بە لۆدینی دەرەکی نەبێت */
-            background: #090514 linear-gradient(180deg, #090514 0%, #1c0f3a 100%) no-repeat center center fixed;
+            /* 🌌 گەڕانەوەی وێنەی باگراوندە مۆرەکەت بە شێوازێکی جێگیر */
+            background: #090514 url('image_l86T2P.png') no-repeat center center fixed;
+            background-size: cover;
             color: white;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -51,28 +52,25 @@
             justify-content: center;
             align-items: center;
             z-index: 1;
-            gap: 25px; 
+            gap: 20px; 
         }
         
-        /* 🪙 سکەیەکی زێڕینی درەوشاوە بە کۆدی CSS بۆ ئەوەی هەمیشە دیار بێت */
+        /* 🪙 گەڕانەوەی وێنەی سکە زێڕینە ئەسڵییەکەت بە قەبارەیەکی بچووک و فێکسکراوی ١٤٠ پێکسڵ */
         .tap-zone {
-            width: 150px !important; 
-            height: 150px !important;
+            width: 140px !important; 
+            height: 140px !important;
             border-radius: 50%;
             cursor: pointer;
-            background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%) !important;
-            border: 4px solid #ffffff;
-            box-shadow: 0 0 35px rgba(255, 224, 102, 0.8); 
+            background: url('chubbyx_coin.png') no-repeat center center !important;
+            background-size: contain !important;
+            box-shadow: 0 0 35px rgba(234, 179, 8, 0.6); 
             -webkit-tap-highlight-color: transparent;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 50px;
-            transition: transform 0.05s ease;
+            transition: transform 0.05s ease-in-out;
         }
         
+        /* کاریگەری تەپ‌تەپی زۆر نەرم بەبێ لەرینەوەی توند */
         .tap-zone:active {
-            transform: scale(0.92) !important;
+            transform: scale(0.93) !important;
         }
 
         .energy-container {
@@ -189,7 +187,7 @@
     </div>
 
     <div class="coin-container" id="mainGameContainer">
-        <div class="tap-zone" id="tapCoin">🪙</div>
+        <div class="tap-zone" id="tapCoin"></div>
         
         <div class="energy-container">
             <div class="energy-text">⚡ <span id="energyText">500</span>/500</div>
@@ -262,7 +260,7 @@
     </div>
 
     <script>
-        // 🛠️ سیستمی نوێی ناوخۆیی زۆر جێگیر بەبێ بەکارهێنانی فایەربەیسی بلۆککراو
+        // 🛠️ لۆجیکی پاشەکەوتکردنی ناوخۆیی بە بێ پێویستی بە هێڵی دەرەکی
         let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         let energy = 500;
         const maxEnergy = 500;
@@ -284,10 +282,14 @@
                 energy -= 1; 
                 scoreDisplay.innerText = count;
                 updateEnergyUI();
-                localStorage.setItem('chubby_coins', count); // سەیڤکردنی دەستبەجێ لە مۆبایلەکەدا
+                localStorage.setItem('chubby_coins', count); 
             }
         });
 
         setInterval(() => {
             if (energy < maxEnergy) {
                 energy += 3;
+                if (energy > maxEnergy) energy = maxEnergy;
+                updateEnergyUI();
+            }
+        }, 1000);
