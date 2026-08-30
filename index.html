@@ -56,14 +56,14 @@
             gap: 25px; 
         }
         
-        /* 🪙 لێرەدا قەبارەی سکەکەم گەورە کردووە بۆ 180px و ڕێک بە قەبارەی بازنەکە کراوە */
+        /* 🪙 چاککردنی وێنە بازنەییەکە بۆ ئەوەی تێکنەچێت و نەکشێت */
         .tap-zone {
-            width: 180px !important; 
-            height: 180px !important;
+            width: 170px; 
+            height: 170px;
             border-radius: 50%;
             cursor: pointer;
-            background: url('image_okKb6u.png.jpeg') no-repeat center center !important;
-            background-size: 100% 100% !important; /* وێنەکە بە تەواوی شاشەی بازنەکە پڕ دەکاتەوە */
+            background: url('image_okKb6u.png.jpeg') no-repeat center center;
+            background-size: cover; /* لێرەدا کرا بە cover بۆ ئەوەی وێنەکە ناشرین نەبێت و نەشێوێت */
             box-shadow: 0 0 35px rgba(234, 179, 8, 0.6); 
             -webkit-tap-highlight-color: transparent;
             transition: transform 0.05s ease-in-out;
@@ -76,14 +76,15 @@
         .energy-container {
             width: 220px;
             text-align: center;
+            margin-top: 10px;
         }
-        /* ⚡ لێرەدا ڕەنگی دەقی وزەکە گۆڕدراوە بۆ وەنەوشەیی تۆخ و دیار */
+        /* ⚡ ڕەنگی وەنەوشەیی گونجاو و دیار لەسەر باگراوەندەکە */
         .energy-text {
             font-size: 16px;
-            color: #b5179e; /* ڕەنگی وەنەوشەیی جوان */
+            color: #df49ff; 
             margin-bottom: 5px;
             font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* بۆ ئەوەی لەسەر ڕەنگی زەرد بە تەواوی دیار بێت */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 1); /* سێبەری تۆخ بۆ زیاتر دیاربوون */
         }
         .energy-bar-bg {
             width: 100%;
@@ -247,8 +248,8 @@
         scoreDisplay.innerText = count;
         updateEnergyUI();
 
-        function handleTap(e) {
-            e.preventDefault(); 
+        // چاککردنی فەنکشنەکە بۆ ئەوەی ڕێگری لە دوگمەکانی تر نەکات
+        function handleTap() {
             if (energy > 0) {
                 count += 1;
                 energy -= 1; 
@@ -259,8 +260,8 @@
             }
         }
 
-        tapCoin.addEventListener('touchstart', handleTap);
-        tapCoin.addEventListener('click', handleTap); 
+        // بەکارهێنانی کۆنتڕۆڵی سادە بۆ چارەسەری قفڵ بوونی دوگمەکان
+        tapCoin.addEventListener('pointerdown', handleTap); 
 
         setInterval(() => {
             if (energy < maxEnergy) {
