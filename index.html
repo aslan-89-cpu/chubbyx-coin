@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
-    <!-- 🚀 سکڕێپتی فەرمی تێلیگرام -->
-    <script src="https://telegram.org"></script>
     <style>
         body {
+            /* 🌌 لێرەدا ناوی فایلی باگراوەندە مۆرەکەت ڕێکخراوە ڕێک وەک سەر گیتھەبەکەت */
             background: #090514 url('image.png.jpeg') no-repeat center center fixed;
             background-size: cover;
             color: white;
@@ -56,35 +55,32 @@
             gap: 25px; 
         }
         
-        /* 🪙 چاککردنی وێنە بازنەییەکە بۆ ئەوەی تێکنەچێت و نەکشێت */
+        /* 🪙 لێرەدا قەبارەکە گەورەکراوە بۆ 185px و کێشەی لێوارە ڕەشەکان بە تەواوی چارەسەر کراوە */
         .tap-zone {
-            width: 170px; 
-            height: 170px;
+            width: 185px !important; 
+            height: 185px !important;
             border-radius: 50%;
             cursor: pointer;
-            background: url('image_okKb6u.png.jpeg') no-repeat center center;
-            background-size: cover; /* لێرەدا کرا بە cover بۆ ئەوەی وێنەکە ناشرین نەبێت و نەشێوێت */
+            background: url('image_okKb6u.png.jpeg') no-repeat center center !important;
+            background-size: 100% 100% !important; /* وێنەکە ڕێک بە قەبارەی بازنەکە پڕ دەکاتەوە */
             box-shadow: 0 0 35px rgba(234, 179, 8, 0.6); 
             -webkit-tap-highlight-color: transparent;
             transition: transform 0.05s ease-in-out;
         }
         
         .tap-zone:active {
-            transform: scale(0.92);
+            transform: scale(0.92) !important;
         }
 
         .energy-container {
             width: 220px;
             text-align: center;
-            margin-top: 10px;
         }
-        /* ⚡ ڕەنگی وەنەوشەیی گونجاو و دیار لەسەر باگراوەندەکە */
         .energy-text {
-            font-size: 16px;
-            color: #df49ff; 
+            font-size: 14px;
+            color: #eab308;
             margin-bottom: 5px;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 1); /* سێبەری تۆخ بۆ زیاتر دیاربوون */
         }
         .energy-bar-bg {
             width: 100%;
@@ -231,13 +227,8 @@
     </div>
 
     <script>
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
-        }
-
         let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        let energy = parseInt(localStorage.getItem('chubby_energy')) || 500;
+        let energy = 500;
         const maxEnergy = 500;
 
         const scoreDisplay = document.getElementById('score');
@@ -246,29 +237,22 @@
         const energyFill = document.getElementById('energyFill');
 
         scoreDisplay.innerText = count;
-        updateEnergyUI();
 
-        // چاککردنی فەنکشنەکە بۆ ئەوەی ڕێگری لە دوگمەکانی تر نەکات
-        function handleTap() {
+        tapCoin.addEventListener('click', () => {
             if (energy > 0) {
                 count += 1;
                 energy -= 1; 
                 scoreDisplay.innerText = count;
                 updateEnergyUI();
                 localStorage.setItem('chubby_coins', count); 
-                localStorage.setItem('chubby_energy', energy); 
             }
-        }
-
-        // بەکارهێنانی کۆنتڕۆڵی سادە بۆ چارەسەری قفڵ بوونی دوگمەکان
-        tapCoin.addEventListener('pointerdown', handleTap); 
+        });
 
         setInterval(() => {
             if (energy < maxEnergy) {
                 energy += 3;
                 if (energy > maxEnergy) energy = maxEnergy;
                 updateEnergyUI();
-                localStorage.setItem('chubby_energy', energy);
             }
         }, 1000);
 
@@ -292,3 +276,15 @@
         }
 
         function showMainGame() {
+            const pages = document.querySelectorAll('.page');
+            for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
+            
+            document.getElementById('mainGameContainer').style.display = 'flex';
+            document.getElementById('mainHeader').style.display = 'block';
+            
+            const navItems = document.querySelectorAll('.nav-bar .nav-item');
+            for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
+        }
+    </script>
+</body>
+</html>
