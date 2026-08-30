@@ -6,8 +6,8 @@
     <title>ChubbyX Coin</title>
     <style>
         body {
-            /* 🌌 لێرەدا ناوی فایلی باگراوندە مۆرەکە ڕێکخراوە وەک لای خۆت */
-            background: #090514 url('image_okKb6u.png.jpeg') no-repeat center center fixed;
+            /* 🌌 لێرەدا ناوی فایلی باگراوەندە مۆرەکەت ڕێکخراوە ڕێک وەک سەر گیتھەبەکەت */
+            background: #090514 url('image.png.jpeg') no-repeat center center fixed;
             background-size: cover;
             color: white;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -55,15 +55,15 @@
             gap: 25px; 
         }
         
-        /* 🪙 لێرەدا ناوی فایلی سکە زێڕینەکە گۆڕدرا بۆ ناوە دروستەکە کە لای خۆت هەیە: image_okKb6u.png */
+        /* 🪙 لێرەدا ناوی فایلی سکەکەت ڕێکخراوە ڕێک وەک سەر گیتھەبەکەت بە قەبارەی ١٤٠ پێکسڵ */
         .tap-zone {
             width: 140px !important; 
             height: 140px !important;
             border-radius: 50%;
             cursor: pointer;
-            background: url('image_okKb6u.png') no-repeat center center !important;
+            background: url('image_okKb6u.png.jpeg') no-repeat center center !important;
             background-size: contain !important;
-            box-shadow: 0 0 45px rgba(234, 179, 8, 0.7); 
+            box-shadow: 0 0 35px rgba(234, 179, 8, 0.6); 
             -webkit-tap-highlight-color: transparent;
             transition: transform 0.05s ease-in-out;
         }
@@ -158,24 +158,6 @@
             cursor: pointer;
             font-weight: bold;
         }
-        .item-list {
-            background: #180e29;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #3c1661;
-        }
-        .action-btn {
-            background: #9d4edd; 
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -201,10 +183,7 @@
             <h2>Settings</h2>
             <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
-        <div class="item-list">
-            <div>Game Sound Effects</div>
-            <button class="action-btn" onclick="alert('Sound is active')">On</button>
-        </div>
+        <p style="padding: 10px;">Game Sound Effects are active (On).</p>
     </div>
 
     <div id="tasksPage" class="page">
@@ -212,13 +191,7 @@
             <h2>Tasks</h2>
             <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
-        <div class="item-list">
-            <div>Join Telegram Channel (+1,000 CHUB)</div>
-            <div id="taskBtnGroup">
-                <button class="action-btn" style="background:#0098ea;" onclick="openTelegramChannel()">Join</button>
-                <button class="action-btn" onclick="checkTelegramTask()">Check</button>
-            </div>
-        </div>
+        <p style="padding: 10px;">Complete tasks to earn more CHUB!</p>
     </div>
 
     <div id="invitePage" class="page">
@@ -226,8 +199,7 @@
             <h2>Invite Friends</h2>
             <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
-        <p>Get 5,000 coins for each friend you invite!</p>
-        <button class="action-btn" style="width:100%; padding:15px; font-size:16px; background: #7b2cbf;" onclick="copyInviteLink()">Copy Invite Link 🔗</button>
+        <p style="padding: 10px;">Invite your friends and get 5,000 CHUB for each!</p>
     </div>
 
     <div id="gamesPage" class="page">
@@ -235,10 +207,7 @@
             <h2>Mini Games</h2>
             <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
-        <div class="item-list">
-            <div>Fast Tap Game (Jar Jar Mod)</div>
-            <button class="action-btn" style="background:#00f0ff; color:black;" onclick="alert('Coming soon!')">Start 🎮</button>
-        </div>
+        <p style="padding: 10px;">Mini games are coming soon!</p>
     </div>
 
     <div id="walletPage" class="page">
@@ -246,8 +215,7 @@
             <h2>Wallet</h2>
             <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
-        <p>Connect your wallet for the upcoming airdrop:</p>
-        <button class="action-btn" style="width:100%; background:#0098ea; padding:15px;" onclick="alert('TON Wallet connection coming soon')">Connect TON Wallet 💎</button>
+        <p style="padding: 10px;">Connect your TON wallet for the upcoming airdrop.</p>
     </div>
 
     <div class="nav-bar">
@@ -262,7 +230,6 @@
         let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         let energy = 500;
         const maxEnergy = 500;
-        let taskCompleted = localStorage.getItem('chubby_task') === 'true';
 
         const scoreDisplay = document.getElementById('score');
         const tapCoin = document.getElementById('tapCoin');
@@ -270,9 +237,6 @@
         const energyFill = document.getElementById('energyFill');
 
         scoreDisplay.innerText = count;
-        if(taskCompleted) {
-            document.getElementById('taskBtnGroup').innerHTML = '<span style="color:#22c55e; font-weight:bold;">Completed ✓</span>';
-        }
 
         tapCoin.addEventListener('click', () => {
             if (energy > 0) {
@@ -294,3 +258,33 @@
 
         function updateEnergyUI() {
             energyText.innerText = energy;
+            const percentage = (energy / maxEnergy) * 100;
+            energyFill.style.width = percentage + '%';
+        }
+
+        function openPage(pageId, btnId) {
+            const pages = document.querySelectorAll('.page');
+            for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
+            
+            document.getElementById(pageId).style.display = 'block';
+            document.getElementById('mainGameContainer').style.display = 'none';
+            document.getElementById('mainHeader').style.display = 'none';
+            
+            const navItems = document.querySelectorAll('.nav-bar .nav-item');
+            for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
+            document.getElementById(btnId).classList.add('active');
+        }
+
+        function showMainGame() {
+            const pages = document.querySelectorAll('.page');
+            for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
+            
+            document.getElementById('mainGameContainer').style.display = 'flex';
+            document.getElementById('mainHeader').style.display = 'block';
+            
+            const navItems = document.querySelectorAll('.nav-bar .nav-item');
+            for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
+        }
+    </script>
+</body>
+</html>
