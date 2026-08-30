@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
-    <!-- 🚀 سکڕێپتی فەرمی تلێگرام -->
-    <script src="https://telegram.org"></script>
     <style>
         body {
             background: #090514 url('image.png.jpeg') no-repeat center center fixed;
@@ -56,7 +54,7 @@
             gap: 25px; 
         }
         
-        /* 🪙 پێوانە گەورە و خڕە سەرکەوتووەکەی سکە زەردەکە */
+        /* 🪙 سکە خڕە پێوانە گەورە و جوانەکەت */
         .tap-zone {
             width: 185px !important; 
             height: 185px !important;
@@ -159,80 +157,6 @@
             cursor: pointer;
             font-weight: bold;
         }
-
-        .task-item {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #7b2cbf;
-            padding: 15px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        .task-btn {
-            background: #00f0ff;
-            color: #090514;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .invite-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px dashed #7b2cbf;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        #gameArea {
-            width: 100%;
-            max-width: 300px;
-            height: 320px;
-            background: rgba(13, 8, 27, 0.6);
-            border: 2px solid #7b2cbf;
-            border-radius: 12px;
-            margin: 10px auto;
-            position: relative;
-            overflow: hidden;
-        }
-        #playerBucket {
-            width: 60px;
-            height: 60px;
-            background: url('image_okKb6u.png.jpeg') no-repeat center center;
-            background-size: contain;
-            position: absolute;
-            bottom: 10px;
-            left: 120px;
-            border-radius: 50%;
-        }
-        .falling-star {
-            width: 25px;
-            height: 25px;
-            background: #ffeb3b;
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            position: absolute;
-            top: -30px;
-        }
-        .game-controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 10px;
-        }
-        .move-btn {
-            background: #7b2cbf;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -265,14 +189,7 @@
             <h2>Tasks</h2>
             <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
-        <div class="task-item">
-            <div>📢 Join Telegram Channel<br><small style="color:#00f0ff">+5,000 CHUB</small></div>
-            <button class="task-btn" onclick="completeTask('tg_channel', 5000, this)">Claim</button>
-        </div>
-        <div class="task-item">
-            <div>👥 Join Chat Group<br><small style="color:#00f0ff">+3,000 CHUB</small></div>
-            <button class="task-btn" onclick="completeTask('tg_group', 3000, this)">Claim</button>
-        </div>
+        <p style="padding: 10px;">Tasks are coming soon!</p>
     </div>
 
     <div id="invitePage" class="page">
@@ -280,29 +197,15 @@
             <h2>Invite Friends</h2>
             <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
-        <p>Invite your friends and get 5,000 CHUB for each!</p>
-        <div class="invite-box">
-            <p id="refLink" style="color:#00f0ff; font-size:14px;">https://t.me</p>
-            <button class="task-btn" onclick="copyRef()">Copy Link</button>
-        </div>
+        <p style="padding: 10px;">Invite friends feature coming soon!</p>
     </div>
 
     <div id="gamesPage" class="page">
         <div class="page-header">
-            <h2>Catch Stars!</h2>
-            <button class="close-btn" onclick="showMainGame(); stopCatchGame();">X</button>
+            <h2>Mini Games</h2>
+            <button class="close-btn" onclick="showMainGame()">X</button>
         </div>
-        <div style="text-align: center;">
-            <p>Catch stars with Chubby!</p>
-            <div id="gameArea">
-                <div id="playerBucket"></div>
-            </div>
-            <div class="game-controls">
-                <button class="move-btn" onclick="movePlayer(-30)">◀️ Left</button>
-                <button class="move-btn" onclick="startCatchGame()">Start</button>
-                <button class="move-btn" onclick="movePlayer(30)">Right ▶️</button>
-            </div>
-        </div>
+        <p style="padding: 10px;">Mini games are coming soon!</p>
     </div>
 
     <div id="walletPage" class="page">
@@ -314,3 +217,68 @@
     </div>
 
     <div class="nav-bar">
+        <div class="nav-item" id="btn-settings" onclick="openPage('settingsPage', 'btn-settings')"><span>📱</span>Settings</div>
+        <div class="nav-item" id="btn-tasks" onclick="openPage('tasksPage', 'btn-tasks')"><span>📋</span>Tasks</div>
+        <div class="nav-item" id="btn-invite" onclick="openPage('invitePage', 'btn-invite')"><span>👥</span>Friends</div>
+        <div class="nav-item" id="btn-games" onclick="openPage('gamesPage', 'btn-games')"><span>🎮</span>Games</div>
+        <div class="nav-item" id="btn-wallet" onclick="openPage('walletPage', 'btn-wallet')"><span>💼</span>Wallet</div>
+    </div>
+
+    <script>
+        let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+        let energy = 500;
+        const maxEnergy = 500;
+
+        const scoreDisplay = document.getElementById('score');
+        const tapCoin = document.getElementById('tapCoin');
+        const energyText = document.getElementById('energyText');
+        const energyFill = document.getElementById('energyFill');
+
+        scoreDisplay.innerText = count;
+
+        tapCoin.addEventListener('click', () => {
+            if (energy > 0) {
+                count += 1;
+                energy -= 1; 
+                scoreDisplay.innerText = count;
+                updateEnergyUI();
+                localStorage.setItem('chubby_coins', count); 
+            }
+        });
+
+        setInterval(() => {
+            if (energy < maxEnergy) {
+                energy += 3;
+                if (energy > maxEnergy) energy = maxEnergy;
+                updateEnergyUI();
+            }
+        }, 1000);
+
+        function updateEnergyUI() {
+            energyText.innerText = energy;
+            const percentage = (energy / maxEnergy) * 100;
+            energyFill.style.width = percentage + '%';
+        }
+
+        function openPage(pageId, btnId) {
+            const pages = document.querySelectorAll('.page');
+            for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
+            document.getElementById(pageId).style.display = 'block';
+            document.getElementById('mainGameContainer').style.display = 'none';
+            document.getElementById('mainHeader').style.display = 'none';
+            const navItems = document.querySelectorAll('.nav-bar .nav-item');
+            for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
+            document.getElementById(btnId).classList.add('active');
+        }
+
+        function showMainGame() {
+            const pages = document.querySelectorAll('.page');
+            for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
+            document.getElementById('mainGameContainer').style.display = 'flex';
+            document.getElementById('mainHeader').style.display = 'block';
+            const navItems = document.querySelectorAll('.nav-bar .nav-item');
+            for(let i=0; i<navItems.length; i++) { navItems[i].classList.remove('active'); }
+        }
+    </script>
+</body>
+</html>
