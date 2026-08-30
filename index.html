@@ -54,23 +54,25 @@
             gap: 25px; 
         }
         
-        /* 🪙 لێرەدا ستایلی بازنەکە جێگیرە، بەڵام گۆڕانکاری لە قەبارەی وێنەی ناوەوەیدا دەکرێت */
+        /* 🪙 چارەسەری کۆتایی پاڵکەوتنی سکەکە: بەکارهێنانی قاڵبی توند بۆ بەکگراوندەکەت */
         .tap-zone {
-            width: 175px !important; 
-            height: 175px !important;
+            width: 155px !important; 
+            height: 155px !important;
             border-radius: 50%;
             cursor: pointer;
-            background: url('image_okKb6u.png.jpeg') no-repeat center 47% !important;
-            background-size: 135% 135% !important; 
+            background: url('image_okKb6u.png.jpeg') no-repeat center center !important;
+            /* لێرەدا زوومەکە ڕێکخراوەتەوە بە شێوەیەک لێوارە ڕەشەکان ببڕێت بەبێ ئەوەی وێنەکە پان بکاتەوە */
+            background-size: 150% 150% !important; 
             box-shadow: 0 0 35px rgba(234, 179, 8, 0.6); 
+            border: 2px solid #eab308; /* لێوارێکی زەردی باریک بۆ جوانکردنی دەوروبەری بازنەکە */
             -webkit-tap-highlight-color: transparent;
-            transition: background-size 0.05s ease-in-out !important; /* تەنها وێنەی ناوەوە دەجوڵێنێت */
+            transition: background-size 0.05s ease-in-out !important;
             will-change: background-size;
         }
         
-        /* ✨ کاتێک تاپ دەکرێت، تەنها وێنەی ناوەوەی بازنەکە بچووک دەبێتەوە (پاش و پێش دەکات) */
+        /* ✨ ئەنیمەیشنی پاش و پێش کردنی ناو وێنەکە */
         .tap-zone.tapped {
-            background-size: 120% 120% !important; /* وێنەکە دەچێتە دواوە */
+            background-size: 135% 135% !important; 
         }
 
         .energy-container {
@@ -247,7 +249,6 @@
                 updateEnergyUI();
                 localStorage.setItem('chubby_coins', count); 
 
-                // کارپێکردنی جووڵەی پاش و پێشی وێنەی ناوەوە
                 tapCoin.classList.add('tapped');
                 setTimeout(() => {
                     tapCoin.classList.remove('tapped');
@@ -288,5 +289,3 @@
             
             document.getElementById('mainGameContainer').style.display = 'flex';
             document.getElementById('mainHeader').style.display = 'block';
-            
-            const navItems = document.querySelectorAll('.nav-bar .nav-item');
