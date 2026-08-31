@@ -5,57 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
     <style>
-        body { 
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
             background: #090514 url('image.png.jpeg') no-repeat center fixed; 
             background-size: cover; 
             color: white; 
             font-family: sans-serif; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden; 
             user-select: none;
-            touch-action: none; 
+            -webkit-user-select: none;
+            touch-action: none; /* ڕێگری لە تەواوی جوڵانی شاشە لەسەر مۆبایل */
         }
         
         .header { 
             margin-top: 50px; 
             text-align: center; 
+            position: relative;
             z-index: 100; 
         }
         
-        /* کۆنتێنەری سەرەکی یارییەکە بۆ ڕێکخستنی شوێنەکان */
         .coin-container { 
             position: relative;
             width: 100%;
-            height: 100%;
-            flex: 1;
+            height: calc(100% - 180px);
         }
         
-        /* ڕێکخستنی سکە بچووکەکە ڕێک لەسەر دەموچاوی کارەکتەرەکە لایدەبات و دەیباتە شوێنی ڕاست */
+        /* دانانی سکە بچووکەکە ڕێک لەسەر زگی کارەکتەرە وەنەوشەیییەکە */
         .tap-zone { 
-            width: 150px !important; 
-            height: 150px !important; 
+            width: 140px !important; 
+            height: 140px !important; 
             border-radius: 50%; 
             cursor: pointer; 
             background: url('image_okKb6u.png.jpeg') no-repeat center center; 
             background-size: 155% !important; 
-            box-shadow: 0 0 25px rgba(234, 179, 8, 0.5); 
+            box-shadow: 0 0 25px rgba(234, 179, 8, 0.6); 
             position: absolute;
-            top: 48%;
+            top: 48%; /* گۆڕینی شوێن بۆ سەر زگی کارەکتەرەکە */
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 500 !important;
             -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
         }
         
-        /* هێنانی پێوەری وزە بۆ خوار سکەکە بە شێوەیەکی جێگیر */
         .energy-container { 
             position: absolute;
-            top: 65%;
+            top: 66%;
             left: 50%;
             transform: translateX(-50%);
             width: 220px; 
@@ -65,16 +62,17 @@
         .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; }
         .energy-bar-fill { width: 100%; height: 100%; background: #eab308; }
         
-        /* پاراستنی تەواوی دوگمەکانی خوارەوە لە داپۆشین */
+        /* ناو-باری خوارەوە بە بەرزترین ئاستی کلیککردن */
         .nav-bar { 
             width: 100%; 
-            background: rgba(13, 8, 27, 0.95); 
+            background: rgba(13, 8, 27, 0.98); 
             border-top: 2px solid #7b2cbf; 
             display: flex; 
-            position: absolute; 
+            position: fixed; 
             bottom: 0; 
-            padding: 18px 0; 
-            z-index: 9999 !important; 
+            left: 0;
+            padding: 20px 0; 
+            z-index: 99999 !important; 
         }
         .nav-item { 
             font-size: 14px; 
@@ -83,7 +81,7 @@
             flex: 1; 
             text-align: center; 
             font-weight: bold; 
-            z-index: 10000 !important; 
+            z-index: 100000 !important; 
             -webkit-tap-highlight-color: transparent;
         }
         
@@ -142,13 +140,18 @@
     <div id="walletPage" class="page"><div class="page-header"><h2>Wallet</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Connect Wallet coming soon!</p></div>
     
     <div class="nav-bar">
-        <div class="nav-item" onclick="openPage('tasksPage')">Tasks</div>
-        <div class="nav-item" onclick="openPage('invitePage')">Invite</div>
-        <div class="nav-item" onclick="openPage('gamesPage')">Games</div>
-        <div class="nav-item" onclick="openPage('walletPage')">Wallet</div>
+        <div class="nav-item" id="btn-tasks">Tasks</div>
+        <div class="nav-item" id="btn-invite">Invite</div>
+        <div class="nav-item" id="btn-games">Games</div>
+        <div class="nav-item" id="btn-wallet">Wallet</div>
     </div>
     
     <script>
+        // ڕاگرتنی تەواوی جوڵانی پەڕەکە بۆ ئەوەی دوگمەکان لە کار نەکەون
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+
         var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var invitedFriends = parseInt(localStorage.getItem('chubby_invites')) || 0;
         var energy = 500;
@@ -163,7 +166,8 @@
 
         var tapElement = document.getElementById('tapCoin');
         
-        function doTap() {
+        function doTap(e) {
+            if(e) e.preventDefault();
             if (energy > 0) { 
                 count++; energy--; 
                 document.getElementById('score').innerText = count; 
@@ -172,14 +176,8 @@
             }
         }
         
-        tapElement.addEventListener('touchstart', function(e) {
-            e.preventDefault(); 
-            doTap();
-        });
-        
-        tapElement.addEventListener('click', function(e) {
-            doTap();
-        });
+        tapElement.addEventListener('touchstart', doTap);
+        tapElement.addEventListener('click', doTap);
 
         function updateUI() { 
             document.getElementById('energyText').innerText = energy; 
@@ -196,29 +194,19 @@
         }
         function showMainGame() { document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); }
         
+        // جێگیرکردنی دوگمەکانی خوارەوە بە شێوازی دەست لێدانی خێرا (Touchstart)
+        document.getElementById('btn-tasks').addEventListener('touchstart', function() { openPage('tasksPage'); });
+        document.getElementById('btn-tasks').addEventListener('click', function() { openPage('tasksPage'); });
+        
+        document.getElementById('btn-invite').addEventListener('touchstart', function() { openPage('invitePage'); });
+        document.getElementById('btn-invite').addEventListener('click', function() { openPage('invitePage'); });
+        
+        document.getElementById('btn-games').addEventListener('touchstart', function() { openPage('gamesPage'); });
+        document.getElementById('btn-games').addEventListener('click', function() { openPage('gamesPage'); });
+        
+        document.getElementById('btn-wallet').addEventListener('touchstart', function() { openPage('walletPage'); });
+        document.getElementById('btn-wallet').addEventListener('click', function() { openPage('walletPage'); });
+
         function copyInviteLink() {
             navigator.clipboard.writeText("https://t.me").then(function() {
                 alert("Link copied!");
-            });
-        }
-
-        function completeTask(taskId, reward, link) {
-            window.open(link, '_blank');
-            let taskButton = document.getElementById(taskId);
-            
-            if (taskButton && taskButton.innerText !== "Completed" && !taskButton.disabled) {
-                let timeLeft = 15; 
-                taskButton.disabled = true; 
-                taskButton.style.backgroundColor = "#555"; 
-                
-                let countdown = setInterval(function() {
-                    timeLeft--;
-                    taskButton.innerText = "Wait " + timeLeft + "s";
-                    
-                    if (timeLeft <= 0) {
-                        clearInterval(countdown);
-                        taskButton.innerText = "Claim " + reward;
-                        taskButton.disabled = false; 
-                        taskButton.style.backgroundColor = "#ff9800"; 
-                        
-                        taskButton.onclick = function() {
