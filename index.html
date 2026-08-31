@@ -91,7 +91,17 @@
         </div>
     </div>
     
-    <div id="gamesPage" class="page"><div class="page-header"><h2>Games</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Mini Games coming soon!</p></div>
+    <div id="gamesPage" class="page">
+        <div class="page-header"><h2>Chubby Catch Game</h2><button class="close-btn" onclick="showMainGame()">X</button></div>
+        <div style="text-align: center; margin-top: 15px;">
+            <div style="font-size: 16px; margin-bottom: 10px;">Time: <span id="gameTimer">30</span>s | Score: <span id="gameScore">0</span></div>
+            <button id="startGameBtn" style="background: #eab308; color: #090514; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;" onclick="startCatchGame()">Start Game</button>
+        </div>
+        <div id="gameArea" style="position: relative; width: 100%; height: 60vh; background: rgba(255,255,255,0.02); border: 1px dashed #7b2cbf; margin-top: 15px; border-radius: 12px; overflow: hidden; display: none;">
+            <img id="targetChubby" src="image_okKb6u.png.jpeg" style="position: absolute; width: 60px; height: 60px; cursor: pointer; display: none;" onclick="hitChubby()">
+        </div>
+    </div>
+    
     <div id="walletPage" class="page"><div class="page-header"><h2>Wallet</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Connect Wallet coming soon!</p></div>
     
     <div class="nav-bar">
@@ -153,33 +163,22 @@
             window.open(link, '_blank');
             let taskButton = document.getElementById(taskId);
             
-            if (taskButton && taskButton.innerText !== "Completed") {
-                taskButton.innerText = "Claim " + reward;
-                taskButton.style.backgroundColor = "#ff9800"; 
+            if (taskButton && taskButton.innerText !== "Completed" && !taskButton.disabled) {
+                let timeLeft = 15; 
+                taskButton.disabled = true; 
+                taskButton.style.backgroundColor = "#555"; 
                 
-                taskButton.onclick = function() {
-                    count += reward;
-                    document.getElementById('score').innerText = count;
-                    localStorage.setItem('chubby_coins', count);
-                    localStorage.setItem(taskId + '_completed', 'true');
+                let countdown = setInterval(function() {
+                    timeLeft--;
+                    taskButton.innerText = "Wait " + timeLeft + "s";
                     
-                    taskButton.innerText = "Completed";
-                    taskButton.disabled = true;
-                    taskButton.style.backgroundColor = "#555"; 
-                };
-            }
-        }
-
-        function checkTaskStatus(taskId) {
-            if (localStorage.getItem(taskId + '_completed') === 'true') {
-                var btn = document.getElementById(taskId);
-                if (btn) { 
-                    btn.innerText = "Completed"; 
-                    btn.disabled = true; 
-                    btn.style.backgroundColor = "#555"; 
-                }
-            }
-        }
-    </script>
-</body>
-</html>
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        taskButton.innerText = "Claim " + reward;
+                        taskButton.disabled = false; 
+                        taskButton.style.backgroundColor = "#ff9800"; 
+                        
+                        taskButton.onclick = function() {
+                            count += reward;
+                            document.getElementById('score').innerText = count;
+                            localStorage.setItem('chubby_coins', count);
