@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
-    <script src="https://telegram.org"></script>
     <style>
         body { 
             background: #090514 url('image.png.jpeg') no-repeat center fixed; 
@@ -20,12 +19,23 @@
             user-select: none;
             touch-action: none; 
         }
-        .header { margin-top: 40px; text-align: center; z-index: 10; }
-        .coin-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px; z-index: 10; }
+        .header { margin-top: 30px; text-align: center; z-index: 10; }
+        
+        /* چاککردنی کۆنتێنەری سکەکە بۆ ئەوەی نەکەوێتە سەر دوگمەکان */
+        .coin-container { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-start; 
+            align-items: center; 
+            gap: 15px; 
+            z-index: 10; 
+            margin-top: 140px; 
+        }
         
         .tap-zone { 
-            width: 140px !important; 
-            height: 140px !important; 
+            width: 130px !important; 
+            height: 130px !important; 
             border-radius: 50%; 
             cursor: pointer; 
             background: url('image_okKb6u.png.jpeg') no-repeat center center; 
@@ -34,16 +44,34 @@
             z-index: 50 !important;
             position: relative;
             -webkit-tap-highlight-color: transparent;
-            margin-top: 55px; 
             touch-action: manipulation;
         }
         
-        .energy-container { width: 220px; text-align: center; z-index: 10; }
+        .energy-container { width: 220px; text-align: center; z-index: 60; margin-top: 10px; }
         .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; }
         .energy-bar-fill { width: 100%; height: 100%; background: #eab308; }
         
-        .nav-bar { width: 100%; background: rgba(13, 8, 27, 0.95); border-top: 2px solid #7b2cbf; display: flex; position: absolute; bottom: 0; padding: 15px 0; z-index: 2000 !important; }
-        .nav-item { font-size: 13px; color: #9d4edd; cursor: pointer; flex: 1; text-align: center; font-weight: bold; z-index: 2001 !important; }
+        /* بەرزکردنەوەی ئاستی ناو-بار بۆ ئەوەی هەمیشە لە سەرەوە بێت و کلیکی لێ بکرێت */
+        .nav-bar { 
+            width: 100%; 
+            background: rgba(13, 8, 27, 0.95); 
+            border-top: 2px solid #7b2cbf; 
+            display: flex; 
+            position: absolute; 
+            bottom: 0; 
+            padding: 18px 0; 
+            z-index: 9999 !important; 
+        }
+        .nav-item { 
+            font-size: 14px; 
+            color: #9d4edd; 
+            cursor: pointer; 
+            flex: 1; 
+            text-align: center; 
+            font-weight: bold; 
+            z-index: 10000 !important; 
+            -webkit-tap-highlight-color: transparent;
+        }
         
         .page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #090514; padding: 20px; box-sizing: border-box; z-index: 3000 !important; overflow-y: auto; }
         .page-header { display: flex; justify-content: space-between; border-bottom: 1px solid #7b2cbf; padding-bottom: 10px; }
@@ -92,7 +120,6 @@
         </div>
     </div>
     
-    <!-- لێرەدا فایلی game.html بە فۆرماتێکی پارێزراو بەستراوەتەوە -->
     <div id="gamesPage" class="page" style="padding: 10px; overflow: hidden;">
         <div class="page-header"><h2>Chubby Games</h2><button class="close-btn" onclick="showMainGame()">X</button></div>
         <iframe src="game.html" style="width: 100%; height: 85vh; border: none; margin-top: 10px;"></iframe>
@@ -121,14 +148,24 @@
         };
 
         var tapElement = document.getElementById('tapCoin');
-        tapElement.addEventListener('touchstart', function(e) {
-            e.preventDefault(); 
+        
+        // باشترکردنی وەرگرتنی کلیک بۆ سەر مۆبایل و کۆمپیوتەر
+        function doTap() {
             if (energy > 0) { 
                 count++; energy--; 
                 document.getElementById('score').innerText = count; 
                 updateUI(); 
                 localStorage.setItem('chubby_coins', count); 
             }
+        }
+        
+        tapElement.addEventListener('touchstart', function(e) {
+            e.preventDefault(); 
+            doTap();
+        });
+        
+        tapElement.addEventListener('click', function(e) {
+            doTap();
         });
 
         function updateUI() { 
@@ -175,20 +212,3 @@
                             count += reward;
                             document.getElementById('score').innerText = count;
                             localStorage.setItem('chubby_coins', count);
-                            localStorage.setItem(taskId + '_completed', 'true');
-                            
-                            taskButton.innerText = "Completed";
-                            taskButton.disabled = true;
-                            taskButton.style.backgroundColor = "#555"; 
-                        };
-                    }
-                }, 1000);
-            }
-        }
-
-        function checkTaskStatus(taskId) {
-            if (localStorage.getItem(taskId + '_completed') === 'true') {
-                var btn = document.getElementById(taskId);
-                if (btn) { btn.innerText = "Completed"; btn.disabled = true; }
-            }
-        }
