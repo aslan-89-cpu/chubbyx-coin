@@ -20,31 +20,32 @@
             user-select: none;
             touch-action: none; 
         }
-        .header { margin-top: 40px; text-align: center; z-index: 10; }
-        .coin-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px; z-index: 10; padding-bottom: 80px; }
+        .header { margin-top: 30px; text-align: center; z-index: 10; }
+        .coin-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; z-index: 10; padding-bottom: 70px; width: 100%; }
         
+        /* لێرەدا وێنە گەورە وەنەوشەیییەکە خۆی کراوەتە ناوچەی تەپ-تەپ */
         .tap-zone { 
-            width: 160px !important; 
-            height: 160px !important; 
+            width: 280px !important; 
+            height: 280px !important; 
             border-radius: 50%; 
             cursor: pointer; 
             background: url('image_okKb6u.png.jpeg') no-repeat center center; 
-            background-size: 100% 100% !important; 
-            box-shadow: 0 0 25px rgba(234, 179, 8, 0.7); 
+            background-size: cover !important; 
+            box-shadow: 0 0 35px rgba(123, 44, 191, 0.6); 
             z-index: 50 !important;
             position: relative;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
         
-        .energy-container { width: 220px; text-align: center; z-index: 10; }
+        .energy-container { width: 220px; text-align: center; z-index: 60; margin-top: 10px; }
         .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; }
         .energy-bar-fill { width: 100%; height: 100%; background: #eab308; }
         
-        .nav-bar { width: 100%; background: rgba(13, 8, 27, 0.95); border-top: 2px solid #7b2cbf; display: flex; position: absolute; bottom: 0; padding: 15px 0; z-index: 1000; }
-        .nav-item { font-size: 13px; color: #9d4edd; cursor: pointer; flex: 1; text-align: center; font-weight: bold; z-index: 1001; }
+        .nav-bar { width: 100%; background: rgba(13, 8, 27, 0.95); border-top: 2px solid #7b2cbf; display: flex; position: absolute; bottom: 0; padding: 15px 0; z-index: 2000 !important; }
+        .nav-item { font-size: 13px; color: #9d4edd; cursor: pointer; flex: 1; text-align: center; font-weight: bold; z-index: 2001 !important; }
         
-        .page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #090514; padding: 20px; box-sizing: border-box; z-index: 200; overflow-y: auto; }
+        .page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #090514; padding: 20px; box-sizing: border-box; z-index: 3000 !important; overflow-y: auto; }
         .page-header { display: flex; justify-content: space-between; border-bottom: 1px solid #7b2cbf; padding-bottom: 10px; }
         .close-btn { background: #7b2cbf; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
         
@@ -125,16 +126,14 @@
             checkTaskStatus('task2');
         };
 
-        // چاککردنی تەواوی سیستەمی کلیک (Tap)
         var tapElement = document.getElementById('tapCoin');
         
-        // بۆ مۆبایل
+        // چاککردنی کارکردنی تەپ-تەپ بە شێوەیەکی دروست
         tapElement.addEventListener('touchstart', function(e) {
             e.preventDefault(); 
             handleTap();
         });
         
-        // بۆ کۆمپیوتەر
         tapElement.addEventListener('click', function(e) {
             handleTap();
         });
@@ -189,5 +188,3 @@
                     if (timeLeft <= 0) {
                         clearInterval(countdown);
                         taskButton.innerText = "Claim " + reward;
-                        taskButton.disabled = false; 
-                        taskButton.style.backgroundColor = "#ff9800";
