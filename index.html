@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
+    <!-- لێرەدا بەستەری تلێگرام بە شێوازێکی پارێزراو بارکراوە -->
     <script src="https://telegram.org"></script>
     <style>
         body {
@@ -254,34 +255,42 @@
     </div>
 
     <script>
-        let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        let energy = 500;
-        const maxEnergy = 500;
+        // لێرەدا هەموو گۆڕاوەکان بە شێوازێکی زۆر دڵنیا پێناسەکراون تا ڕێگری لە بلۆکبوون بکەن
+        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+        var energy = 500;
+        var maxEnergy = 500;
+        var userId = "test_user";
 
-        const scoreDisplay = document.getElementById('score');
-        const tapCoin = document.getElementById('tapCoin');
-        const energyText = document.getElementById('energyText');
-        const energyFill = document.getElementById('energyFill');
+        // وەرگرتنی تلێگرام ئایدی بە مەرجی توند
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                var tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand(); // شاشەکە گەورە دەکات بۆ مۆبایل
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    userId = tg.initDataUnsafe.user.id;
+                }
+            }
+        } catch(e) { console.log("Telegram SDK ignore"); }
 
-        const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "test_user";
-
-        if(scoreDisplay) scoreDisplay.innerText = count;
+        // پیشاندانی باڵانسی سەرەتایی
+        document.getElementById('score').innerText = count;
         updateEnergyUI();
 
-        if(tapCoin) {
-            tapCoin.addEventListener('click', () => {
-                if (energy > 0) {
-                    count += 1;
-                    energy -= 1; 
-                    if(scoreDisplay) scoreDisplay.innerText = count;
-                    updateEnergyUI();
-                    localStorage.setItem('chubby_coins', count); 
-                    syncWithDatabase(userId, count);
-                }
-            });
-        }
+        // ڕووداوی کلیک کردن بە شێوازی کۆن و جێگیر کە چاکت کردبوو
+        document.getElementById('tapCoin').addEventListener('click', function() {
+            if (energy > 0) {
+                count += 1;
+                energy -= 1; 
+                document.getElementById('score').innerText = count;
+                updateEnergyUI();
+                localStorage.setItem('chubby_coins', count); 
+                syncWithDatabase(userId, count);
+            }
+        });
 
-        setInterval(() => {
+        // سیستەمی زیادبوونەوەی وزە
+        setInterval(function() {
             if (energy < maxEnergy) {
                 energy += 3;
                 if (energy > maxEnergy) energy = maxEnergy;
@@ -290,16 +299,4 @@
         }, 1000);
 
         function updateEnergyUI() {
-            if(energyText) energyText.innerText = energy;
-            if(energyFill) {
-                const percentage = (energy / maxEnergy) * 100;
-                energyFill.style.width = percentage + '%';
-            }
-        }
-
-        function completeTask(reward, element) {
-            count += reward;
-            if(scoreDisplay) scoreDisplay.innerText = count;
-            localStorage.setItem('chubby_coins', count);
-            syncWithDatabase(userId, count);
-            setTimeout(() => {
+            document.getElementById('energyText').innerText = energy;
