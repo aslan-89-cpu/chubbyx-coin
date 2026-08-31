@@ -20,25 +20,25 @@
             user-select: none;
             touch-action: none; 
         }
-        .header { margin-top: 30px; text-align: center; z-index: 10; }
-        .coin-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; z-index: 10; padding-bottom: 70px; width: 100%; }
+        .header { margin-top: 40px; text-align: center; z-index: 10; }
+        .coin-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px; z-index: 10; }
         
-        /* لێرەدا وێنە گەورە وەنەوشەیییەکە خۆی کراوەتە ناوچەی تەپ-تەپ */
         .tap-zone { 
-            width: 280px !important; 
-            height: 280px !important; 
+            width: 140px !important; 
+            height: 140px !important; 
             border-radius: 50%; 
             cursor: pointer; 
             background: url('image_okKb6u.png.jpeg') no-repeat center center; 
-            background-size: cover !important; 
-            box-shadow: 0 0 35px rgba(123, 44, 191, 0.6); 
+            background-size: 155% !important; 
+            box-shadow: 0 0 25px rgba(234, 179, 8, 0.7); 
             z-index: 50 !important;
             position: relative;
             -webkit-tap-highlight-color: transparent;
+            margin-top: 55px; 
             touch-action: manipulation;
         }
         
-        .energy-container { width: 220px; text-align: center; z-index: 60; margin-top: 10px; }
+        .energy-container { width: 220px; text-align: center; z-index: 10; }
         .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; }
         .energy-bar-fill { width: 100%; height: 100%; background: #eab308; }
         
@@ -94,14 +94,8 @@
     </div>
     
     <div id="gamesPage" class="page">
-        <div class="page-header"><h2>Chubby Catch Game</h2><button class="close-btn" onclick="showMainGame()">X</button></div>
-        <div style="text-align: center; margin-top: 15px;">
-            <div style="font-size: 16px; margin-bottom: 10px;">Time: <span id="gameTimer">30</span>s | Score: <span id="gameScore">0</span></div>
-            <button id="startGameBtn" style="background: #eab308; color: #090514; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;" onclick="startCatchGame()">Start Game</button>
-        </div>
-        <div id="gameArea" style="position: relative; width: 100%; height: 60vh; background: rgba(255,255,255,0.02); border: 1px dashed #7b2cbf; margin-top: 15px; border-radius: 12px; overflow: hidden; display: none;">
-            <img id="targetChubby" src="image_okKb6u.png.jpeg" style="position: absolute; width: 60px; height: 60px; cursor: pointer; display: none;" onclick="hitChubby()">
-        </div>
+        <div class="page-header"><h2>Games</h2><button class="close-btn" onclick="showMainGame()">X</button></div>
+        <p style="padding-top:20px;">Mini Games coming soon!</p>
     </div>
     
     <div id="walletPage" class="page"><div class="page-header"><h2>Wallet</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Connect Wallet coming soon!</p></div>
@@ -127,26 +121,15 @@
         };
 
         var tapElement = document.getElementById('tapCoin');
-        
-        // چاککردنی کارکردنی تەپ-تەپ بە شێوەیەکی دروست
         tapElement.addEventListener('touchstart', function(e) {
             e.preventDefault(); 
-            handleTap();
-        });
-        
-        tapElement.addEventListener('click', function(e) {
-            handleTap();
-        });
-
-        function handleTap() {
             if (energy > 0) { 
-                count++; 
-                energy--; 
+                count++; energy--; 
                 document.getElementById('score').innerText = count; 
                 updateUI(); 
                 localStorage.setItem('chubby_coins', count); 
             }
-        }
+        });
 
         function updateUI() { 
             document.getElementById('energyText').innerText = energy; 
@@ -161,10 +144,7 @@
             document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
             document.getElementById(id).style.display = 'block'; 
         }
-        
-        function showMainGame() { 
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
-        }
+        function showMainGame() { document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); }
         
         function copyInviteLink() {
             navigator.clipboard.writeText("https://t.me").then(function() {
@@ -188,3 +168,30 @@
                     if (timeLeft <= 0) {
                         clearInterval(countdown);
                         taskButton.innerText = "Claim " + reward;
+                        taskButton.disabled = false; 
+                        taskButton.style.backgroundColor = "#ff9800"; 
+                        
+                        taskButton.onclick = function() {
+                            count += reward;
+                            document.getElementById('score').innerText = count;
+                            localStorage.setItem('chubby_coins', count);
+                            localStorage.setItem(taskId + '_completed', 'true');
+                            
+                            taskButton.innerText = "Completed";
+                            taskButton.disabled = true;
+                            taskButton.style.backgroundColor = "#555"; 
+                        };
+                    }
+                }, 1000);
+            }
+        }
+
+        function checkTaskStatus(taskId) {
+            if (localStorage.getItem(taskId + '_completed') === 'true') {
+                var btn = document.getElementById(taskId);
+                if (btn) { btn.innerText = "Completed"; btn.disabled = true; }
+            }
+        }
+    </script>
+</body>
+</html>
