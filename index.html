@@ -142,28 +142,31 @@
         function showMainGame() { document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); }
         
         function copyInviteLink() {
-            navigator.clipboard.writeText("https://t.me").then(function() {
-                alert("Link copied!");
-                if (invitedFriends < 10) {
-                    invitedFriends++; count += 5000;
-                    document.getElementById('score').innerText = count;
-                    document.getElementById('friendCount').innerText = invitedFriends;
-                    localStorage.setItem('chubby_invites', invitedFriends);
-                    localStorage.setItem('chubby_coins', count);
-                }
-            });
-        }
+    navigator.clipboard.writeText("https://t.me").then(function() {
+        alert("Link copied!");
+    });
+}
 
-        function completeTask(taskId, reward, link) {
-            window.open(link, '_blank');
-            setTimeout(function() {
-                count += reward;
-                document.getElementById('score').innerText = count;
-                localStorage.setItem('chubby_coins', count);
-                localStorage.setItem(taskId + '_completed', 'true');
-                var btn = document.getElementById(taskId);
-                if(btn) { btn.innerText = "Completed"; btn.disabled = true; }
-            }, 2000);
+function completeTask(taskId, reward, link) {
+    window.open(link, '_blank');
+    let taskButton = document.getElementById(taskId);
+    
+    if (taskButton && taskButton.innerText !== "Completed") {
+        taskButton.innerText = "Claim " + reward;
+        taskButton.style.backgroundColor = "#ff9800"; 
+        
+        taskButton.onclick = function() {
+            count += reward;
+            document.getElementById('score').innerText = count;
+            localStorage.setItem('chubby_coins', count);
+            localStorage.setItem(taskId + '_completed', 'true');
+            
+            taskButton.innerText = "Completed";
+            taskButton.disabled = true;
+            taskButton.style.backgroundColor = "#555"; 
+        };
+    }
+}
         }
 
         function checkTaskStatus(taskId) {
