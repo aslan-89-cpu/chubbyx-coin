@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
-    <!-- لێرەدا بەستەری فەرمی تلێگرام زیادکراوە بۆ ناسینەوەی بەکارهێنەر -->
     <script src="https://telegram.org"></script>
     <style>
         body {
@@ -225,7 +224,7 @@
         </div>
         <p>Invite your friends to get 5,000 CHUB!</p>
         <div class="invite-box">
-            <p style="color:#00f0ff; font-size:14px;">https://t.me_bot?start=ref</p>
+            <p style="color:#00f0ff; font-size:14px;">https://t.me</p>
             <button class="task-btn" onclick="alert('Link copied!')">Copy Link</button>
         </div>
     </div>
@@ -264,23 +263,23 @@
         const energyText = document.getElementById('energyText');
         const energyFill = document.getElementById('energyFill');
 
-        // وەرگرتنی ناسنامەی ڕاستەقینەی بەکارهێنەری تلێگرام بە شێوازێکی پارێزراو
         const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "test_user";
 
-        scoreDisplay.innerText = count;
+        if(scoreDisplay) scoreDisplay.innerText = count;
+        updateEnergyUI();
 
-        tapCoin.addEventListener('click', () => {
-            if (energy > 0) {
-                count += 1;
-                energy -= 1; 
-                scoreDisplay.innerText = count;
-                updateEnergyUI();
-                localStorage.setItem('chubby_coins', count); 
-
-                // ناردنی نوێکاری بۆ داتابەیس بە شێوازێکی پارێزراو
-                syncWithDatabase(userId, count);
-            }
-        });
+        if(tapCoin) {
+            tapCoin.addEventListener('click', () => {
+                if (energy > 0) {
+                    count += 1;
+                    energy -= 1; 
+                    if(scoreDisplay) scoreDisplay.innerText = count;
+                    updateEnergyUI();
+                    localStorage.setItem('chubby_coins', count); 
+                    syncWithDatabase(userId, count);
+                }
+            });
+        }
 
         setInterval(() => {
             if (energy < maxEnergy) {
@@ -291,14 +290,16 @@
         }, 1000);
 
         function updateEnergyUI() {
-            energyText.innerText = energy;
-            const percentage = (energy / maxEnergy) * 100;
-            energyFill.style.width = percentage + '%';
+            if(energyText) energyText.innerText = energy;
+            if(energyFill) {
+                const percentage = (energy / maxEnergy) * 100;
+                energyFill.style.width = percentage + '%';
+            }
         }
 
         function completeTask(reward, element) {
             count += reward;
-            scoreDisplay.innerText = count;
+            if(scoreDisplay) scoreDisplay.innerText = count;
             localStorage.setItem('chubby_coins', count);
-            
-            // ناردنی نمرەی نوێی تایکەکان بۆ داتابەیس
+            syncWithDatabase(userId, count);
+            setTimeout(() => {
