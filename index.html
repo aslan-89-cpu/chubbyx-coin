@@ -304,15 +304,22 @@
         }, 1000);
 
         function openPage(pageId) {
-            var pages = document.querySelectorAll('.page');
-            pages.forEach(function(page) {
-                page.style.display = 'none';
-            });
-            var targetPage = document.getElementById(pageId);
-            if (targetPage) {
-                targetPage.style.display = 'block';
-            }
-        }
+    var pages = document.querySelectorAll('.page');
+    pages.forEach(function(page) {
+        page.style.display = 'none';
+    });
+    var targetPage = document.getElementById(pageId);
+    if (targetPage) {
+        targetPage.style.display = 'block';
+    }
+}
 
-        document.querySelectorAll('.nav-item').forEach(function(item) {
-            item.addEventListener('click', function() {
+function showMainGame() {
+    var pages = document.querySelectorAll('.page');
+    pages.forEach(function(page) {
+        page.style.display = 'none';
+    });
+}
+</script>
+</body>
+</html>
