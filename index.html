@@ -18,7 +18,7 @@
             height: 100vh; 
             overflow: hidden; 
             user-select: none;
-            touch-action: none; /* ڕێگری تەواو لە جوڵانی شاشە */
+            touch-action: none; 
         }
         .header { margin-top: 40px; text-align: center; z-index: 10; }
         .coin-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px; z-index: 10; }
@@ -114,10 +114,9 @@
             checkTaskStatus('task2');
         };
 
-        // چاککردنی فەنکشنی تەپ بۆ ئەوەی خێرا بێت و شاشە نەجوڵێنێت
         var tapElement = document.getElementById('tapCoin');
         tapElement.addEventListener('touchstart', function(e) {
-            e.preventDefault(); // ڕێگری لە جوڵانی شاشە
+            e.preventDefault(); 
             if (energy > 0) { 
                 count++; energy--; 
                 document.getElementById('score').innerText = count; 
@@ -139,40 +138,46 @@
             document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
             document.getElementById(id).style.display = 'block'; 
         }
-        function showMainGame() { document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); }
+        
+        function showMainGame() { 
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
+        }
         
         function copyInviteLink() {
-    navigator.clipboard.writeText("https://t.me").then(function() {
-        alert("Link copied!");
-    });
-}
+            navigator.clipboard.writeText("https://t.me").then(function() {
+                alert("Link copied!");
+            });
+        }
 
-function completeTask(taskId, reward, link) {
-    window.open(link, '_blank');
-    let taskButton = document.getElementById(taskId);
-    
-    if (taskButton && taskButton.innerText !== "Completed") {
-        taskButton.innerText = "Claim " + reward;
-        taskButton.style.backgroundColor = "#ff9800"; 
-        
-        taskButton.onclick = function() {
-            count += reward;
-            document.getElementById('score').innerText = count;
-            localStorage.setItem('chubby_coins', count);
-            localStorage.setItem(taskId + '_completed', 'true');
+        function completeTask(taskId, reward, link) {
+            window.open(link, '_blank');
+            let taskButton = document.getElementById(taskId);
             
-            taskButton.innerText = "Completed";
-            taskButton.disabled = true;
-            taskButton.style.backgroundColor = "#555"; 
-        };
-    }
-}
+            if (taskButton && taskButton.innerText !== "Completed") {
+                taskButton.innerText = "Claim " + reward;
+                taskButton.style.backgroundColor = "#ff9800"; 
+                
+                taskButton.onclick = function() {
+                    count += reward;
+                    document.getElementById('score').innerText = count;
+                    localStorage.setItem('chubby_coins', count);
+                    localStorage.setItem(taskId + '_completed', 'true');
+                    
+                    taskButton.innerText = "Completed";
+                    taskButton.disabled = true;
+                    taskButton.style.backgroundColor = "#555"; 
+                };
+            }
         }
 
         function checkTaskStatus(taskId) {
             if (localStorage.getItem(taskId + '_completed') === 'true') {
                 var btn = document.getElementById(taskId);
-                if (btn) { btn.innerText = "Completed"; btn.disabled = true; }
+                if (btn) { 
+                    btn.innerText = "Completed"; 
+                    btn.disabled = true; 
+                    btn.style.backgroundColor = "#555"; 
+                }
             }
         }
     </script>
