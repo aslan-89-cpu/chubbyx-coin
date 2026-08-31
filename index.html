@@ -22,46 +22,21 @@
         .header { margin-top: 40px; text-align: center; z-index: 10; }
         .coin-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px; z-index: 10; }
         
-        /* گەورەکردنی کۆینەکە و هێنانە پێشەوەی بە تەواوی */
-        <!DOCTYPE HTML>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChubbyX Coin</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body { 
-            background: #090514 url('image.png.jpeg') no-repeat center fixed; 
-            background-size: cover; 
-            color: white; 
-            font-family: sans-serif; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden; 
-            user-select: none; 
-        }
-        .header { margin-top: 40px; text-align: center; z-index: 10; }
-        .coin-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px; z-index: 10; }
-        
-        /* گەورەکردنی کۆینەکە و هێنانە پێشەوەی بە تەواوی */
+        /* بڕینی بازنە ڕەشەکە و ڕێکخستنی قەبارەی کۆینەکە */
         .tap-zone { 
-            width: 240px !important; 
-            height: 240px !important; 
+            width: 140px !important; 
+            height: 140px !important; 
             border-radius: 50%; 
             cursor: pointer; 
-            background: url('image_okKb6u.png.jpeg') no-repeat center; 
-            background-size: contain; 
-            box-shadow: 0 0 45px rgba(234, 179, 8, 0.8); 
+            background: url('image_okKb6u.png.jpeg') no-repeat center center; 
+            background-size: 155% !important; 
+            box-shadow: 0 0 25px rgba(234, 179, 8, 0.7); 
             z-index: 50 !important;
             position: relative;
             transition: transform 0.05s ease;
             -webkit-tap-highlight-color: transparent;
+            margin-top: 55px; 
         }
-        /* لادانی جوڵەی پاش و پێش لەکاتی کلیل لێدان */
         .tap-zone:active { 
             transform: scale(0.98) !important; 
         }
@@ -69,11 +44,8 @@
         .energy-container { width: 220px; text-align: center; z-index: 10; }
         .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; }
         .energy-bar-fill { width: 100%; height: 100%; background: #eab308; }
-        
-        /* بارتەقای خوارەوە بۆ ٤ دوگمە */
         .nav-bar { width: 100%; background: rgba(13, 8, 27, 0.95); border-top: 2px solid #7b2cbf; display: flex; position: absolute; bottom: 0; padding: 15px 0; z-index: 100; }
         .nav-item { font-size: 13px; color: #9d4edd; cursor: pointer; flex: 1; text-align: center; font-weight: bold; }
-        
         .page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #090514; padding: 20px; box-sizing: border-box; z-index: 200; }
         .page-header { display: flex; justify-content: space-between; border-bottom: 1px solid #7b2cbf; }
         .close-btn { background: #7b2cbf; color: white; border: none; padding: 5px 15px; border-radius: 5px; }
@@ -89,13 +61,11 @@
         </div>
     </div>
     
-    <!-- لاپەڕەکان -->
     <div id="tasksPage" class="page"><div class="page-header"><h2>Tasks</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Tasks coming soon!</p></div>
     <div id="invitePage" class="page"><div class="page-header"><h2>Invite</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Invite Friends coming soon!</p></div>
     <div id="gamesPage" class="page"><div class="page-header"><h2>Games</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Mini Games coming soon!</p></div>
     <div id="walletPage" class="page"><div class="page-header"><h2>Wallet</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Connect TON Wallet coming soon!</p></div>
     
-    <!-- ناڤبار بە ٤ دوگمە -->
     <div class="nav-bar">
         <div class="nav-item" onclick="openPage('tasksPage')">Tasks</div>
         <div class="nav-item" onclick="openPage('invitePage')">Invite</div>
@@ -124,12 +94,10 @@
                 localStorage.setItem('chubby_coins', count); 
             }
         }
-        
         function updateUI() { 
             document.getElementById('energyText').innerText = energy; 
             document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%'; 
         }
-        
         setInterval(function() { 
             if (energy < 500) { 
                 energy += 3; 
@@ -137,206 +105,6 @@
                 updateUI(); 
             } 
         }, 1000);
-        
-        function openPage(id) { 
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
-            document.getElementById(id).style.display = 'block'; 
-        }
-        function showMainGame() { 
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
-        }
-    </script>
-</body>
-</html>
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden; 
-            user-select: none; 
-        }
-        .header { margin-top: 40px; text-align: center; z-index: 10; }
-        .coin-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px; z-index: 10; }
-        
-        /* گەورەکردنی کۆینەکە و هێنانە پێشەوەی بە تەواوی */
-        .tap-zone { 
-            width: 240px !important; 
-            height: 240px !important; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            background: url('image_okKb6u.png.jpeg') no-repeat center; 
-            background-size: contain; 
-            box-shadow: 0 0 45px rgba(234, 179, 8, 0.8); 
-            z-index: 50 !important;
-            position: relative;
-            transition: transform 0.05s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-        /* لادانی جوڵەی پاش و پێش لەکاتی کلیل لێدان */
-        .tap-zone:active { 
-            transform: scale(0.98) !important; 
-        }
-        
-        .energy-container { width: 220px; text-align: center; z-index: 10; }
-        .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; }
-        .energy-bar-fill { width: 100%; height: 100%; background: #eab308; }
-        
-        /* بارتەقای خوارەوە بۆ ٤ دوگمە */
-        .nav-bar { width: 100%; background: rgba(13, 8, 27, 0.95); border-top: 2px solid #7b2cbf; display: flex; position: absolute; bottom: 0; padding: 15px 0; z-index: 100; }
-        .nav-item { font-size: 13px; color: #9d4edd; cursor: pointer; flex: 1; text-align: center; font-weight: bold; }
-        
-        .page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #090514; padding: 20px; box-sizing: border-box; z-index: 200; }
-        .page-header { display: flex; justify-content: space-between; border-bottom: 1px solid #7b2cbf; }
-        .close-btn { background: #7b2cbf; color: white; border: none; padding: 5px 15px; border-radius: 5px; }
-    </style>
-</head>
-<body>
-    <div class="header"><div>ChubbyX Balance</div><h1 id="score">0</h1></div>
-    <div class="coin-container">
-        <div class="tap-zone" id="tapCoin"></div>
-        <div class="energy-container">
-            <div style="margin-bottom: 5px;"><span id="energyText">500</span>/500</div>
-            <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyFill"></div></div>
-        </div>
-    </div>
-    
-    <!-- لاپەڕەکان -->
-    <div id="tasksPage" class="page"><div class="page-header"><h2>Tasks</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Tasks coming soon!</p></div>
-    <div id="invitePage" class="page"><div class="page-header"><h2>Invite</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Invite Friends coming soon!</p></div>
-    <div id="gamesPage" class="page"><div class="page-header"><h2>Games</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Mini Games coming soon!</p></div>
-    <div id="walletPage" class="page"><div class="page-header"><h2>Wallet</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Connect TON Wallet coming soon!</p></div>
-    
-    <!-- ناڤبار بە ٤ دوگمە -->
-    <div class="nav-bar">
-        <div class="nav-item" onclick="openPage('tasksPage')">Tasks</div>
-        <div class="nav-item" onclick="openPage('invitePage')">Invite</div>
-        <div class="nav-item" onclick="openPage('gamesPage')">Games</div>
-        <div class="nav-item" onclick="openPage('walletPage')">Wallet</div>
-    </div>
-    
-    <script>
-        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        var energy = 500;
-        document.getElementById('score').innerText = count;
-        
-        var tapElement = document.getElementById('tapCoin');
-        tapElement.addEventListener('click', handleTap);
-        tapElement.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            handleTap();
-        });
-
-        function handleTap() {
-            if (energy > 0) { 
-                count++; 
-                energy--; 
-                document.getElementById('score').innerText = count; 
-                updateUI(); 
-                localStorage.setItem('chubby_coins', count); 
-            }
-        }
-        
-        function updateUI() { 
-            document.getElementById('energyText').innerText = energy; 
-            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%'; 
-        }
-        
-        setInterval(function() { 
-            if (energy < 500) { 
-                energy += 3; 
-                if (energy > 500) energy = 500; 
-                updateUI(); 
-            } 
-        }, 1000);
-        
-        function openPage(id) { 
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
-            document.getElementById(id).style.display = 'block'; 
-        }
-        function showMainGame() { 
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
-        }
-    </script>
-</body>
-</html>
-        /* لادانی جوڵەی پاش و پێش لەکاتی کلیل لێدان */
-        .tap-zone:active { 
-            transform: scale(0.98) !important; 
-        }
-        
-        .energy-container { width: 220px; text-align: center; z-index: 10; }
-        .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; }
-        .energy-bar-fill { width: 100%; height: 100%; background: #eab308; }
-        
-        /* بارتەقای خوارەوە بۆ ٤ دوگمە */
-        .nav-bar { width: 100%; background: rgba(13, 8, 27, 0.95); border-top: 2px solid #7b2cbf; display: flex; position: absolute; bottom: 0; padding: 15px 0; z-index: 100; }
-        .nav-item { font-size: 13px; color: #9d4edd; cursor: pointer; flex: 1; text-align: center; font-weight: bold; }
-        
-        .page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #090514; padding: 20px; box-sizing: border-box; z-index: 200; }
-        .page-header { display: flex; justify-content: space-between; border-bottom: 1px solid #7b2cbf; }
-        .close-btn { background: #7b2cbf; color: white; border: none; padding: 5px 15px; border-radius: 5px; }
-    </style>
-</head>
-<body>
-    <div class="header"><div>ChubbyX Balance</div><h1 id="score">0</h1></div>
-    <div class="coin-container">
-        <div class="tap-zone" id="tapCoin"></div>
-        <div class="energy-container">
-            <div style="margin-bottom: 5px;"><span id="energyText">500</span>/500</div>
-            <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyFill"></div></div>
-        </div>
-    </div>
-    
-    <!-- لاپەڕەکان -->
-    <div id="tasksPage" class="page"><div class="page-header"><h2>Tasks</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Tasks coming soon!</p></div>
-    <div id="invitePage" class="page"><div class="page-header"><h2>Invite</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Invite Friends coming soon!</p></div>
-    <div id="gamesPage" class="page"><div class="page-header"><h2>Games</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Mini Games coming soon!</p></div>
-    <div id="walletPage" class="page"><div class="page-header"><h2>Wallet</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Connect TON Wallet coming soon!</p></div>
-    
-    <!-- ناڤبار بە ٤ دوگمە -->
-    <div class="nav-bar">
-        <div class="nav-item" onclick="openPage('tasksPage')">Tasks</div>
-        <div class="nav-item" onclick="openPage('invitePage')">Invite</div>
-        <div class="nav-item" onclick="openPage('gamesPage')">Games</div>
-        <div class="nav-item" onclick="openPage('walletPage')">Wallet</div>
-    </div>
-    
-    <script>
-        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        var energy = 500;
-        document.getElementById('score').innerText = count;
-        
-        var tapElement = document.getElementById('tapCoin');
-        tapElement.addEventListener('click', handleTap);
-        tapElement.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            handleTap();
-        });
-
-        function handleTap() {
-            if (energy > 0) { 
-                count++; 
-                energy--; 
-                document.getElementById('score').innerText = count; 
-                updateUI(); 
-                localStorage.setItem('chubby_coins', count); 
-            }
-        }
-        
-        function updateUI() { 
-            document.getElementById('energyText').innerText = energy; 
-            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%'; 
-        }
-        
-        setInterval(function() { 
-            if (energy < 500) { 
-                energy += 3; 
-                if (energy > 500) energy = 500; 
-                updateUI(); 
-            } 
-        }, 1000);
-        
         function openPage(id) { 
             document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
             document.getElementById(id).style.display = 'block'; 
