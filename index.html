@@ -25,53 +25,54 @@
             z-index: 100; 
         }
         
+        /* کورتکردنەوەی بەرزی کۆنتێنەرەکە بۆ ئەوەی نەکەوێتە سەر دوگمەکانی خوارەوە */
         .coin-container { 
             position: relative;
             width: 100%;
-            height: 100%;
-            flex: 1;
+            height: 300px; /* دیاریکردنی بەرزی بۆ ڕێگریکردن لە داپۆشینی شاشە */
         }
         
-        /* جێگیرکردنی سکەکە ڕێک لەسەر ناوەڕاستی زگی کارەکتەرە وەنەوشەیییەکە */
+        /* جێگیرکردنی سکەکە ڕێک لەسەر ناوەڕاستی زگی کارەکتەرە وەنەوشەیییەکە (کەمێک بەرزتر لە پێشتر) */
         .tap-zone { 
-            width: 140px !important; 
-            height: 140px !important; 
+            width: 135px !important; 
+            height: 135px !important; 
             border-radius: 50%; 
             cursor: pointer; 
             background: url('image_okKb6u.png.jpeg') no-repeat center center; 
             background-size: 155% !important; 
             box-shadow: 0 0 25px rgba(234, 179, 8, 0.6); 
             position: absolute;
-            top: 45%; /* کەمێک هێنانە خوارەوە بۆ ئەوەی ڕێک بکەوێتە سەر زگی */
+            top: 25%; /* هێنانە سەرەوەی زیاتر بۆ ڕێکخستنی لەسەر زگی کارەکتەرەکە */
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 999 !important;
+            z-index: 9999 !important;
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* بردنە خوارەوەی وزە بۆ ئەوەی نەکەوێتە ژێر سکەکە */
+        /* جێگیرکردنی وزە کەمێک خوارتر لە سکەکە بەبێ تێکچوونی چینەکان */
         .energy-container { 
             position: absolute;
-            top: 62%; 
+            top: 60%; 
             left: 50%;
             transform: translateX(-50%);
             width: 220px; 
             text-align: center; 
-            z-index: 1000 !important; 
+            z-index: 8888 !important; 
         }
         .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; }
         .energy-bar-fill { width: 100%; height: 100%; background: #eab308; }
         
-        /* دڵنیابوونەوە لە بەرزترین ئاستی کلیککردنی دوگمەکانی خوارەوە */
+        /* ناو-باری خوارەوە بە بەرزترین ئاستی گرنگی بۆ کارکردنی مسۆگەر */
         .nav-bar { 
             width: 100%; 
-            background: rgba(13, 8, 27, 0.95); 
+            background: rgba(13, 8, 27, 0.96); 
             border-top: 2px solid #7b2cbf; 
             display: flex; 
-            position: absolute; 
+            position: fixed; 
             bottom: 0; 
-            padding: 16px 0; 
-            z-index: 99999 !important; 
+            left: 0;
+            padding: 18px 0; 
+            z-index: 999999 !important; 
         }
         .nav-item { 
             font-size: 14px; 
@@ -80,7 +81,7 @@
             flex: 1; 
             text-align: center; 
             font-weight: bold; 
-            z-index: 100000 !important; 
+            z-index: 1000000 !important; 
             -webkit-tap-highlight-color: transparent;
         }
         
@@ -213,8 +214,4 @@
                         clearInterval(countdown);
                         taskButton.innerText = "Claim " + reward;
                         taskButton.disabled = false; 
-                        taskButton.style.backgroundColor = "#ff9800"; 
-                        
-                        taskButton.onclick = function() {
-                            count += reward;
-                            document.getElementById('score').innerText = count;
+                        taskButton.style.backgroundColor = "#ff9800";
