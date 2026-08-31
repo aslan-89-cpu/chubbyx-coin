@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
-    <!-- لێرەدا بەستەری تلێگرام بە شێوازێکی پارێزراو بارکراوە -->
     <script src="https://telegram.org"></script>
     <style>
         body {
@@ -255,29 +254,25 @@
     </div>
 
     <script>
-        // لێرەدا هەموو گۆڕاوەکان بە شێوازێکی زۆر دڵنیا پێناسەکراون تا ڕێگری لە بلۆکبوون بکەن
         var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var energy = 500;
         var maxEnergy = 500;
         var userId = "test_user";
 
-        // وەرگرتنی تلێگرام ئایدی بە مەرجی توند
         try {
             if (window.Telegram && window.Telegram.WebApp) {
                 var tg = window.Telegram.WebApp;
                 tg.ready();
-                tg.expand(); // شاشەکە گەورە دەکات بۆ مۆبایل
+                tg.expand();
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     userId = tg.initDataUnsafe.user.id;
                 }
             }
         } catch(e) { console.log("Telegram SDK ignore"); }
 
-        // پیشاندانی باڵانسی سەرەتایی
         document.getElementById('score').innerText = count;
         updateEnergyUI();
 
-        // ڕووداوی کلیک کردن بە شێوازی کۆن و جێگیر کە چاکت کردبوو
         document.getElementById('tapCoin').addEventListener('click', function() {
             if (energy > 0) {
                 count += 1;
@@ -289,7 +284,6 @@
             }
         });
 
-        // سیستەمی زیادبوونەوەی وزە
         setInterval(function() {
             if (energy < maxEnergy) {
                 energy += 3;
@@ -300,3 +294,11 @@
 
         function updateEnergyUI() {
             document.getElementById('energyText').innerText = energy;
+            var percentage = (energy / maxEnergy) * 100;
+            document.getElementById('energyFill').style.width = percentage + '%';
+        }
+
+        function completeTask(reward, element) {
+            count += reward;
+            document.getElementById('score').innerText = count;
+            localStorage.setItem('chubby_coins', count);
