@@ -19,39 +19,53 @@
             user-select: none;
             touch-action: none; 
         }
-        .header { margin-top: 30px; text-align: center; z-index: 10; }
         
-        /* چاککردنی کۆنتێنەری سکەکە بۆ ئەوەی نەکەوێتە سەر دوگمەکان */
-        .coin-container { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-start; 
-            align-items: center; 
-            gap: 15px; 
-            z-index: 10; 
-            margin-top: 140px; 
+        .header { 
+            margin-top: 50px; 
+            text-align: center; 
+            z-index: 100; 
         }
         
+        /* کۆنتێنەری سەرەکی یارییەکە بۆ ڕێکخستنی شوێنەکان */
+        .coin-container { 
+            position: relative;
+            width: 100%;
+            height: 100%;
+            flex: 1;
+        }
+        
+        /* ڕێکخستنی سکە بچووکەکە ڕێک لەسەر دەموچاوی کارەکتەرەکە لایدەبات و دەیباتە شوێنی ڕاست */
         .tap-zone { 
-            width: 130px !important; 
-            height: 130px !important; 
+            width: 150px !important; 
+            height: 150px !important; 
             border-radius: 50%; 
             cursor: pointer; 
             background: url('image_okKb6u.png.jpeg') no-repeat center center; 
             background-size: 155% !important; 
-            box-shadow: 0 0 25px rgba(234, 179, 8, 0.7); 
-            z-index: 50 !important;
-            position: relative;
+            box-shadow: 0 0 25px rgba(234, 179, 8, 0.5); 
+            position: absolute;
+            top: 48%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 500 !important;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
         
-        .energy-container { width: 220px; text-align: center; z-index: 60; margin-top: 10px; }
+        /* هێنانی پێوەری وزە بۆ خوار سکەکە بە شێوەیەکی جێگیر */
+        .energy-container { 
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 220px; 
+            text-align: center; 
+            z-index: 600 !important; 
+        }
         .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; }
         .energy-bar-fill { width: 100%; height: 100%; background: #eab308; }
         
-        /* بەرزکردنەوەی ئاستی ناو-بار بۆ ئەوەی هەمیشە لە سەرەوە بێت و کلیکی لێ بکرێت */
+        /* پاراستنی تەواوی دوگمەکانی خوارەوە لە داپۆشین */
         .nav-bar { 
             width: 100%; 
             background: rgba(13, 8, 27, 0.95); 
@@ -149,7 +163,6 @@
 
         var tapElement = document.getElementById('tapCoin');
         
-        // باشترکردنی وەرگرتنی کلیک بۆ سەر مۆبایل و کۆمپیوتەر
         function doTap() {
             if (energy > 0) { 
                 count++; energy--; 
@@ -209,6 +222,3 @@
                         taskButton.style.backgroundColor = "#ff9800"; 
                         
                         taskButton.onclick = function() {
-                            count += reward;
-                            document.getElementById('score').innerText = count;
-                            localStorage.setItem('chubby_coins', count);
