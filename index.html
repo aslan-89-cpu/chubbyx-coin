@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
     <script src="https://telegram.org"></script>
     <style>
@@ -17,7 +17,8 @@
             align-items: center; 
             height: 100vh; 
             overflow: hidden; 
-            user-select: none; 
+            user-select: none;
+            touch-action: none; /* ڕێگری تەواو لە جوڵانی شاشە */
         }
         .header { margin-top: 40px; text-align: center; z-index: 10; }
         .coin-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px; z-index: 10; }
@@ -32,12 +33,9 @@
             box-shadow: 0 0 25px rgba(234, 179, 8, 0.7); 
             z-index: 50 !important;
             position: relative;
-            transition: transform 0.05s ease;
             -webkit-tap-highlight-color: transparent;
             margin-top: 55px; 
-        }
-        .tap-zone:active { 
-            transform: scale(0.98) !important; 
+            touch-action: manipulation;
         }
         
         .energy-container { width: 220px; text-align: center; z-index: 10; }
@@ -49,19 +47,15 @@
         .page-header { display: flex; justify-content: space-between; border-bottom: 1px solid #7b2cbf; padding-bottom: 10px; }
         .close-btn { background: #7b2cbf; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
         
-        /* دیزاینی بەشی نوێی ئینڤایت */
-        .invite-box { background: rgba(255, 255, 255, 0.05); border: 1px solid #7b2cbf; border-radius: 12px; padding: 15px; margin-top: 20px; text-align: center; }
-        .invite-counter { font-size: 18px; color: #eab308; font-weight: bold; margin: 10px 0; }
-        .invite-btn { background: #eab308; color: #090514; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; margin-top: 10px; }
-        .bonus-info { font-size: 13px; color: #a4a4a4; margin-top: 5px; }
-
-        /* دیزاینی بەشی نوێی تاسکەکان */
         .task-list { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
         .task-item { background: rgba(255, 255, 255, 0.05); border: 1px solid #7b2cbf; border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
         .task-details h4 { margin: 0; font-size: 15px; }
         .task-details p { margin: 5px 0 0 0; font-size: 13px; color: #eab308; font-weight: bold; }
         .task-claim-btn { background: #eab308; color: #090514; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
         .task-claim-btn:disabled { background: #444; color: #888; cursor: not-allowed; }
+        .invite-box { background: rgba(255, 255, 255, 0.05); border: 1px solid #7b2cbf; border-radius: 12px; padding: 15px; margin-top: 20px; text-align: center; }
+        .invite-counter { font-size: 18px; color: #eab308; font-weight: bold; margin: 10px 0; }
+        .invite-btn { background: #eab308; color: #090514; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -74,53 +68,31 @@
         </div>
     </div>
     
-    <!-- لاپەڕەی تاسکەکان بە نوێکارییەوە -->
     <div id="tasksPage" class="page">
-        <div class="page-header">
-            <h2>Tasks</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
+        <div class="page-header"><h2>Tasks</h2><button class="close-btn" onclick="showMainGame()">X</button></div>
         <div class="task-list">
             <div class="task-item">
-                <div class="task-details">
-                    <h4>Join Telegram Channel</h4>
-                    <p>+5,000 CHUB</p>
-                </div>
+                <div class="task-details"><h4>Join Telegram Channel</h4><p>+5,000 CHUB</p></div>
                 <button class="task-claim-btn" id="task1" onclick="completeTask('task1', 5000, 'https://t.me')">Claim</button>
             </div>
             <div class="task-item">
-                <div class="task-details">
-                    <h4>Follow us on X (Twitter)</h4>
-                    <p>+3,000 CHUB</p>
-                </div>
+                <div class="task-details"><h4>Follow us on X</h4><p>+3,000 CHUB</p></div>
                 <button class="task-claim-btn" id="task2" onclick="completeTask('task2', 3000, 'https://x.com')">Claim</button>
-            </div>
-            <div class="task-item">
-                <div class="task-details">
-                    <h4>Watch Daily Video</h4>
-                    <p>+2,500 CHUB</p>
-                </div>
-                <button class="task-claim-btn" id="task3" onclick="completeTask('task3', 2500, 'https://youtube.com')">Claim</button>
             </div>
         </div>
     </div>
     
-    <!-- بەشی ئینڤایت -->
     <div id="invitePage" class="page">
-        <div class="page-header">
-            <h2>Invite Friends</h2>
-            <button class="close-btn" onclick="showMainGame()">X</button>
-        </div>
+        <div class="page-header"><h2>Invite Friends</h2><button class="close-btn" onclick="showMainGame()">X</button></div>
         <div class="invite-box">
             <h3>Your Referrals</h3>
             <div class="invite-counter"><span id="friendCount">0</span> / 10 Invited</div>
-            <p class="bonus-info">🎁 +5,000 CHUB for each friend you invite!</p>
             <button class="invite-btn" onclick="copyInviteLink()">Copy Invite Link</button>
         </div>
     </div>
     
     <div id="gamesPage" class="page"><div class="page-header"><h2>Games</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Mini Games coming soon!</p></div>
-    <div id="walletPage" class="page"><div class="page-header"><h2>Wallet</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Connect TON Wallet coming soon!</p></div>
+    <div id="walletPage" class="page"><div class="page-header"><h2>Wallet</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Connect Wallet coming soon!</p></div>
     
     <div class="nav-bar">
         <div class="nav-item" onclick="openPage('tasksPage')">Tasks</div>
@@ -137,58 +109,43 @@
         document.getElementById('score').innerText = count;
         document.getElementById('friendCount').innerText = invitedFriends;
         
-        // پشکنینی تاسکە تەواوبووەکان لەکاتی کردنەوەی یارییەکەدا
         window.onload = function() {
             checkTaskStatus('task1');
             checkTaskStatus('task2');
-            checkTaskStatus('task3');
         };
 
+        // چاککردنی فەنکشنی تەپ بۆ ئەوەی خێرا بێت و شاشە نەجوڵێنێت
         var tapElement = document.getElementById('tapCoin');
-        tapElement.addEventListener('click', handleTap);
         tapElement.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            handleTap();
-        });
-
-        function handleTap() {
+            e.preventDefault(); // ڕێگری لە جوڵانی شاشە
             if (energy > 0) { 
-                count++; 
-                energy--; 
+                count++; energy--; 
                 document.getElementById('score').innerText = count; 
                 updateUI(); 
                 localStorage.setItem('chubby_coins', count); 
             }
-        }
-        
+        });
+
         function updateUI() { 
             document.getElementById('energyText').innerText = energy; 
             document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%'; 
         }
         
         setInterval(function() { 
-            if (energy < 500) { 
-                energy += 3; 
-                if (energy > 500) energy = 500; 
-                updateUI(); 
-            } 
+            if (energy < 500) { energy += 3; if (energy > 500) energy = 500; updateUI(); } 
         }, 1000);
         
         function openPage(id) { 
             document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
             document.getElementById(id).style.display = 'block'; 
         }
-        function showMainGame() { 
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
-        }
+        function showMainGame() { document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); }
         
         function copyInviteLink() {
-            var botLink = "https://t.me"; 
-            navigator.clipboard.writeText(botLink).then(function() {
-                alert("Invite link copied to clipboard!");
+            navigator.clipboard.writeText("https://t.me").then(function() {
+                alert("Link copied!");
                 if (invitedFriends < 10) {
-                    invitedFriends++;
-                    count += 5000; 
+                    invitedFriends++; count += 5000;
                     document.getElementById('score').innerText = count;
                     document.getElementById('friendCount').innerText = invitedFriends;
                     localStorage.setItem('chubby_invites', invitedFriends);
@@ -197,9 +154,24 @@
             });
         }
 
-        // فەنکشنی تەواوکردنی تاسکەکان و پێدانی پاداشت
         function completeTask(taskId, reward, link) {
-            window.open(link, '_blank'); // کردنەوەی لینکی چەناڵ یان پەیجەکە
-            
+            window.open(link, '_blank');
             setTimeout(function() {
                 count += reward;
+                document.getElementById('score').innerText = count;
+                localStorage.setItem('chubby_coins', count);
+                localStorage.setItem(taskId + '_completed', 'true');
+                var btn = document.getElementById(taskId);
+                if(btn) { btn.innerText = "Completed"; btn.disabled = true; }
+            }, 2000);
+        }
+
+        function checkTaskStatus(taskId) {
+            if (localStorage.getItem(taskId + '_completed') === 'true') {
+                var btn = document.getElementById(taskId);
+                if (btn) { btn.innerText = "Completed"; btn.disabled = true; }
+            }
+        }
+    </script>
+</body>
+</html>
