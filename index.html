@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
-    <script src="https://telegram.org"></script>
     <style>
         body { 
             background: #090514 url('image.png.jpeg') no-repeat center fixed; 
@@ -75,11 +74,11 @@
         <div class="task-list">
             <div class="task-item">
                 <div class="task-details"><h4>Join Telegram Channel</h4><p>+5,000 CHUB</p></div>
-                <button class="task-claim-btn" id="task1" onclick="completeTask('task1', 5000, 'https://t.me')">Join</button>
+                <button class="task-claim-btn" id="task1" onclick="completeTask('task1', 5000, 'https://t.me')">Claim</button>
             </div>
             <div class="task-item">
                 <div class="task-details"><h4>Follow us on X</h4><p>+3,000 CHUB</p></div>
-                <button class="task-claim-btn" id="task2" onclick="completeTask('task2', 3000, 'https://x.com')">Follow</button>
+                <button class="task-claim-btn" id="task2" onclick="completeTask('task2', 3000, 'https://x.com')">Claim</button>
             </div>
         </div>
     </div>
@@ -108,11 +107,6 @@
     </div>
     
     <script>
-        // وەرگرتنی زانیاری بەکارهێنەری تێلیگرام بە شێوەی ئۆتۆماتیکی
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        const userId = tg.initDataUnsafe?.user?.id || 123456789; // ئەگەر لە دەرەوەی تێلیگرام بێت ئایدییەکی هەڕەمەکی دادەنێت
-
         var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var invitedFriends = parseInt(localStorage.getItem('chubby_invites')) || 0;
         var energy = 500;
@@ -152,40 +146,51 @@
         function showMainGame() { document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); }
         
         function copyInviteLink() {
-            navigator.clipboard.writeText("https://t.me_" + userId).then(function() {
+            navigator.clipboard.writeText("https://t.me").then(function() {
                 alert("Link copied!");
             });
         }
 
-        // فانکشنی پشکنینی ڕاستەقینەی جۆین بوونی چەناڵ
         function completeTask(taskId, reward, link) {
             window.open(link, '_blank');
             let taskButton = document.getElementById(taskId);
             
-            if (taskButton && taskButton.innerText !== "Completed") {
-                taskButton.innerText = "Check";
-                taskButton.style.backgroundColor = "#ff9800"; 
+            if (taskButton && taskButton.innerText !== "Completed" && !taskButton.disabled) {
+                let timeLeft = 15; 
+                taskButton.disabled = true; 
+                taskButton.style.backgroundColor = "#555"; 
                 
-                taskButton.onclick = function() {
-                    // ئەگەر تەسکی تێلیگرام بێت، داواکاری دەنێرێت بۆ سێرڤەرەکەت بۆ پشکنین
-                    if (taskId === 'task1') {
-                        taskButton.innerText = "Checking...";
-                        taskButton.disabled = true;
+                let countdown = setInterval(function() {
+                    timeLeft--;
+                    taskButton.innerText = "Wait " + timeLeft + "s";
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        taskButton.innerText = "Claim " + reward;
+                        taskButton.disabled = false; 
+                        taskButton.style.backgroundColor = "#ff9800"; 
+                        
+                        taskButton.onclick = function() {
+                            count += reward;
+                            document.getElementById('score').innerText = count;
+                            localStorage.setItem('chubby_coins', count);
+                            localStorage.setItem(taskId + '_completed', 'true');
+                            
+                            taskButton.innerText = "Completed";
+                            taskButton.disabled = true;
+                            taskButton.style.backgroundColor = "#555"; 
+                        };
+                    }
+                }, 1000);
+            }
+        }
 
-                        fetch('http://localhost:3000/api/verify-channel', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ userId: userId })
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                giveReward(taskId, reward, taskButton);
-                            } else {
-                                alert(data.message);
-                                taskButton.innerText = "Check";
-                                taskButton.disabled = false;
-                            }
-                        })
-                        .catch(err => {
-                            // ئەگەر سێرڤەرەکە هێشتا هۆست نەکرابوو، وەک چارەسەری کاتی کوینەکە دەدات بە مەرجی کلیکی دووەم
+        function checkTaskStatus(taskId) {
+            if (localStorage.getItem(taskId + '_completed') === 'true') {
+                var btn = document.getElementById(taskId);
+                if (btn) { btn.innerText = "Completed"; btn.disabled = true; }
+            }
+        }
+    </script>
+</body>
+</html>
