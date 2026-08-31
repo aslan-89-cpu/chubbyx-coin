@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
+    <!-- لێرەدا بەستەری فەرمی تلێگرام زیادکراوە بۆ ناسینەوەی بەکارهێنەر -->
+    <script src="https://telegram.org"></script>
     <style>
         body {
             background: #090514 url('image.png.jpeg') no-repeat center center fixed;
@@ -262,6 +264,9 @@
         const energyText = document.getElementById('energyText');
         const energyFill = document.getElementById('energyFill');
 
+        // وەرگرتنی ناسنامەی ڕاستەقینەی بەکارهێنەری تلێگرام بە شێوازێکی پارێزراو
+        const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "test_user";
+
         scoreDisplay.innerText = count;
 
         tapCoin.addEventListener('click', () => {
@@ -271,6 +276,9 @@
                 scoreDisplay.innerText = count;
                 updateEnergyUI();
                 localStorage.setItem('chubby_coins', count); 
+
+                // ناردنی نوێکاری بۆ داتابەیس بە شێوازێکی پارێزراو
+                syncWithDatabase(userId, count);
             }
         });
 
@@ -292,15 +300,5 @@
             count += reward;
             scoreDisplay.innerText = count;
             localStorage.setItem('chubby_coins', count);
-            setTimeout(() => {
-                element.innerText = "Completed";
-                element.style.background = "#555";
-                element.style.pointerEvents = "none";
-            }, 1000);
-        }
-
-        function openPage(pageId, btnId) {
-            const pages = document.querySelectorAll('.page');
-            for(let i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
             
-            document.getElementById(pageId).style.display = 'block';
+            // ناردنی نمرەی نوێی تایکەکان بۆ داتابەیس
