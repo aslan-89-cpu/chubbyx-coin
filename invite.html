@@ -1,35 +1,53 @@
-function sendInvite() {
-    let botUsername = "chubbyx_bot"; 
-    let randomId = Math.floor(Math.random() * 99999);
-    let inviteLink = https://t.me{botUsername}?start=r_${randomId};
+<!DOCTYPE html>
+<html lang="ku">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChubbyX Invite</title>
+    <style>
+        body { font-family: sans-serif; background-color: #111; color: white; text-align: center; padding: 20px; }
+        .btn { background-color: #f39c12; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 15px; }
+        .status { margin-top: 20px; font-size: 14px; color: #bbb; }
+    </style>
+</head>
+<body>
 
-    // دروستکردنی کایەیەکی کاتی بۆ ئەوەی ئایفۆن ناچار بکات کۆپی بکات
-    let textArea = document.createElement("textarea");
-    textArea.value = inviteLink;
-    textArea.style.position = "fixed";  // ڕێگری لە جوڵانی شاشە دەکات
-    document.body.appendChild(textArea);
-    textArea.select();
-    textArea.setSelectionRange(0, 99999); // بۆ مۆبایلەکان
+    <h2>داوەتکردنی هاوڕێیان</h2>
+    <p>بۆ هەر هاوڕێیەک ٣,٠٠٠ کۆین وەرگرە! (زۆرترین ٢٠ هاوڕێ)</p>
 
-    try {
-        document.execCommand("copy");
-        alert("Invite link copied successfully! Send it to your friends.");
-        
-        if (currentInvites < maxInvites) {
-            currentInvites++;
-            globalCoins += inviteReward;
-            localStorage.setItem('chubby_invites', currentInvites);
-            localStorage.setItem('chubby_coins', globalCoins);
-            document.getElementById('inviteCount').innerText = currentInvites;
+    <!-- دوگمەی دروستکردن و کۆپیکردنی لینک -->
+    <button class="btn" onclick="generateInviteLink()">کۆپیکردنی لینکی ئینڤایت</button>
+    
+    <div class="status">
+        <p>هاوڕێیانی داوەتکراو: <span id="inviteCount">0</span> / 20</p>
+    </div>
+
+    <script>
+        // وەرگرتنی ئایدی بەکارهێنەر لە تێلیگرامەوە
+        const tg = window.Telegram?.WebApp;
+        const userId = tg?.initDataUnsafe?.user?.id || "test_user"; 
+
+        function generateInviteLink() {
+            const botUsername = "chubbyx_bot"; // ئایدی بۆتەکەت لێرە بنووسە
+            const inviteLink = https://t.me{botUsername}?start=ref_${userId};
             
-            if (currentInvites >= maxInvites) {
-                document.getElementById('invite-btn').innerText = "Limit Reached (20/20)";
-                document.getElementById('invite-btn').disabled = true;
+            navigator.clipboard.writeText(inviteLink).then(() => {
+                alert("لینکەکە کۆپی کرا! بینێرە بۆ هاوڕێکانت.");
+            });
+        }
+
+        // وەرگرتنی ژمارەی ئینڤایتەکان لە سێرڤەرەوە
+        async function loadInviteData() {
+            try {
+                const response = await fetch(/api/invite-status?userId=${userId});
+                const data = await response.json();
+                document.getElementById("inviteCount").innerText = data.inviteCount;
+            } catch (error) {
+                console.error("هەڵە لە بارکردنی داتا", error);
             }
         }
-    } catch (err) {
-        alert("Please manual copy: " + inviteLink);
-    }
 
-    document.body.removeChild(textArea);
-}
+        window.onload = loadInviteData;
+    </script>
+</body>
+</html>
