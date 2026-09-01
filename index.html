@@ -41,11 +41,12 @@
             transform: scale(0.9);
         }
         
-        .energy-container { width: 100%; text-align: center; margin-bottom: 20px;
+        /* بۆشایی وزەکە ڕێکخرا تا تێکەڵی مێنووەکە نەبێت */
+        .energy-container { width: 100%; text-align: center; margin-bottom: 55px; z-index: 10; }
         .energy-bar-bg { width: 80%; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #a48fff; margin: 10px auto; }
         .energy-bar-fill { width: 100%; height: 12px; background: #a48fff; transition: width 0.1s ease; }
         
-        /* چاککردنی مێنووی خوارەوە و بەرزکردنەوەی بۆ سەرەوە */
+        /* گەڕانەوە بۆ مێنووە جوانەکەی پێشوو بە چاککردنی کۆدەکان */
         .nav-bar { 
             position: fixed; 
             bottom: 0; 
@@ -53,8 +54,7 @@
             display: flex; 
             justify-content: space-around; 
             background: rgba(20, 10, 35, 0.95); 
-            /* لێرەدا کۆدەکە ڕاستکراوەتەوە و کەمێک بۆشایی جێگیری زیاتر دابین کراوە بۆ سەرەوە هێنان */
-            padding: 15px 0 calc(25px + env(safe-area-inset-bottom)); 
+            padding: 15px 0 calc(15px + env(safe-area-inset-bottom)); 
             border-top: 1px solid #331a5e; 
             z-index: 20; 
         }
@@ -92,7 +92,7 @@
         document.getElementById('score').innerText = count;
 
         function playVoiceSound() {
-            let utterance = new SpeechSynthesisUtterance("chubby"); 
+            let utterance = new SpeechSynthesisUtterance("Chubby"); 
             utterance.lang = 'en-US';
             utterance.rate = 2.2; 
             utterance.pitch = 1.3; 
