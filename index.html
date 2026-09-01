@@ -1,196 +1,200 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
     <style>
-        body { 
-            background: #090514 url('image.png.jpeg') no-repeat center fixed; 
-            background-size: cover; 
-            color: white; 
-            font-family: sans-serif; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden; 
+        body {
+            background: #090314 url('image.png.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            font-family: sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
             user-select: none;
-            touch-action: none; 
+            touch-action: none;
         }
         .header { margin-top: 40px; text-align: center; z-index: 10; }
-        .coin-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px; z-index: 10; }
+        .coin-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; width: 100%; }
         
-        .tap-zone { 
-            width: 140px !important; 
-            height: 140px !important; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            background: url('image_okKb6u.png.jpeg') no-repeat center center; 
-            background-size: 155% !important; 
-            box-shadow: 0 0 25px rgba(234, 179, 8, 0.7); 
-            z-index: 50 !important;
+        /* بازنەی تاپ تاپی کۆدەکەی خۆت */
+        .tap-zone {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: url('image_okkb6u.png.jpeg') no-repeat center center;
+            background-size: cover;
+            box-shadow: 0 0 25px rgba(164, 143, 255, 0.7);
+            z-index: 10;
             position: relative;
+            margin-top: 50px;
             -webkit-tap-highlight-color: transparent;
-            margin-top: 55px; 
             touch-action: manipulation;
         }
         
-        .energy-container { width: 220px; text-align: center; z-index: 10; }
-        .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; }
-        .energy-bar-fill { width: 100%; height: 100%; background: #eab308; }
+        .energy-container { width: 100%; text-align: center; z-index: 10; margin-bottom: 20px; }
+        .energy-bar-bg { width: 80%; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #a48fff; margin: 10px auto; }
+        .energy-bar-fill { width: 100%; height: 12px; background: #a48fff; transition: width 0.1s ease; }
         
-        .nav-bar { width: 100%; background: rgba(13, 8, 27, 0.95); border-top: 2px solid #7b2cbf; display: flex; position: absolute; bottom: 0; padding: 15px 0; z-index: 2000 !important; }
-        .nav-item { font-size: 13px; color: #9d4edd; cursor: pointer; flex: 1; text-align: center; font-weight: bold; z-index: 2001 !important; }
+        /* شێوازی لاپەڕە ناوخۆییەکانی کۆدەکەی خۆت */
+        .page { display: none; position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 80px); background: rgba(9, 3, 20, 0.98); z-index: 100; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+        .page-header { text-align: center; font-weight: bold; font-size: 24px; color: #a48fff; margin-top: 20px; margin-bottom: 20px; }
+        .close-btn { background: #1c103a; border: 1px solid #331a5e; padding: 10px; border-radius: 10px; color: white; cursor: pointer; text-align: center; margin-top: 20px; font-weight: bold; }
         
-        .page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #090514; padding: 20px; box-sizing: border-box; z-index: 3000 !important; overflow-y: auto; }
-        .page-header { display: flex; justify-content: space-between; border-bottom: 1px solid #7b2cbf; padding-bottom: 10px; }
-        .close-btn { background: #7b2cbf; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
-        
-        .task-list { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .task-item { background: rgba(255, 255, 255, 0.05); border: 1px solid #7b2cbf; border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .task-item { background: rgba(255,255,255,0.05); border: 1px solid #331a5e; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .task-details h4 { margin: 0; font-size: 15px; }
-        .task-details p { margin: 5px 0 0 0; font-size: 13px; color: #eab308; font-weight: bold; }
-        .task-claim-btn { background: #eab308; color: #090514; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .task-details p { margin: 5px 0 0 0; font-size: 13px; color: #a48fff; font-weight: bold; }
+        .task-claim-btn { background: #a48fff; color: black; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .task-claim-btn:disabled { background: #444; color: #888; cursor: not-allowed; }
-        .invite-box { background: rgba(255, 255, 255, 0.05); border: 1px solid #7b2cbf; border-radius: 12px; padding: 15px; margin-top: 20px; text-align: center; }
-        .invite-counter { font-size: 18px; color: #eab308; font-weight: bold; margin: 10px 0; }
-        .invite-btn { background: #eab308; color: #090514; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; margin-top: 10px; }
+        
+        .invite-box { background: #1c103a; border: 1px solid #331a5e; border-radius: 12px; padding: 20px; text-align: center; }
+        .invite-counter { font-size: 18px; font-weight: bold; margin: 10px 0; }
+        
+        /* --- ستایلی تایبەت بە یارییە نوێیەکە --- */
+        #catch-game-zone { position: relative; width: 100%; height: 320px; background: #130a24; border-radius: 15px; overflow: hidden; border: 2px dashed #a48fff; margin-top: 15px; }
+        .falling-coin { position: absolute; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; background: url('image_okkb6u.png.jpeg') no-repeat center center; background-size: cover; box-shadow: 0 0 10px #a48fff; }
+
+        /* مێنووی خوارەوەی کۆدەکەی خۆت */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; display: flex; justify-content: space-around; background: rgba(20, 10, 35, 0.95); padding: 15px 0; border-top: 1px solid #331a5e; z-index: 200; }
+        .nav-item { color: #a48fff; text-decoration: none; font-size: 14px; cursor: pointer; font-weight: bold; opacity: 0.7; }
+        .nav-item.active, .nav-item:hover { opacity: 1; color: white; }
     </style>
 </head>
 <body>
-    <div class="header"><div>ChubbyX Balance</div><h1 id="score">0</h1></div>
-    <div class="coin-container">
-        <div class="tap-zone" id="tapCoin"></div>
-        <div class="energy-container">
-            <div style="margin-bottom: 5px;"><span id="energyText">500</span>/500</div>
-            <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyFill"></div></div>
+
+    <!-- شاشەی سەرەکی (Games Page) -->
+    <div class="header">
+        <div style="opacity: 0.8; font-size: 14px; letter-spacing: 1px;">CHUBBYX BALANCE</div>
+        <h1 id="score" style="margin: 5px 0; font-size: 48px;">0</h1>
+    </div>
+
+    <div class="coin-container" id="main-game-view">
+        <div class="tap-zone" id="tapcoin"></div>
+    </div>
+
+    <div class="energy-container" id="main-energy-view">
+        <div style="font-size: 14px;">⚡ <span id="energyText">500</span> / 500</div>
+        <div class="energy-bar-bg">
+            <div class="energy-bar-fill" id="energyFill"></div>
         </div>
     </div>
-    
+
+    <!-- لاپەڕەی Tasks -->
     <div id="tasksPage" class="page">
-        <div class="page-header"><h2>Tasks</h2><button class="close-btn" onclick="showMainGame()">X</button></div>
+        <div class="page-header">Tasks</div>
         <div class="task-list">
             <div class="task-item">
-                <div class="task-details"><h4>Join Telegram Channel</h4><p>+5,000 CHUB</p></div>
-                <button class="task-claim-btn" id="task1" onclick="completeTask('task1', 5000, 'https://t.me')">Claim</button>
+                <div class="task-details">
+                    <h4>Join Telegram Channel</h4>
+                    <p>+1,000 CHUB</p>
+                </div>
+                <button class="task-claim-btn" id="task1" onclick="completeTask('task1', 1000, 'https://t.me')">Join</button>
             </div>
             <div class="task-item">
-                <div class="task-details"><h4>Follow us on X</h4><p>+3,000 CHUB</p></div>
-                <button class="task-claim-btn" id="task2" onclick="completeTask('task2', 3000, 'https://x.com')">Claim</button>
+                <div class="task-details">
+                    <h4>Follow ChubbyX on X</h4>
+                    <p>+2,500 CHUB</p>
+                </div>
+                <button class="task-claim-btn" id="task2" onclick="completeTask('task2', 2500, 'https://x.com')">Join</button>
             </div>
         </div>
+        <div class="close-btn" onclick="showMainGame()">Back to Main</div>
     </div>
-    
+
+    <!-- لاپەڕەی فەرمی یارییە نوێیەکە (Mini-Game Page) -->
+    <div id="minigamePage" class="page">
+        <div class="page-header">Chubby Catch Game</div>
+        <p style="text-align: center; font-size: 14px; opacity: 0.8; margin: 0 0 15px 0;">
+            سکە زەردەکان لە ئاسمانەوە دەکەونە خوارەوە! خێرا کلیکیان لێ بکە بۆ کۆکردنەوەی خاڵ!
+        </p>
+        <div style="text-align: center;">
+            <button class="task-claim-btn" id="start-game-btn" style="background:#ff9800; padding:12px 25px;" onclick="startCatchGame()">Start Play (30s)</button>
+        </div>
+        <div id="catch-game-zone"></div>
+        <div class="close-btn" onclick="showMainGame()">Back to Main</div>
+    </div>
+
+    <!-- لاپەڕەی Invite -->
     <div id="invitePage" class="page">
-        <div class="page-header"><h2>Invite Friends</h2><button class="close-btn" onclick="showMainGame()">X</button></div>
+        <div class="page-header">Invite Friends</div>
         <div class="invite-box">
             <h3>Your Referrals</h3>
             <div class="invite-counter"><span id="friendCount">0</span> / 10 Invited</div>
-            <button class="invite-btn" onclick="copyInviteLink()">Copy Invite Link</button>
+            <button class="task-claim-btn" style="width: 100%; padding: 12px;" onclick="copyInviteLink()">Copy Invite Link</button>
         </div>
+        <div class="close-btn" onclick="showMainGame()">Back to Main</div>
     </div>
-    
-    <div id="gamesPage" class="page">
-        <div class="page-header"><h2>Games</h2><button class="close-btn" onclick="showMainGame()">X</button></div>
-        <p style="padding-top:20px;">Mini Games coming soon!</p>
+
+    <!-- لاپەڕەی Wallet -->
+    <div id="walletPage" class="page">
+        <div class="page-header">Connect Wallet</div>
+        <p style="text-align: center; opacity: 0.8; margin-bottom: 30px;">Connect your TON wallet to receive Airdrop tokens.</p>
+        <div style="text-align: center;">
+            <button class="task-claim-btn" style="padding: 15px 30px;" onclick="alert('Connecting to TON Wallet...')">Connect Wallet</button>
+        </div>
+        <div class="close-btn" onclick="showMainGame()">Back to Main</div>
     </div>
-    
-    <div id="walletPage" class="page"><div class="page-header"><h2>Wallet</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Connect Wallet coming soon!</p></div>
-    
+
+    <!-- مێنووی خوارەوەی کۆدەکەی خۆت -->
     <div class="nav-bar">
-        <div class="nav-item" onclick="openPage('tasksPage')">Tasks</div>
-        <div class="nav-item" onclick="openPage('invitePage')">Invite</div>
-        <div class="nav-item" onclick="openPage('gamesPage')">Games</div>
-        <div class="nav-item" onclick="openPage('walletPage')">Wallet</div>
+        <div class="nav-item" id="btn-tasks" onclick="openPage('tasksPage', 'btn-tasks')">Tasks</div>
+        <div class="nav-item" id="btn-mini" onclick="openPage('minigamePage', 'btn-mini')">Mini-Game</div>
+        <div class="nav-item active" id="btn-game" onclick="showMainGame()">Games</div>
+        <div class="nav-item" id="btn-invite" onclick="openPage('invitePage', 'btn-invite')">Invite</div>
+        <div class="nav-item" id="btn-wallet" onclick="openPage('walletPage', 'btn-wallet')">Wallet</div>
     </div>
-    
+
     <script>
-        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        var invitedFriends = parseInt(localStorage.getItem('chubby_invites')) || 0;
-        var energy = 500;
-        
+        // لۆدکردنی باڵانسی ڕاستەقینەی پێشووت لە ناو مۆبایلەکەدا
+        let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+        let energy = 500;
+        let gameInterval;
+
         document.getElementById('score').innerText = count;
-        document.getElementById('friendCount').innerText = invitedFriends;
-        
+
         window.onload = function() {
             checkTaskStatus('task1');
             checkTaskStatus('task2');
         };
 
-        var tapElement = document.getElementById('tapCoin');
+        // فەنکشنی لێدانی کۆدەکەی خۆت (Tap Event)
+        var tapElement = document.getElementById('tapcoin');
         tapElement.addEventListener('touchstart', function(e) {
-            e.preventDefault(); 
-            if (energy > 0) { 
-                count++; energy--; 
-                document.getElementById('score').innerText = count; 
-                updateUI(); 
-                localStorage.setItem('chubby_coins', count); 
+            e.preventDefault();
+            if (energy > 0) {
+                count++;
+                energy--;
+                document.getElementById('score').innerText = count;
+                localStorage.setItem('chubby_coins', count);
+                updateUI();
+                createFloatingText(e.touches[0]);
             }
         });
 
-        function updateUI() { 
-            document.getElementById('energyText').innerText = energy; 
-            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%'; 
-        }
-        
-        setInterval(function() { 
-            if (energy < 500) { energy += 3; if (energy > 500) energy = 500; updateUI(); } 
-        }, 1000);
-        
-        function openPage(id) { 
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
-            document.getElementById(id).style.display = 'block'; 
-        }
-        function showMainGame() { document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); }
-        
-        function copyInviteLink() {
-            navigator.clipboard.writeText("https://t.me").then(function() {
-                alert("Link copied!");
-            });
+        function createFloatingText(touch) {
+            let text = document.createElement('div');
+            text.innerText = '+1';
+            text.style.position = 'absolute';
+            text.style.left = touch.clientX + 'px';
+            text.style.top = touch.clientY + 'px';
+            text.style.color = '#a48fff';
+            text.style.fontWeight = 'bold';
+            text.style.fontSize = '24px';
+            text.style.pointerEvents = 'none';
+            text.style.transition = 'all 0.4s ease-out';
+            text.style.zIndex = '1000';
+            document.body.appendChild(text);
+            setTimeout(() => { text.style.transform = 'translateY(-50px)'; text.style.opacity = '0'; }, 10);
+            setTimeout(() => { text.remove(); }, 400);
         }
 
-        function completeTask(taskId, reward, link) {
-            window.open(link, '_blank');
-            let taskButton = document.getElementById(taskId);
-            
-            if (taskButton && taskButton.innerText !== "Completed" && !taskButton.disabled) {
-                let timeLeft = 15; 
-                taskButton.disabled = true; 
-                taskButton.style.backgroundColor = "#555"; 
-                
-                let countdown = setInterval(function() {
-                    timeLeft--;
-                    taskButton.innerText = "Wait " + timeLeft + "s";
-                    
-                    if (timeLeft <= 0) {
-                        clearInterval(countdown);
-                        taskButton.innerText = "Claim " + reward;
-                        taskButton.disabled = false; 
-                        taskButton.style.backgroundColor = "#ff9800"; 
-                        
-                        taskButton.onclick = function() {
-                            count += reward;
-                            document.getElementById('score').innerText = count;
-                            localStorage.setItem('chubby_coins', count);
-                            localStorage.setItem(taskId + '_completed', 'true');
-                            
-                            taskButton.innerText = "Completed";
-                            taskButton.disabled = true;
-                            taskButton.style.backgroundColor = "#555"; 
-                        };
-                    }
-                }, 1000);
-            }
+        function updateUI() {
+            document.getElementById('energyText').innerText = energy;
+            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%';
         }
-
-        function checkTaskStatus(taskId) {
-            if (localStorage.getItem(taskId + '_completed') === 'true') {
-                var btn = document.getElementById(taskId);
-                if (btn) { btn.innerText = "Completed"; btn.disabled = true; }
-            }
-        }
-    </script>
-</body>
-</html>
