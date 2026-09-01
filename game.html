@@ -16,61 +16,64 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow: hidden;
+            user-select: none;
         }
-        h2 { color: #a48fff; margin-top: 20px; }
+        h2 { color: #a48fff; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px; }
         #zone { 
             position: relative; 
             width: 100%; 
             max-width: 400px;
-            height: 350px; 
+            height: 380px; 
             background: #130a24; 
             border: 2px dashed #a48fff; 
             border-radius: 15px; 
             overflow: hidden; 
             margin-top: 20px; 
+            touch-action: none;
         }
         .falling-coin { 
             position: absolute; 
-            width: 45px; 
-            height: 45px; 
+            width: 50px; 
+            height: 50px; 
             background: url('image_okkb6u.png.jpeg') no-repeat center; 
             background-size: cover; 
             border-radius: 50%; 
             cursor: pointer; 
+            touch-action: manipulation;
         }
         .btn-play { 
             background: #ff9800; 
             color: white; 
             border: none; 
-            padding: 12px 25px; 
-            border-radius: 8px; 
+            padding: 12px 30px; 
+            border-radius: 10px; 
             font-weight: bold; 
             cursor: pointer; 
             font-size: 16px;
             margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
         }
         .back-btn { 
-            background: #331a5e; 
+            background: #1c103a; 
             color: white; 
-            padding: 12px 30px; 
+            padding: 12px 35px; 
             border-radius: 10px; 
             border: 1px solid #a48fff; 
-            margin-top: 30px; 
+            margin-top: 25px; 
             cursor: pointer; 
             font-weight: bold; 
-            text-decoration: none;
         }
     </style>
 </head>
 <body>
     <h2>Chubby Catch Game</h2>
-    <p style="opacity: 0.8; font-size: 14px;">سکە زەردەکان دەبارێن! خێرا کلیکیان لێ بکە!</p>
+    <p style="opacity: 0.8; font-size: 14px; margin-bottom: 5px;">Catch the falling golden coins quickly!</p>
     
     <button class="btn-play" id="start-btn" onclick="startGame()">Start Game (30s)</button>
     
     <div id="zone"></div>
     
-    <br>
     <button class="back-btn" onclick="window.location.href='index.html'">Back to Game</button>
 
     <script>
@@ -80,19 +83,20 @@
         function startGame() {
             document.getElementById('start-btn').disabled = true;
             document.getElementById('start-btn').style.background = '#444';
+            document.getElementById('start-btn').innerText = "Playing...";
             const zone = document.getElementById('zone'); 
             zone.innerHTML = '';
             
             gameInterval = setInterval(() => {
                 let coin = document.createElement('div'); 
                 coin.classList.add('falling-coin');
-                coin.style.left = Math.floor(Math.random() * (zone.clientWidth - 45)) + 'px'; 
+                coin.style.left = Math.floor(Math.random() * (zone.clientWidth - 50)) + 'px'; 
                 coin.style.top = '0px';
                 zone.appendChild(coin);
                 
                 let top = 0;
                 let fall = setInterval(() => {
-                    if (top > zone.clientHeight - 45) { 
+                    if (top > zone.clientHeight - 50) { 
                         clearInterval(fall); 
                         coin.remove(); 
                     } else { 
@@ -101,20 +105,24 @@
                     }
                 }, 20);
                 
-                coin.onclick = function() { 
+                // بەکارهێنانی touchstart بۆ وەڵامدانەوەی خێرا لەسەر ئایفۆن
+                coin.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
                     count += 5; 
                     localStorage.setItem('chubby_coins', count); 
                     clearInterval(fall); 
                     coin.remove(); 
-                };
-            }, 700);
+                });
+                
+            }, 750);
             
             setTimeout(() => { 
                 clearInterval(gameInterval); 
                 zone.innerHTML = ''; 
                 document.getElementById('start-btn').disabled = false; 
                 document.getElementById('start-btn').style.background = '#ff9800';
-                alert("یارییەکە کۆتایی هات! خاڵەکانت پاشەکەوت کران."); 
+                document.getElementById('start-btn').innerText = "Start Game (30s)";
+                alert("Game Over! Your coins have been saved."); 
             }, 30000);
         }
     </script>
