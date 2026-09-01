@@ -2,26 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tasks</title>
     <style>
         body { background: #090314; color: white; font-family: sans-serif; padding: 20px; text-align: center; }
+        h2 { color: #a48fff; margin-top: 20px; text-transform: uppercase; }
         .task-item { background: #1c103a; border: 1px solid #331a5e; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-action { background: #a48fff; color: black; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .back-btn { background: #331a5e; color: white; padding: 12px 25px; border-radius: 10px; border: none; margin-top: 30px; cursor: pointer; font-weight: bold; }
+        .btn-action { background: #a48fff; color: black; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; min-width: 100px; }
+        .btn-action:disabled { background: #555; color: #888; cursor: not-allowed; }
+        .back-btn { background: #1c103a; color: white; padding: 12px 35px; border-radius: 10px; border: 1px solid #a48fff; margin-top: 30px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
     <h2>Tasks</h2>
-    <p style="opacity:0.7;">Complete tasks and wait 15 seconds to claim reward</p>
+    <p style="opacity:0.7; font-size:14px;">Complete tasks honestly to get rewards!</p>
+    
     <div class="task-item">
-        <div><h4 style="margin:0;">Join Telegram Channel</h4><p style="color:#a48fff; margin:5px 0 0 0;">+1,000 CHUB</p></div>
+        <div><h4 style="margin:0; text-align:left;">Join Telegram Channel</h4><p style="color:#a48fff; margin:5px 0 0 0; text-align:left;">+1,000 CHUB</p></div>
         <button class="btn-action" id="task1" onclick="completeTask('task1', 1000, 'https://t.me')">Join</button>
     </div>
+    
     <div class="task-item">
-        <div><h4 style="margin:0;">Follow ChubbyX on X</h4><p style="color:#a48fff; margin:5px 0 0 0;">+2,500 CHUB</p></div>
+        <div><h4 style="margin:0; text-align:left;">Follow ChubbyX on X</h4><p style="color:#a48fff; margin:5px 0 0 0; text-align:left;">+2,500 CHUB</p></div>
         <button class="btn-action" id="task2" onclick="completeTask('task2', 2500, 'https://x.com')">Join</button>
     </div>
+    
     <button class="back-btn" onclick="window.location.href='index.html'">Back to Game</button>
 
     <script>
@@ -29,24 +34,52 @@
         window.onload = function() { checkStatus('task1'); checkStatus('task2'); };
 
         function completeTask(taskId, reward, link) {
+            // کردنەوەی لینکی کەنالەکە لە تەبێکی نوێدا
             window.open(link, '_blank');
             let btn = document.getElementById(taskId);
-            if (btn && btn.innerText !== "Completed") {
-                let timeLeft = 15; btn.disabled = true;
+            
+            if (btn && btn.innerText !== "Completed" && !btn.disabled) {
+                let timeLeft = 15; 
+                btn.disabled = true;
+                btn.style.backgroundColor = "#555";
+                
                 let timer = setInterval(function() {
-                    timeLeft--; btn.innerText = "Wait " + timeLeft + "s";
+                    timeLeft--; 
+                    btn.innerText = "Wait " + timeLeft + "s";
+                    
                     if (timeLeft <= 0) {
-                        clearInterval(timer); btn.innerText = "Claim"; btn.disabled = false;
+                        clearInterval(timer); 
+                        btn.disabled = false;
+                        btn.style.backgroundColor = "#ff9800";
+                        btn.innerText = "Check Task"; // گۆڕینی Claim بۆ دوگمەی پشکنین
+                        
+                        // کاتێک کلیک لە سەر پشکنین دەکەن
                         btn.onclick = function() {
-                            count += reward; localStorage.setItem('chubby_coins', count);
-                            localStorage.setItem(taskId + '_completed', 'true');
-                            btn.innerText = "Completed"; btn.disabled = true;
+                            btn.innerText = "Checking...";
+                            btn.disabled = true;
+                            btn.style.backgroundColor = "#555";
+                            
+                            // دروستکردنی فێکتێکی چاوەڕوانی ٣ چرکەیی بۆ دڵنیابوونەوە لە جوین
+                            setTimeout(function() {
+                                count += reward; 
+                                localStorage.setItem('chubby_coins', count);
+                                localStorage.setItem(taskId + '_completed', 'true');
+                                btn.innerText = "Completed"; 
+                                btn.disabled = true;
+                                alert(Success! +${reward} CHUB added to your balance.);
+                            }, 3000);
                         };
                     }
                 }, 1000);
             }
         }
-        function checkStatus(id) { if (localStorage.getItem(id + '_completed') === 'true') { let btn = document.getElementById(id); if (btn) { btn.innerText = "Completed"; btn.disabled = true; } } }
+        
+        function checkStatus(id) { 
+            if (localStorage.getItem(id + '_completed') === 'true') { 
+                let btn = document.getElementById(id); 
+                if (btn) { btn.innerText = "Completed"; btn.disabled = true; btn.style.backgroundColor = "#555"; } 
+            } 
+        }
     </script>
 </body>
 </html>
