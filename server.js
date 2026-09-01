@@ -29,13 +29,13 @@ app.post('/api/verify-channel', async (req, res) => {
         const status = member.status;
 
         if (['member', 'administrator', 'creator'].includes(status)) {
-            return res.json({ success: true, message: "بەکارهێنەر ئەندامە." });
+            return res.json({ success: true, message: "user verified successfully." });
         } else {
-            return res.json({ success: false, message: "تکایە سەرەتا جۆینی کەناڵەکە ببە." });
+            return res.json({ success: false, message: "please join the channel first." });
         }
     } catch (error) {
         console.error(error);
-        return res.json({ success: false, message: "هەڵەیەک ڕوویدا لە کاتی پشکنین." });
+        return res.json({ success: false, message: "an error occurred during verifiction." });
     }
 });
 
@@ -44,18 +44,18 @@ app.post('/api/start-bot', (req, res) => {
     const { userId, referrerId } = req.body;
 
     if (!userId) {
-        return res.json({ success: false, message: "userId پێویستە" });
+        return res.json({ success: false, message: "userId userid is required" });
     }
 
-    // ئەگەر بەکارهێنەرەکە نوێ بێت
+    // if the user is new
     if (!usersDatabase[userId]) {
         usersDatabase[userId] = { balance: 0, inviteCount: 0, invitedBy: referrerId || null };
 
-        // ئەگەر لەڕێگەی لینکی کەسێکی ترەوە هاتبێت
+        // if invited by soone else
         if (referrerId && usersDatabase[referrerId] && referrerId !== userId) {
             let referrer = usersDatabase[referrerId];
             
-            // پشکنین بۆ ئەوەی لە ٢٠ هاوڕێ زیاتر نەبێت
+            // limit to maximum 20 invites
             if (referrer.inviteCount < 20) {
                 referrer.inviteCount += 1;
                 referrer.balance += 3000; // پێدانی ٣٠٠٠ کۆین بۆ کەسی داوەتکار
