@@ -14,7 +14,7 @@
             background: var(--bg-color) url('image.png.jpeg') no-repeat center fixed;
             background-size: cover;
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
@@ -22,135 +22,34 @@
             height: 100vh;
             overflow: hidden;
             user-select: none;
-            -webkit-user-select: none;
         }
-        .app-container {
-            width: 100%;
-            max-width: 450px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            position: relative;
-        }
-        #game-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            height: calc(100% - 70px);
-            justify-content: space-around;
-            padding-bottom: 20px;
-            box-sizing: border-box;
-        }
+        .app-container { width: 100%; max-width: 450px; display: flex; flex-direction: column; align-items: center; height: 100%; position: relative; }
+        
+        #game-page { display: flex; flex-direction: column; align-items: center; width: 100%; height: calc(100% - 70px); justify-content: space-around; padding-bottom: 20px; box-sizing: border-box; }
         .balance-container { text-align: center; margin-top: 20px; }
-        .balance-title { font-size: 16px; opacity: 0.8; letter-spacing: 1px; text-transform: uppercase; }
-        .balance-amount { font-size: 48px; font-weight: bold; color: white; margin-top: 5px; text-shadow: 0 0 15px var(--purple-main); }
+        .balance-amount { font-size: 48px; font-weight: bold; color: white; text-shadow: 0 0 15px var(--purple-main); }
         
         .coin-wrapper { cursor: pointer; position: relative; transition: transform 0.08s ease; }
         .coin-wrapper:active { transform: scale(0.92); }
-        .coin-image {
-            width: 230px;
-            height: 230px;
-            border-radius: 50%;
-            box-shadow: 0 0 35px rgba(164, 143, 255, 0.6);
-            border: 4px solid var(--purple-main);
-        }
+        .coin-image { width: 230px; height: 230px; border-radius: 50%; box-shadow: 0 0 35px rgba(164, 143, 255, 0.6); border: 4px solid var(--purple-main); }
         
-        .energy-wrapper {
-            font-size: 18px;
-            font-weight: bold;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 25px;
-            border-radius: 25px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(164, 143, 255, 0.3);
-        }
+        .energy-wrapper { font-size: 18px; font-weight: bold; background: rgba(255, 255, 255, 0.2); padding: 8px 25px; border-radius: 25px; }
 
-        .sub-page {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: calc(100% - 70px);
-            background: rgba(9, 3, 20, 0.98);
-            z-index: 10;
-            padding: 25px;
-            box-sizing: border-box;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-        .page-title {
-            font-size: 28px;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 20px;
-            margin-bottom: 30px;
-            color: var(--purple-main);
-        }
-        .item-card {
-            background: var(--purple-dark);
-            padding: 18px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #331a5e;
-        }
+        /* لاپەڕەکانی تری وەک تاسی و یاری */
+        .sub-page { display: none; position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 70px); background: rgba(9, 3, 20, 0.98); z-index: 10; padding: 25px; box-sizing: border-box; flex-direction: column; overflow-y: auto; }
+        .page-title { font-size: 28px; font-weight: bold; text-align: center; margin-top: 20px; color: var(--purple-main); }
+        .item-card { background: var(--purple-dark); padding: 18px; border-radius: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #331a5e; }
         
-        .btn-action {
-            background: var(--purple-main);
-            color: black;
-            border: none;
-            padding: 10px 22px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-        }
+        .btn-action { background: var(--purple-main); color: black; border: none; padding: 10px 22px; border-radius: 10px; cursor: pointer; font-weight: bold; }
         .btn-action:disabled { background: #555; color: #888; cursor: not-allowed; }
         
-        #purple-catch-game {
-            position: relative;
-            width: 100%;
-            height: 300px;
-            background: #130a24;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 2px dashed var(--purple-main);
-            margin-top: 10px;
-        }
-        .falling-obj {
-            position: absolute;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
+        /* شوێنی یارییە نوێیەکە */
+        #purple-catch-game { position: relative; width: 100%; height: 300px; background: #130a24; border-radius: 15px; overflow: hidden; border: 2px dashed var(--purple-main); margin-top: 15px; }
+        .falling-obj { position: absolute; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
 
-        .navigation-bar {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            max-width: 450px;
-            display: flex;
-            justify-content: space-around;
-            background: rgba(20, 10, 35, 0.98);
-            padding: 18px 0;
-            border-top: 1px solid #331a5e;
-            z-index: 20;
-        }
-        .nav-link {
-            color: var(--purple-main);
-            text-decoration: none;
-            font-size: 14px;
-            cursor: pointer;
-            font-weight: bold;
-            opacity: 0.6;
-        }
-        .nav-link.active, .nav-link:hover { opacity: 1; color: white; }
+        .navigation-bar { position: fixed; bottom: 0; width: 100%; max-width: 450px; display: flex; justify-content: space-around; background: rgba(20, 10, 35, 0.98); padding: 18px 0; border-top: 1px solid #331a5e; z-index: 20; }
+        .nav-link { color: var(--purple-main); text-decoration: none; font-size: 14px; cursor: pointer; font-weight: bold; opacity: 0.6; }
+        .nav-link.active { opacity: 1; color: white; }
     </style>
 </head>
 <body>
@@ -159,53 +58,48 @@
         <!-- Main Game Page -->
         <div id="game-page">
             <div class="balance-container">
-                <div class="balance-title">ChubbyX Balance</div>
-                <!-- گۆڕینی ئایدی بۆ score بۆ ئەوەی لەگەڵ فەنکشنەکەت یەک بێتەوە -->
+                <div style="opacity:0.8; font-size:14px;">ChubbyX Balance</div>
+                <!-- ئایدیەکە کرا بە score وەک کۆدەکەی خۆت -->
                 <div class="balance-amount" id="score">0</div>
             </div>
 
             <div class="coin-wrapper" onclick="handleTapEvent(event)">
+                <!-- ناوی وێنەی سکە زەردەکە لێرەدا بە پیتی بچووک جێگیر کرا -->
                 <img class="coin-image" src="image_okkb6u.png.jpeg" alt="ChubbyX Coin">
             </div>
 
-            <div class="energy-wrapper">
-                <span id="live-energy">500</span>/500
-            </div>
+            <div class="energy-wrapper"><span id="live-energy">500</span>/500</div>
         </div>
 
         <!-- Tasks Page -->
         <div id="tasks-page" class="sub-page">
             <div class="page-title">Tasks</div>
+            <p style="text-align:center; opacity:0.7; margin-bottom:20px;">ئەرکەکان جێبەجێ بکە و ١٥ چرکە چاوەڕێ بکە بۆ وەرگرتنی خەڵات</p>
+            
             <div class="item-card">
-                <div>
-                    <div style="font-weight:bold;">Join Telegram Channel</div>
-                    <div style="color:var(--purple-main);">+1,000 CHUB</div>
-                </div>
-                <!-- لێرەدا فەنکشنە کاتژمێرییەکەت بەستراوەتەوە بە ئایدی تەواو -->
+                <div><div>Join Telegram Channel</div><div style="color:var(--purple-main);">+1,000 CHUB</div></div>
                 <button class="btn-action" id="task1" onclick="completeTask('task1', 1000, 'https://t.me')">Join</button>
             </div>
             <div class="item-card">
-                <div>
-                    <div style="font-weight:bold;">Follow ChubbyX on X</div>
-                    <div style="color:var(--purple-main);">+2,500 CHUB</div>
-                </div>
+                <div><div>Follow ChubbyX on X</div><div style="color:var(--purple-main);">+2,500 CHUB</div></div>
                 <button class="btn-action" id="task2" onclick="completeTask('task2', 2500, 'https://x.com')">Join</button>
             </div>
         </div>
 
-        <!-- Mini-Game Page -->
+        <!-- Mini-Game Page (یارییە نوێیەکە لێرەدایە) -->
         <div id="minigame-page" class="sub-page">
             <div class="page-title">Chubby Catch Game</div>
-            <div style="text-align: center; margin-bottom: 10px;">
-                <button class="btn-action" id="start-game-btn" onclick="startCatchGame()">Start Play</button>
+            <p style="text-align: center; font-size: 14px; opacity: 0.8; margin-top:10px;">سکە زەردەکان دەکەونە خوارەوە! کلیکیان لێ بکە بۆ خاڵی زیاتر!</p>
+            <div style="text-align: center; margin: 15px 0;">
+                <button class="btn-action" id="start-game-btn" onclick="startCatchGame()">Start Play (30s)</button>
             </div>
             <div id="purple-catch-game"></div>
         </div>
 
         <!-- Invite Page -->
         <div id="invite-page" class="sub-page">
-            <div class="page-title">Friends & Invite</div>
-            <div style="text-align: center; margin-top: 30px;">
+            <div class="page-title">Invite Friends</div>
+            <div style="text-align: center; margin-top: 50px;">
                 <button class="btn-action" onclick="copyInviteLink()">Copy Invite Link</button>
             </div>
         </div>
@@ -213,7 +107,7 @@
         <!-- Wallet Page -->
         <div id="wallet-page" class="sub-page">
             <div class="page-title">Connect Wallet</div>
-            <div style="text-align: center; margin-top: 30px;">
+            <div style="text-align: center; margin-top: 50px;">
                 <button class="btn-action" onclick="alert('Connecting TON Wallet...')">Connect Wallet</button>
             </div>
         </div>
@@ -229,15 +123,13 @@
     </div>
 
     <script>
-        // لۆدکردنی خاڵە پارێزراوەکانی پێشوو لە localStorage
+        // لۆدکردنی کۆینی پاشەکەوتکراو لە مۆبایلەکەدا
         let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         let liveEnergy = 500;
         let gameInterval;
 
-        // نیشاندانی خاڵە لۆدبووەکان لە کاتی کردنەوەی پەیج
         document.getElementById('score').innerText = count;
 
-        // پشکنیینی دۆخی تاسکەکان لە کاتی دەستپێکردن
         window.onload = function() {
             checkTaskStatus('task1');
             checkTaskStatus('task2');
@@ -249,7 +141,7 @@
                 liveEnergy -= 1;
                 document.getElementById('score').innerText = count;
                 document.getElementById('live-energy').innerText = liveEnergy;
-                localStorage.setItem('chubby_coins', count); // پاشەکەوتکردنی خاڵەکانی تاپ تاپ
+                localStorage.setItem('chubby_coins', count);
                 createFloatingTextEffect(event);
             }
         }
@@ -264,7 +156,36 @@
             effect.style.fontWeight = 'bold';
             effect.style.fontSize = '26px';
             effect.style.pointerEvents = 'none';
-            effect.style.transition = 'all 0.5s ease-out';
+            effect.style.transition = 'all 0.4s ease-out';
             effect.style.zIndex = '100';
             document.body.appendChild(effect);
             setTimeout(() => { effect.style.transform = 'translateY(-60px)'; effect.style.opacity = '0'; }, 10);
+            setTimeout(() => { effect.remove(); }, 400);
+        }
+
+        function changeTab(pageId, navId) {
+            document.getElementById('game-page').style.display = 'none';
+            document.getElementById('tasks-page').style.display = 'none';
+            document.getElementById('minigame-page').style.display = 'none';
+            document.getElementById('invite-page').style.display = 'none';
+            document.getElementById('wallet-page').style.display = 'none';
+            
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.getElementById(navId).classList.add('active');
+            document.getElementById(pageId).style.display = 'flex';
+            
+            if(pageId !== 'minigame-page') {
+                clearInterval(gameInterval);
+                document.getElementById('purple-catch-game').innerHTML = '';
+                document.getElementById('start-game-btn').disabled = false;
+            }
+        }
+
+        // کۆدەکەی خۆت بۆ تاسکەکان بە ١٥ چرکە چاوەڕوانی لێرەدا ڕێکخراوە
+        function completeTask(taskId, reward, link) {
+            window.open(link, '_blank');
+            let taskButton = document.getElementById(taskId);
+            
+            if (taskButton && taskButton.innerText !== "Completed" && !taskButton.disabled) {
+                let timeLeft = 15; 
+                taskButton.disabled = true;
