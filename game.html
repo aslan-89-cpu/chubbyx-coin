@@ -68,7 +68,8 @@
 </head>
 <body>
     <h2>Chubby Catch Game</h2>
-    <p style="opacity: 0.8; font-size: 14px; margin-bottom: 5px;">Catch the falling golden coins quickly!</p>
+    <!-- لێرەدا نووسینە کوردییەکە گۆڕدرا بۆ ئینگلیزی فەرمی -->
+    <p style="opacity: 0.8; font-size: 14px; margin-bottom: 5px;">Coins are falling! Catch them quickly!</p>
     
     <button class="btn-play" id="start-btn" onclick="startGame()">Start Game (30s)</button>
     
@@ -105,7 +106,7 @@
                     }
                 }, 20);
                 
-                // بەکارهێنانی touchstart بۆ وەڵامدانەوەی خێرا لەسەر ئایفۆن
+                // بەکارهێنانی touchstart بۆ کارکردنی خێرا لەسەر ئایفۆن
                 coin.addEventListener('touchstart', function(e) {
                     e.preventDefault();
                     count += 5; 
