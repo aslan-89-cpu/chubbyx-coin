@@ -11,7 +11,6 @@
             --bg-color: #090314;
         }
         body {
-            /* وێنەی یەکەم وەک پاشبنەما (بوونەوەرە وەنەوشەییەکە) */
             background: var(--bg-color) url('image.png.jpeg') no-repeat center fixed;
             background-size: cover;
             color: white;
@@ -111,7 +110,7 @@
             font-weight: bold;
             font-size: 14px;
         }
-        .btn-action:disabled { background: #444; color: #888; }
+        .btn-action:disabled { background: #555; color: #888; cursor: not-allowed; }
         
         #purple-catch-game {
             position: relative;
@@ -161,11 +160,11 @@
         <div id="game-page">
             <div class="balance-container">
                 <div class="balance-title">ChubbyX Balance</div>
-                <div class="balance-amount" id="global-balance">0</div>
+                <!-- گۆڕینی ئایدی بۆ score بۆ ئەوەی لەگەڵ فەنکشنەکەت یەک بێتەوە -->
+                <div class="balance-amount" id="score">0</div>
             </div>
 
             <div class="coin-wrapper" onclick="handleTapEvent(event)">
-                <!-- وێنەی دووەم وەک سکە زەردەکە بە پیتی بچووک -->
                 <img class="coin-image" src="image_okkb6u.png.jpeg" alt="ChubbyX Coin">
             </div>
 
@@ -182,18 +181,19 @@
                     <div style="font-weight:bold;">Join Telegram Channel</div>
                     <div style="color:var(--purple-main);">+1,000 CHUB</div>
                 </div>
-                <button class="btn-action" id="t-tg" onclick="runTask('t-tg', 1000, 'https://t.me')">Join</button>
+                <!-- لێرەدا فەنکشنە کاتژمێرییەکەت بەستراوەتەوە بە ئایدی تەواو -->
+                <button class="btn-action" id="task1" onclick="completeTask('task1', 1000, 'https://t.me')">Join</button>
             </div>
             <div class="item-card">
                 <div>
                     <div style="font-weight:bold;">Follow ChubbyX on X</div>
                     <div style="color:var(--purple-main);">+2,500 CHUB</div>
                 </div>
-                <button class="btn-action" id="t-x" onclick="runTask('t-x', 2500, 'https://x.com')">Join</button>
+                <button class="btn-action" id="task2" onclick="completeTask('task2', 2500, 'https://x.com')">Join</button>
             </div>
         </div>
 
-        <!-- Mini-Game Page (یاری نوێ لەسەر شێوازی سکە زەردەکان) -->
+        <!-- Mini-Game Page -->
         <div id="minigame-page" class="sub-page">
             <div class="page-title">Chubby Catch Game</div>
             <div style="text-align: center; margin-bottom: 10px;">
@@ -229,16 +229,27 @@
     </div>
 
     <script>
-        let totalCoins = 0;
+        // لۆدکردنی خاڵە پارێزراوەکانی پێشوو لە localStorage
+        let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         let liveEnergy = 500;
         let gameInterval;
 
+        // نیشاندانی خاڵە لۆدبووەکان لە کاتی کردنەوەی پەیج
+        document.getElementById('score').innerText = count;
+
+        // پشکنیینی دۆخی تاسکەکان لە کاتی دەستپێکردن
+        window.onload = function() {
+            checkTaskStatus('task1');
+            checkTaskStatus('task2');
+        };
+
         function handleTapEvent(event) {
             if (liveEnergy > 0) {
-                totalCoins += 1;
+                count += 1;
                 liveEnergy -= 1;
-                document.getElementById('global-balance').innerText = totalCoins;
+                document.getElementById('score').innerText = count;
                 document.getElementById('live-energy').innerText = liveEnergy;
+                localStorage.setItem('chubby_coins', count); // پاشەکەوتکردنی خاڵەکانی تاپ تاپ
                 createFloatingTextEffect(event);
             }
         }
@@ -257,12 +268,3 @@
             effect.style.zIndex = '100';
             document.body.appendChild(effect);
             setTimeout(() => { effect.style.transform = 'translateY(-60px)'; effect.style.opacity = '0'; }, 10);
-            setTimeout(() => { effect.remove(); }, 500);
-        }
-
-        function changeTab(pageId, navId) {
-            document.getElementById('game-page').style.display = 'none';
-            document.getElementById('tasks-page').style.display = 'none';
-            document.getElementById('minigame-page').style.display = 'none';
-            document.getElementById('invite-page').style.display = 'none';
-            document.getElementById('wallet-page').style.display = 'none';
