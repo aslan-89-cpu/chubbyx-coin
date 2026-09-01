@@ -1,140 +1,121 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChubbyX Mini Game</title>
+    <title>Mini Game</title>
     <style>
-        body {
-            background: #090514;
-            color: white;
-            font-family: sans-serif;
+        body { 
+            background: #090314; 
+            color: white; 
+            font-family: sans-serif; 
+            padding: 20px; 
+            text-align: center; 
             margin: 0;
-            padding: 15px;
-            text-align: center;
-            overflow: hidden;
-            user-select: none;
-            touch-action: none;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .game-header {
+        h2 { color: #a48fff; margin-top: 20px; }
+        #zone { 
+            position: relative; 
+            width: 100%; 
+            max-width: 400px;
+            height: 350px; 
+            background: #130a24; 
+            border: 2px dashed #a48fff; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            margin-top: 20px; 
+        }
+        .falling-coin { 
+            position: absolute; 
+            width: 45px; 
+            height: 45px; 
+            background: url('image_okkb6u.png.jpeg') no-repeat center; 
+            background-size: cover; 
+            border-radius: 50%; 
+            cursor: pointer; 
+        }
+        .btn-play { 
+            background: #ff9800; 
+            color: white; 
+            border: none; 
+            padding: 12px 25px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
             font-size: 16px;
-            margin-bottom: 10px;
-            font-weight: bold;
+            margin-top: 10px;
         }
-        .score-color { color: #eab308; }
-        .start-btn {
-            background: #eab308;
-            color: #090514;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 15px;
-            box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3);
-        }
-        .game-area {
-            position: relative;
-            width: 100%;
-            height: 70vh;
-            background: rgba(255, 255, 255, 0.02);
-            border: 2px dashed #7b2cbf;
-            margin-top: 15px;
-            border-radius: 12px;
-            overflow: hidden;
-            display: none;
-        }
-        .target-chubby {
-            position: absolute;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: none;
-            box-shadow: 0 0 15px #7b2cbf;
-            -webkit-tap-highlight-color: transparent;
+        .back-btn { 
+            background: #331a5e; 
+            color: white; 
+            padding: 12px 30px; 
+            border-radius: 10px; 
+            border: 1px solid #a48fff; 
+            margin-top: 30px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
-
-    <div class="game-header">
-        Time: <span id="timer">30</span>s | Score: <span id="score" class="score-color">0</span>
-    </div>
+    <h2>Chubby Catch Game</h2>
+    <p style="opacity: 0.8; font-size: 14px;">سکە زەردەکان دەبارێن! خێرا کلیکیان لێ بکە!</p>
     
-    <button id="startBtn" class="start-btn" onclick="startGame()">Start Catch Game</button>
+    <button class="btn-play" id="start-btn" onclick="startGame()">Start Game (30s)</button>
     
-    <div id="area" class="game-area">
-        <img id="chubby" src="image_okKb6u.png.jpeg" class="target-chubby" onclick="hitChubby()">
-    </div>
+    <div id="zone"></div>
+    
+    <br>
+    <button class="back-btn" onclick="window.location.href='index.html'">Back to Game</button>
 
     <script>
-        var interval, countdown;
-        var timeLeft = 30;
-        var gameScore = 0;
-        var isRunning = false;
-
+        let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+        let gameInterval;
+        
         function startGame() {
-            if (isRunning) return;
-            isRunning = true;
-            timeLeft = 30;
-            gameScore = 0;
+            document.getElementById('start-btn').disabled = true;
+            document.getElementById('start-btn').style.background = '#444';
+            const zone = document.getElementById('zone'); 
+            zone.innerHTML = '';
             
-            document.getElementById('timer').innerText = timeLeft;
-            document.getElementById('score').innerText = gameScore;
-            document.getElementById('startBtn').style.display = 'none';
-            document.getElementById('area').style.display = 'block';
+            gameInterval = setInterval(() => {
+                let coin = document.createElement('div'); 
+                coin.classList.add('falling-coin');
+                coin.style.left = Math.floor(Math.random() * (zone.clientWidth - 45)) + 'px'; 
+                coin.style.top = '0px';
+                zone.appendChild(coin);
+                
+                let top = 0;
+                let fall = setInterval(() => {
+                    if (top > zone.clientHeight - 45) { 
+                        clearInterval(fall); 
+                        coin.remove(); 
+                    } else { 
+                        top += 4; 
+                        coin.style.top = top + 'px'; 
+                    }
+                }, 20);
+                
+                coin.onclick = function() { 
+                    count += 5; 
+                    localStorage.setItem('chubby_coins', count); 
+                    clearInterval(fall); 
+                    coin.remove(); 
+                };
+            }, 700);
             
-            moveChubby();
-            interval = setInterval(moveChubby, 850); // جوڵانی کارەکتەرەکە
-            
-            countdown = setInterval(function() {
-                timeLeft--;
-                document.getElementById('timer').innerText = timeLeft;
-                if (timeLeft <= 0) {
-                    endGame();
-                }
-            }, 1000);
-        }
-
-        function moveChubby() {
-            var area = document.getElementById('area');
-            var target = document.getElementById('chubby');
-            
-            var maxX = area.clientWidth - 70;
-            var maxY = area.clientHeight - 70;
-            
-            var randomX = Math.floor(Math.random() * maxX);
-            var randomY = Math.floor(Math.random() * maxY);
-            
-            target.style.left = randomX + 'px';
-            target.style.top = randomY + 'px';
-            target.style.display = 'block';
-        }
-
-        function hitChubby() {
-            if (!isRunning) return;
-            gameScore += 50; // زیادکردنی ٥٠ کوین بۆ هەر لێدانێک
-            document.getElementById('score').innerText = gameScore;
-            document.getElementById('chubby').style.display = 'none';
-            moveChubby();
-            
-            // ناردنی خاڵەکان بۆ باڵانسی سەرەکی ناو فایلی index.html
-            if (window.parent) {
-                window.parent.postMessage({ type: 'ADD_COINS', amount: 50 }, '*');
-            }
-        }
-
-        function endGame() {
-            clearInterval(interval);
-            clearInterval(countdown);
-            isRunning = false;
-            
-            document.getElementById('chubby').style.display = 'none';
-            document.getElementById('startBtn').style.display = 'inline-block';
-            document.getElementById('startBtn').innerText = "Play Again";
-            
-            alert("Game Over! You earned " + gameScore + " CHUB coins!");
+            setTimeout(() => { 
+                clearInterval(gameInterval); 
+                zone.innerHTML = ''; 
+                document.getElementById('start-btn').disabled = false; 
+                document.getElementById('start-btn').style.background = '#ff9800';
+                alert("یارییەکە کۆتایی هات! خاڵەکانت پاشەکەوت کران."); 
+            }, 30000);
         }
     </script>
 </body>
