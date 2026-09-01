@@ -1,221 +1,265 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChubbyX Coin</title>
+    <title>ChubbyX Coin - Ultimate Mini App</title>
     <style>
-        body { 
-            background: #090514 url('image.png.jpeg') no-repeat center fixed; 
-            background-size: cover; 
-            color: white; 
-            font-family: sans-serif; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden; 
-            user-select: none;
+        :root {
+            --purple-main: #a48fff;
+            --purple-dark: #1c103a;
+            --bg-color: #090314;
         }
-        
-        .header { 
-            margin-top: 30px; 
-            text-align: center; 
-            z-index: 10; 
-        }
-
-        .main-content {
-            flex: 1;
-            width: 100%;
-            position: relative;
+        body {
+            background: var(--bg-color) url('image.png.jpeg') no-repeat center fixed;
+            background-size: cover;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            position: relative;
         }
         
-        /* دانانی سکەکە ڕێک لەسەر ناوەڕاستی زگی کارەکتەرە وەنەوشەیییەکە */
-        .tap-zone { 
-            width: 140px !important; 
-            height: 140px !important; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            background: url('image_okKb6u.png.jpeg') no-repeat center center; 
-            background-size: 155% !important; 
-            box-shadow: 0 0 25px rgba(234, 179, 8, 0.6); 
+        /* Main Tap Screen */
+        #game-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: calc(100% - 70px);
+            justify-content: space-around;
+            padding-bottom: 20px;
+            box-sizing: border-box;
+        }
+        .balance-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .balance-title { font-size: 16px; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; }
+        .balance-amount { font-size: 48px; font-weight: bold; color: white; margin-top: 5px; text-shadow: 0 0 15px var(--purple-main); }
+        
+        .coin-wrapper {
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.08s ease;
+        }
+        .coin-wrapper:active { transform: scale(0.92); }
+        .coin-image {
+            width: 230px;
+            height: 230px;
+            border-radius: 50%;
+            box-shadow: 0 0 35px rgba(164, 143, 255, 0.6);
+            border: 4px solid var(--purple-main);
+        }
+        
+        .energy-wrapper {
+            font-size: 18px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 25px;
+            border-radius: 25px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(164, 143, 255, 0.2);
+        }
+
+        /* Sub Pages styling */
+        .sub-page {
+            display: none;
             position: absolute;
-            top: 38%; /* کەمێک هێنانە خوارەوە لە دەموچاوی بۆ سەر زگی */
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 100;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* پێوەرەکە دەچێتە خوار سکەکە بەبێ داپۆشینی ناوچەی کلیک */
-        .energy-container { 
-            position: absolute;
-            top: 54%; 
-            left: 50%;
-            transform: translateX(-50%);
-            width: 220px; 
-            text-align: center; 
-            z-index: 101; 
-        }
-        .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; }
-        .energy-bar-fill { width: 100%; height: 100%; background: #eab308; }
-        
-        /* دڵنیابوون لە کارکردنی مسۆگەری دوگمەکانی خوارەوە */
-        .nav-bar { 
-            width: 100%; 
-            background: rgba(13, 8, 27, 0.96); 
-            border-top: 2px solid #7b2cbf; 
-            display: flex; 
-            position: fixed; 
-            bottom: 0; 
+            top: 0;
             left: 0;
-            padding: 18px 0; 
-            z-index: 9999 !important; 
+            width: 100%;
+            height: calc(100% - 70px);
+            background: rgba(9, 3, 20, 0.98);
+            z-index: 10;
+            padding: 25px;
+            box-sizing: border-box;
+            flex-direction: column;
+            overflow-y: auto;
         }
-        .nav-item { 
-            font-size: 14px; 
-            color: #9d4edd; 
-            cursor: pointer; 
-            flex: 1; 
-            text-align: center; 
-            font-weight: bold; 
-            z-index: 10000 !important; 
-            -webkit-tap-highlight-color: transparent;
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            color: var(--purple-main);
+            text-shadow: 0 0 10px rgba(164, 143, 255, 0.3);
         }
+        .item-card {
+            background: var(--purple-dark);
+            padding: 18px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #331a5e;
+        }
+        .card-info { display: flex; flex-direction: column; }
+        .card-title { font-weight: bold; font-size: 16px; }
+        .card-reward { font-size: 13px; color: var(--purple-main); margin-top: 4px; font-weight: bold; }
         
-        .page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #090514; padding: 20px; box-sizing: border-box; z-index: 20000 !important; overflow-y: auto; }
-        .page-header { display: flex; justify-content: space-between; border-bottom: 1px solid #7b2cbf; padding-bottom: 10px; }
-        .close-btn { background: #7b2cbf; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+        .btn-action {
+            background: var(--purple-main);
+            color: black;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn-action:disabled { background: #444; color: #888; cursor: not-allowed; }
         
-        .task-list { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .task-item { background: rgba(255, 255, 255, 0.05); border: 1px solid #7b2cbf; border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .task-details h4 { margin: 0; font-size: 15px; }
-        .task-details p { margin: 5px 0 0 0; font-size: 13px; color: #eab308; font-weight: bold; }
-        .task-claim-btn { background: #eab308; color: #090514; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
-        .invite-box { background: rgba(255, 255, 255, 0.05); border: 1px solid #7b2cbf; border-radius: 12px; padding: 15px; margin-top: 20px; text-align: center; }
-        .invite-counter { font-size: 18px; color: #eab308; font-weight: bold; margin: 10px 0; }
-        .invite-btn { background: #eab308; color: #090514; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; margin-top: 10px; }
+        /* --- MINI GAME AREA --- */
+        #purple-catch-game {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: #130a24;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px dashed var(--purple-main);
+            margin-top: 10px;
+        }
+        .falling-obj {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: #a48fff;
+            border: 2px solid white;
+            box-shadow: 0 0 10px var(--purple-main);
+        }
+        .game-score {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        /* Navigation Bar */
+        .navigation-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            justify-content: space-around;
+            background: rgba(20, 10, 35, 0.98);
+            padding: 18px 0;
+            border-top: 1px solid #331a5e;
+            z-index: 5;
+        }
+        .nav-link {
+            color: var(--purple-main);
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .nav-link.active, .nav-link:hover { opacity: 1; color: white; }
     </style>
 </head>
 <body>
-    <div class="header"><div>ChubbyX Balance</div><h1 id="score">0</h1></div>
-    
-    <div class="main-content">
-        <div class="tap-zone" id="tapCoin"></div>
-        <div class="energy-container">
-            <div style="margin-bottom: 5px;"><span id="energyText">500</span>/500</div>
-            <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyFill"></div></div>
-        </div>
-    </div>
-    
-    <div id="tasksPage" class="page">
-        <div class="page-header"><h2>Tasks</h2><button class="close-btn" onclick="showMainGame()">X</button></div>
-        <div class="task-list">
-            <div class="task-item">
-                <div class="task-details"><h4>Join Telegram Channel</h4><p>+5,000 CHUB</p></div>
-                <button class="task-claim-btn" id="task1" onclick="completeTask('task1', 5000, 'https://t.me')">Claim</button>
+
+    <div class="app-container">
+        
+        <!-- شاشەی سەرەکی یارییەکە (Tap Page) -->
+        <div id="game-page">
+            <div class="balance-container">
+                <div class="balance-title">ChubbyX Balance</div>
+                <div class="balance-amount" id="global-balance">0</div>
             </div>
-            <div class="task-item">
-                <div class="task-details"><h4>Follow us on X</h4><p>+3,000 CHUB</p></div>
-                <button class="task-claim-btn" id="task2" onclick="completeTask('task2', 3000, 'https://x.com')">Claim</button>
+
+            <div class="coin-wrapper" onclick="handleTapEvent(event)">
+                <img class="coin-image" src="image_okkB6u.png.jpeg" alt="ChubbyX Coin">
+            </div>
+
+            <div class="energy-wrapper">
+                <span id="live-energy">500</span>/500
             </div>
         </div>
-    </div>
-    
-    <div id="invitePage" class="page">
-        <div class="page-header"><h2>Invite Friends</h2><button class="close-btn" onclick="showMainGame()">X</button></div>
-        <div class="invite-box">
-            <h3>Your Referrals</h3>
-            <div class="invite-counter"><span id="friendCount">0</span> / 10 Invited</div>
-            <button class="invite-btn" onclick="copyInviteLink()">Copy Invite Link</button>
-        </div>
-    </div>
-    
-    <div id="gamesPage" class="page" style="padding: 10px; overflow: hidden;">
-        <div class="page-header"><h2>Chubby Games</h2><button class="close-btn" onclick="showMainGame()">X</button></div>
-        <iframe src="game.html" style="width: 100%; height: 85vh; border: none; margin-top: 10px;"></iframe>
-    </div>
-    
-    <div id="walletPage" class="page"><div class="page-header"><h2>Wallet</h2><button class="close-btn" onclick="showMainGame()">X</button></div><p style="padding-top:20px;">Connect Wallet coming soon!</p></div>
-    
-    <div class="nav-bar">
-        <div class="nav-item" onclick="openPage('tasksPage')">Tasks</div>
-        <div class="nav-item" onclick="openPage('invitePage')">Invite</div>
-        <div class="nav-item" onclick="openPage('gamesPage')">Games</div>
-        <div class="nav-item" onclick="openPage('walletPage')">Wallet</div>
-    </div>
-    
-    <script>
-        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        var invitedFriends = parseInt(localStorage.getItem('chubby_invites')) || 0;
-        var energy = 500;
-        
-        document.getElementById('score').innerText = count;
-        document.getElementById('friendCount').innerText = invitedFriends;
-        
-        window.onload = function() {
-            checkTaskStatus('task1');
-            checkTaskStatus('task2');
-        };
 
-        var tapElement = document.getElementById('tapCoin');
-        
-        function handleTapEvent(e) {
-            if(e) e.preventDefault();
-            if (energy > 0) { 
-                count++; energy--; 
-                document.getElementById('score').innerText = count; 
-                updateUI(); 
-                localStorage.setItem('chubby_coins', count); 
-            }
-        }
-        
-        tapElement.addEventListener('touchstart', handleTapEvent);
-        tapElement.addEventListener('click', handleTapEvent);
-
-        function updateUI() { 
-            document.getElementById('energyText').innerText = energy; 
-            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%'; 
-        }
-        
-        setInterval(function() { 
-            if (energy < 500) { energy += 3; if (energy > 500) energy = 500; updateUI(); } 
-        }, 1000);
-        
-        function openPage(id) { 
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
-            document.getElementById(id).style.display = 'block'; 
-        }
-        function showMainGame() { document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); }
-        
-        function copyInviteLink() {
-            navigator.clipboard.writeText("https://t.me").then(function() {
-                alert("Link copied!");
-            });
-        }
-
-        function completeTask(taskId, reward, link) {
-            window.open(link, '_blank');
-            let taskButton = document.getElementById(taskId);
+        <!-- لاپەڕەی ئەرکەکان (Tasks Page) -->
+        <div id="tasks-page" class="sub-page">
+            <div class="page-title">Tasks</div>
             
-            if (taskButton && taskButton.innerText !== "Completed" && !taskButton.disabled) {
-                let timeLeft = 15; 
-                taskButton.disabled = true; 
-                taskButton.style.backgroundColor = "#555"; 
-                
-                let countdown = setInterval(function() {
-                    timeLeft--;
-                    taskButton.innerText = "Wait " + timeLeft + "s";
-                    
-                    if (timeLeft <= 0) {
-                        clearInterval(countdown);
-                        taskButton.innerText = "Claim " + reward;
-                        taskButton.disabled = false; 
-                        taskButton.style.backgroundColor = "#ff9800"; 
-                        
-                        taskButton.onclick = function() {
-                            count += reward;
+            <div class="item-card">
+                <div class="card-info">
+                    <div class="card-title">Join Telegram Channel</div>
+                    <div class="card-reward">+1,000 CHUB</div>
+                </div>
+                <button class="btn-action" id="t-tg" onclick="runTask('t-tg', 1000, 'https://t.me')">Join</button>
+            </div>
+            
+            <div class="item-card">
+                <div class="card-info">
+                    <div class="card-title">Follow ChubbyX on X</div>
+                    <div class="card-reward">+2,500 CHUB</div>
+                </div>
+                <button class="btn-action" id="t-x" onclick="runTask('t-x', 2500, 'https://x.com')">Join</button>
+            </div>
+        </div>
+
+        <!-- لاپەڕەی زیادکراوی یاری نوێ (Mini-Game Page) -->
+        <div id="minigame-page" class="sub-page">
+            <div class="page-title">Chubby Catch Game</div>
+            <p style="text-align: center; font-size: 14px; opacity: 0.8; margin: 0 0 15px 0;">
+                بوونەوەرە وەنەوشەییەکان دەکەونە خوارەوە! خێرا کلیکیان لێ بکە بۆ کۆکردنەوەی خاڵ!
+            </p>
+            <div class="game-score">Game Coins: <span id="mini-score">0</span></div>
+            <div style="text-align: center; margin-bottom: 10px;">
+                <button class="btn-action" id="start-game-btn" onclick="startCatchGame()">Start Play</button>
+            </div>
+            <div id="purple-catch-game"></div>
+        </div>
+
+        <!-- لاپەڕەی هاوڕێیان (Invite Page) -->
+        <div id="invite-page" class="sub-page">
+            <div class="page-title">Friends & Invite</div>
+            <p style="text-align: center; opacity: 0.8; margin-bottom: 30px;">
+                هاوڕێکانت بانگهێشت بکە و ١٠٪ لە تۆکنەکانی ئەوان وەک دیاری وەرگرە!
+            </p>
+            <div class="item-card" style="justify-content: center; background: transparent; border: none;">
+                <button class="btn-action" style="padding: 15px 35px; font-size: 16px; border-radius: 12px;" onclick="copyInviteLink()">Copy Invite Link</button>
+            </div>
+        </div>
+
+        <!-- لاپەڕەی جزدان (Wallet Page) -->
+        <div id="wallet-page" class="sub-page">
+            <div class="page-title">Connect Wallet</div>
+            <p style="text-align: center; opacity: 0.8; margin-bottom: 35px;">
+                جزدانی فەرمی TON ببەستەوە بۆ ئەوەی لە کاتی دابەشکردنی ئایردرۆپ کۆینەکانت بۆ بنێردرێت.
+            </p>
+            <div class="item-card" style="justify-content: center; background: transparent; border: none;">
+                <button class="btn-action" style="padding: 15px 35px; font-size: 16px; border-radius: 12px;" onclick="alert('Connecting to Telegram TON Space...')">Connect TON Wallet</button>
+            </div>
+        </div>
+
+        <!-- مێنووی جێگیری خوارەوە -->
+        <div class="navigation-bar">
+            <div class="nav-link" id="nav-tasks" onclick="changeTab('tasks-page', 'nav-tasks')">Tasks</div>
+            <div class="nav-link" id="nav-minigame" onclick="changeTab('minigame-page', 'nav-minigame')">Mini-Game</div>
+            <div class="nav-link active" id="nav-game" onclick="changeTab('game-page', 'nav-game')">Games</div>
+            <div class="nav-link" id="nav-invite" onclick="changeTab('invite-page', 'nav-invite')">Invite</div>
+            <div class="nav-link" id="nav-wallet" onclick="changeTab('wallet-page', 'nav-wallet')">Wallet</div>
