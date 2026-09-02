@@ -6,10 +6,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🛠️ Initialize Firebase Admin using Application Default Credentials on Railway
-admin.initializeApp({
-  credential: admin.credential.applicationDefault()
-});
+// Initialize Firebase
+if (admin.apps.length === 0) {
+    admin.initializeApp({
+        credential: admin.credential.applicationDefault()
+    });
+}
 const db = admin.firestore();
 
 // Main home test route
@@ -17,7 +19,7 @@ app.get('/', (req, res) => {
     res.send("ChubbyX Web Server is officially running safely with Firebase! 🚀");
 });
 
-// Helper function to get or create user document in Firestore
+// Helper function to get or create user doc
 async function getUserRef(userId) {
     const uId = String(userId || '0');
     const userRef = db.collection('users').doc(uId);
