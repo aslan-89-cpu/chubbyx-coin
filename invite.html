@@ -2,48 +2,67 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invite Friends</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ChubbyX Invite Friends</title>
     <script src="https://telegram.org"></script>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            background-color: #131a26; 
-            color: #ffffff; 
-            text-align: center; 
-            padding: 20px; 
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #131a26;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
         }
-        .box { 
-            background: #1c2635; 
-            padding: 20px; 
-            border-radius: 12px; 
-            margin-top: 20px; 
+        .invite-container {
+            margin-top: 50px;
         }
-        .btn { 
-            background: #2481cc; 
-            color: white; 
-            border: none; 
-            padding: 12px 24px; 
-            border-radius: 8px; 
-            font-size: 16px; 
-            cursor: pointer; 
-            margin-top: 15px; 
+        .btn {
+            background-color: #9b59b6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
             font-weight: bold;
+            font-size: 16px;
+            margin-top: 20px;
+            width: 80%;
         }
     </style>
 </head>
 <body>
 
-    <h2>Invite Friends</h2>
-    <p>Share your link and earn rewards instantly!</p>
-
-    <div class="box">
-        <p>Total Invites: <span id="inviteCount">0</span></p>
-        <p>Coins Earned: <span id="balance">0</span></p>
+    <div class="invite-container">
+        <h2>Invite Friends</h2>
+        <p>Invite your friends and earn mega rewards!</p>
+        
+        <!-- دوگمەی فەرمی بۆ بانگهێشتکردنی هاوڕێیان -->
+        <button class="btn" onclick="inviteFriend()">Invite a Friend</button>
     </div>
 
-    <button class="btn" onclick="shareInviteLink()">Invite a Friend</button>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-    <script src="invite.js"></script>
+        // ١. چارەسەری کێشەی نەبوونی دوگمەی گەڕانەوە (Back Button)
+        tg.BackButton.show();
+        tg.BackButton.onClick(function() {
+            // بە دروستی دەتگەڕێنێتەوە سەر لاپەڕە سەرەکییەکە
+            window.location.href = "index.html"; 
+            tg.BackButton.hide();
+        });
+
+        // ٢. چارەسەری کێشەی کارنەکردنی بانگهێشت (Invite Logic)
+        function inviteFriend() {
+            // ناوی بۆتەکەی خۆت لێرە لە جیاتی chubbyx_coin_bot بنووسە
+            const botUsername = "chubbyx_coin_bot"; 
+            const inviteLink = https://t.me{botUsername}?start=r_${tg.initDataUnsafe.user?.id || 0};
+            const text = encodeURIComponent("Join ChubbyX Coin and start earning rewards now! 🚀");
+            
+            // ئەم بەستەرە فەرمییەی تێلێگرام لیستی هاوڕێکان بۆ بەکارهێنەر دەکاتەوە بۆ ناردنی لینکەکە
+            tg.openTelegramLink(https://t.me{encodeURIComponent(inviteLink)}&text=${text});
+        }
+    </script>
 </body>
 </html>
