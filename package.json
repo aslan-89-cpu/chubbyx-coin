@@ -1,7 +1,7 @@
 {
-  "name": "chubbyx-backend",
-  "version": "1.0.1",
-  "description": "Backend server for ChubbyX",
+  "name": "chubbyx-coin",
+  "version": "1.0.2",
+  "description": "ChubbyX Backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
