@@ -1,109 +1,220 @@
-const TelegramBot = require('node-telegram-bot-api');
-const express = require('express');
-const cors = require('cors');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
+    <title>ChubbyX Arcade</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #131a26; color: white; text-align: center; margin: 0; padding: 10px; overflow: hidden; }
+        .tab-container { display: flex; justify-content: center; margin-bottom: 15px; gap: 10px; }
+        .tab-btn { background: #1c2635; color: white; border: 2px solid #9b59b6; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { background: #9b59b6; box-shadow: 0 0 10px #9b59b6; }
+        .game-section { display: none; background: #1c2635; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-top: 10px; }
+        .game-section.active { display: block; }
+        
+        /* Spin Wheel Styles */
+        .wheel-container { position: relative; width: 250px; height: 250px; margin: 20px auto; }
+        .wheel { width: 100%; height: 100%; border-radius: 50%; border: 5px solid #9b59b6; transition: transform 4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: conic-gradient(#8e44ad 0deg 60deg, #9b59b6 60deg 120deg, #6c3483 120deg 180deg, #4a235a 180deg 240deg, #af7ac5 240deg 300deg, #2e114d 300deg 360deg); position: relative; }
+        
+        .wheel::after { 
+            content: ""; 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: 50px; 
+            height: 50px; 
+            background-image: url('image.png.jpeg'); 
+            background-size: cover; 
+            background-position: center; 
+            border-radius: 50%; 
+            border: 3px solid #9b59b6; 
+            box-shadow: 0 0 15px #9b59b6; 
+        }
+        
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #9b59b6; z-index: 10; }
+        .btn { background: #9b59b6; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; width: 80%; box-shadow: 0 4px 10px rgba(155, 89, 182, 0.4); }
+        .btn:disabled { background: #7f8c8d; cursor: not-allowed; box-shadow: none; }
 
-// Bot Configuration
-const token = '7479707324:AAF1J41IX5YBZMk1L2RNMPSQUOS8T';
-const bot = new TelegramBot(token, { polling: true });
+        /* Catcher Styles */
+        #gameCanvas { background: #0f141d; border: 2px solid #9b59b6; border-radius: 8px; max-width: 100%; display: block; margin: 10px auto; box-shadow: 0 0 15px rgba(155, 89, 182, 0.2); }
+    </style>
+</head>
+<body>
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+    <h2>ChubbyX Purple Arena</h2>
+    
+    <div class="tab-container">
+        <button id="btn-spin" class="tab-btn active" onclick="switchTab('spin')">🎡 Daily Spin</button>
+        <button id="btn-catcher" class="tab-btn" onclick="switchTab('catcher')">🔮 Coin Catcher</button>
+    </div>
 
-const CHANNEL_ID = '@chubbyx_coin';
-let usersDatabase = {}; 
+    <!-- SECTION 1: DAILY SPIN -->
+    <div id="spinSection" class="game-section active">
+        <h3>ChubbyX Lucky Spin</h3>
+        <p>Spin the purple wheel to win mega rewards!</p>
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <div class="wheel" id="wheel"></div>
+        </div>
+        <button class="btn" id="spinBtn" onclick="startSpin()">Spin Now</button>
+        <p id="spinStatus"></p>
+    </div>
 
-// 1. Start Bot API
-app.post('/api/start-bot', (req, res) => {
-    const { userId, username, refererId } = req.body;
-    if (!userId) return res.status(400).json({ success: false, message: "User ID is required." });
+    <!-- SECTION 2: COIN CATCHER -->
+    <div id="catcherSection" class="game-section">
+        <h3>Purple Coin Catcher</h3>
+        <p>Catch falling ChubbyX Coins! Avoid the bombs!</p>
+        <div style="font-size: 20px; font-weight: bold; margin: 5px;">Score: <span id="catcherScore">0</span></div>
+        <canvas id="gameCanvas" width="320" height="380"></canvas>
+        <button class="btn" id="startCatcherBtn" onclick="startGame()">Start Game</button>
+    </div>
 
-    const uId = String(userId);
-    const refId = refererId ? String(refererId) : null;
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        
+        // فەرمی: پێشاندانی دوگمەی Back لە سەر مۆبایلی بەکارهێنەران
+        tg.BackButton.show();
+        tg.BackButton.onClick(function() {
+            // گەڕانەوە بۆ لاپەڕەی فەرمی پڕۆژەکەت
+            window.location.href = "index.html"; 
+        });
 
-    if (!usersDatabase[uId]) {
-        usersDatabase[uId] = { balance: 1000, inviteCount: 0, referredBy: refId };
+        const userId = tg.initDataUnsafe?.user?.id || 0;
+        const serverUrl = window.location.origin;
 
-        if (refId && usersDatabase[refId]) {
-            if (usersDatabase[refId].inviteCount < 20) {
-                usersDatabase[refId].balance += 3000; 
-                usersDatabase[refId].inviteCount += 1;
-                bot.sendMessage(refId, 🎉 A friend joined! You got +3000 coins.);
+        const coinImg = new Image();
+        coinImg.src = 'image.png.jpeg';
+
+        function switchTab(tab) {
+            document.getElementById('spinSection').style.display = 'none';
+            document.getElementById('catcherSection').style.display = 'none';
+            document.getElementById('btn-spin').classList.remove('active');
+            document.getElementById('btn-catcher').classList.remove('active');
+
+            if(tab === 'spin') {
+                document.getElementById('spinSection').style.display = 'block';
+                document.getElementById('btn-spin').classList.add('active');
             } else {
-                usersDatabase[refId].inviteCount += 1;
+                document.getElementById('catcherSection').style.display = 'block';
+                document.getElementById('btn-catcher').classList.add('active');
+                initCatcher();
             }
         }
-        bot.sendMessage(uId, Welcome to ChubbyX! Start earning now!);
-        return res.json({ success: true, message: "Registered." });
-    }
-    return res.json({ success: true, message: "Exists." });
-});
 
-// 2. Daily Lucky Spin API - Fixed Static Rewards to Prevent Crashes
-app.post('/api/spin', (req, res) => {
-    const { userId } = req.body;
-    const uId = String(userId);
+        async function startSpin() {
+            if (!userId) return alert("Telegram User ID not found.");
+            document.getElementById('spinBtn').disabled = true;
 
-    if (!usersDatabase[uId]) return res.json({ success: false, message: "Register first." });
+            try {
+                const response = await fetch(${serverUrl}/api/spin, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ userId })
+                });
+                const data = await response.json();
 
-    const now = Date.now();
-    const lastSpin = usersDatabase[uId].lastSpinTime || 0;
-    const cooldown = 24 * 60 * 60 * 1000; 
+                if (!data.success) {
+                    document.getElementById('spinStatus').innerText = data.message;
+                    document.getElementById('spinBtn').disabled = false;
+                    return;
+                }
 
-    if (now - lastSpin < cooldown) {
-        const hoursLeft = Math.ceil((cooldown - (now - lastSpin)) / (1000 * 60 * 60));
-        return res.json({ success: false, message: Try again in ${hoursLeft} hours. });
-    }
+                const segmentDegrees = { 500: 30, 1000: 90, 2000: 150, 5000: 210, 100: 270, 250: 330 };
+                const baseDegrees = segmentDegrees[data.reward] || 0;
+                const totalRotation = 1800 + (360 - baseDegrees); 
 
-    // Direct assignment to prevent syntax errors
-    const rewardOptions =;
-    const randomReward = rewardOptions[Math.floor(Math.random() * rewardOptions.length)];
+                const wheel = document.getElementById('wheel');
+                wheel.style.transform = rotate(${totalRotation}deg);
 
-    usersDatabase[uId].balance += randomReward;
-    usersDatabase[uId].lastSpinTime = now;
+                setTimeout(() => {
+                    document.getElementById('spinStatus').innerText = 🎉 Congratulations! You won +${data.reward} coins!;
+                    wheel.style.transition = 'none';
+                    wheel.style.transform = rotate(${360 - baseDegrees}deg);
+                    setTimeout(() => wheel.style.transition = 'transform 4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', 50);
+                }, 4000);
 
-    return res.json({ success: true, reward: randomReward });
-});
-
-// 3. User Stats API
-app.get('/api/user-stats', (req, res) => {
-    const { userId } = req.query;
-    const uId = String(userId);
-    if (usersDatabase[uId]) {
-        return res.json({ success: true, inviteCount: usersDatabase[uId].inviteCount, balance: usersDatabase[uId].balance });
-    }
-    return res.json({ success: true, inviteCount: 0, balance: 0 });
-});
-
-// 4. Save Score API
-app.post('/api/save-score', (req, res) => {
-    const { userId, score } = req.body;
-    const uId = String(userId);
-    if (usersDatabase[uId] && score > 0) {
-        usersDatabase[uId].balance += Number(score);
-        return res.json({ success: true, newBalance: usersDatabase[uId].balance });
-    }
-    return res.json({ success: false, message: "Error." });
-});
-
-// 5. Verify Channel API
-app.post('/api/verify-channel', async (req, res) => {
-    const { userId } = req.body;
-    if (!userId) return res.status(400).json({ success: false, message: "No User ID." });
-
-    try {
-        const chatMember = await bot.getChatMember(CHANNEL_ID, userId);
-        const isMember = ['member', 'administrator', 'creator'].includes(chatMember.status);
-        if (isMember) {
-            const uId = String(userId);
-            if (usersDatabase[uId]) usersDatabase[uId].balance += 5000;
-            return res.json({ success: true, message: "Verified!" });
+            } catch (err) {
+                console.error(err);
+                document.getElementById('spinBtn').disabled = false;
+            }
         }
-        return res.json({ success: false, message: "Not a member." });
-    } catch (error) {
-        return res.json({ success: false, message: "Failed." });
-    }
-});
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(Running on ${PORT}));
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let gameInterval, score, basket, items, isPlaying = false;
+
+        function initCatcher() {
+            basket = { x: 130, y: 350, width: 60, height: 15, speed: 20 };
+            items = [];
+            score = 0;
+            document.getElementById('catcherScore').innerText = score;
+            drawStatic();
+        }
+
+        function drawStatic() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#9b59b6"; 
+            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+        }
+
+        function startGame() {
+            if(isPlaying) return;
+            isPlaying = true;
+            initCatcher();
+            document.getElementById('startCatcherBtn').innerText = "Playing...";
+            document.getElementById('startCatcherBtn').disabled = true;
+
+            canvas.onclick = (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                if(clickX < canvas.width/2) { if(basket.x > 0) basket.x -= basket.speed; }
+                else { if(basket.x < canvas.width - basket.width) basket.x += basket.speed; }
+            };
+
+            gameInterval = setInterval(updateGame, 1000/30);
+        }
+
+        function updateGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if(Math.random() < 0.05) {
+                let isBomb = Math.random() < 0.20; 
+                items.push({ x: Math.random() * (canvas.width - 20), y: 0, speed: 4 + Math.random() * 3, isBomb: isBomb });
+            }
+
+            ctx.fillStyle = "#9b59b6";
+            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+
+            for(let i = items.length - 1; i >= 0; i--) {
+                let item = items[i];
+                item.y += item.speed;
+
+                if (item.isBomb) {
+                    ctx.font = "22px Arial";
+                    ctx.fillText("💣", item.x, item.y);
+                } else {
+                    ctx.drawImage(coinImg, item.x, item.y, 25, 25);
+                }
+
+                if(item.y >= basket.y && item.y <= basket.y + basket.height && item.x >= basket.x - 10 && item.x <= basket.x + basket.width) {
+                    if(item.isBomb) {
+                        endGame();
+                        return;
+                    } else {
+                        score += 10; 
+                        document.getElementById('catcherScore').innerText = score;
+                    }
+                    items.splice(i, 1);
+                    continue;
+                }
+
+                if(item.y > canvas.height) items.splice(i, 1);
+            }
+        }
+
+        async function endGame() {
+            clearInterval(gameInterval);
+            isPlaying = false;
