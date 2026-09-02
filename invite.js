@@ -1,39 +1,28 @@
-// فەرمانێک بۆ خوێندنەوەی ژمارەی ئینڤایتەکان لە سێرڤەرە ئۆنلاینەکە
-async function checkInviteStatus(userId) {
-    try {
-        // فەرمانێک بۆ خوێندنەوەی ژمارەی ئینڤایتەکان لە سێرڤەرە ئۆنلاینەکە
-async function checkInviteStatus(userId) {
-    try {
-        const response = await fetch(`https://railway.app{userId}`);
-        const data = await response.json();
-        
-        console.log("Data received:", data);
-        
-        // ئەگەر نوسینی ژمارەی ئینڤایتەکان لە ناو HTML هەیە، لێرەدا نوێ دەبێتەوە
-        if (document.getElementById("inviteCount")) {
-            document.getElementById("inviteCount").innerText = data.inviteCount;
-        }
-        // ئەگەر نوسینی باڵانسی کۆینەکان لە ناو HTML هەیە، لێرەدا نوێ دەبێتەوە
-        if (document.getElementById("balance")) {
-            document.getElementById("balance").innerText = data.balance;
-        }
-    } catch (error) {
-        console.error("Connection error:", error);
-    }
-}
-        const data = await response.json();
-        
-        console.log("Data received:", data);
-        
-        // ئەگەر نوسینی ژمارەی ئینڤایتەکان لە ناو HTML هەیە، لێرەدا نوێ دەبێتەوە
-        if (document.getElementById("inviteCount")) {
-            document.getElementById("inviteCount").innerText = data.inviteCount;
-        }
-        // ئەگەر نوسینی باڵانسی کۆینەکان لە ناو HTML هەیە، لێرەدا نوێ دەبێتەوە
-        if (document.getElementById("balance")) {
-            document.getElementById("balance").innerText = data.balance;
-        }
-    } catch (error) {
-        console.error("Connection error:", error);
-    }
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invite Friends</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        body { font-family: Sans-Serif; background-color: #131a26; color: #ffffff; text-align: center; padding: 20px; }
+        .box { background: #1c2635; padding: 20px; border-radius: 12px; margin-top: 20px; }
+        .btn { background: #2481cc; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <h2>Invite Friends</h2>
+    <p>Share your link and earn rewards instantly!</p>
+
+    <div class="box">
+        <p>Total Invites: <span id="invite-count">0</span></p>
+        <p>Coins Earned: <span id="earned-coins">0</span></p>
+    </div>
+
+    <button class="btn" onclick="shareInviteLink()">Invite a Friend</button>
+
+    <script src="invite.js"></script>
+</body>
+</html>
