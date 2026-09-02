@@ -15,7 +15,7 @@ app.use(express.json());
 const CHANNEL_ID = '@chubbyx_coin';
 const dbPath = path.join(__dirname, 'database.json');
 
-// Safely read and write user data using local JSON file
+// Safe File-System Database functions
 function readDB() {
     try {
         if (!fs.existsSync(dbPath)) fs.writeFileSync(dbPath, JSON.stringify({}));
@@ -57,18 +57,18 @@ app.post('/api/start-bot', (req, res) => {
         }
         writeDB(usersDatabase);
         bot.sendMessage(uId, "Welcome to ChubbyX! Start earning now!");
-        return res.json({ success: true, message: "Registered successfully." });
+        return res.json({ success: true, message: "Registered." });
     }
-    return res.json({ success: true, message: "User already exists." });
+    return res.json({ success: true, message: "Exists." });
 });
 
-// 2. Daily Lucky Spin API - Stripped from any array format to prevent compile failure
+// 2. Daily Lucky Spin API - Stripped from arrays to guarantee NO syntax errors
 app.post('/api/spin', (req, res) => {
     const { userId } = req.body;
     const uId = String(userId);
     let usersDatabase = readDB();
 
-    if (!usersDatabase[uId]) return res.json({ success: false, message: "Please register first." });
+    if (!usersDatabase[uId]) return res.json({ success: false, message: "Register first." });
 
     const now = Date.now();
     const lastSpin = usersDatabase[uId].lastSpinTime || 0;
@@ -76,12 +76,11 @@ app.post('/api/spin', (req, res) => {
 
     if (now - lastSpin < cooldown) {
         const hoursLeft = Math.ceil((cooldown - (now - lastSpin)) / (1000 * 60 * 60));
-        return res.json({ success: false, message: Come back later! Spin available in ${hoursLeft} hours. });
+        return res.json({ success: false, message: Try again in ${hoursLeft} hours. });
     }
 
-    // Mathematical random multiplier between 500 to 5000 to entirely bypass syntax errors
-    const randomMultiplier = Math.floor(Math.random() * 5) + 1; 
-    const finalReward = randomMultiplier * 1000; 
+    // Direct mathematical random prize logic between 500 and 2500 coins safely
+    const finalReward = (Math.floor(Math.random() * 5) + 1) * 500;
 
     usersDatabase[uId].balance += finalReward;
     usersDatabase[uId].lastSpinTime = now;
@@ -113,7 +112,7 @@ app.post('/api/save-score', (req, res) => {
         writeDB(usersDatabase);
         return res.json({ success: true, newBalance: usersDatabase[uId].balance });
     }
-    return res.json({ success: false, message: "Failed to update balance." });
+    return res.json({ success: false, message: "Error." });
 });
 
 // 5. Verify Channel API
@@ -132,11 +131,11 @@ app.post('/api/verify-channel', async (req, res) => {
                 usersDatabase[uId].balance += 5000;
                 writeDB(usersDatabase);
             }
-            return res.json({ success: true, message: "Task completed! Reward granted." });
+            return res.json({ success: true, message: "Verified!" });
         }
-        return res.json({ success: false, message: "You must join the channel first." });
+        return res.json({ success: false, message: "Not a member." });
     } catch (error) {
-        return res.json({ success: false, message: "Verification failed." });
+        return res.json({ success: false, message: "Failed." });
     }
 });
 
