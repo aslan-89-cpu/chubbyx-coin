@@ -24,25 +24,19 @@ app.post('/api/start-bot', (req, res) => {
     const uId = String(userId);
     const refId = refererId ? String(refererId) : null;
 
-    // Check if this is a completely NEW user joining for the first time
     if (!usersDatabase[uId]) {
         usersDatabase[uId] = {
-            balance: 1000, // New user gets 1000 coins for successfully entering
+            balance: 1000, // New user gets 1000 coins
             inviteCount: 0,
             referredBy: refId
         };
 
-        // ONLY reward the inviter if the new user successfully entered the app
         if (refId && usersDatabase[refId]) {
-            // Check if inviter has less than 20 invites
             if (usersDatabase[refId].inviteCount < 20) {
-                usersDatabase[refId].balance += 3000; // Inviter gets 3000 coins now
+                usersDatabase[refId].balance += 3000; // Inviter gets 3000 coins
                 usersDatabase[refId].inviteCount += 1;
-                
-                // Send alert to inviter that their friend successfully joined
                 bot.sendMessage(refId, 🎉 A friend successfully joined using your link! You received +3000 coins.);
             } else {
-                // If they have 20+ invites, just increment the count but don't give coins
                 usersDatabase[refId].inviteCount += 1;
             }
         }
@@ -51,7 +45,6 @@ app.post('/api/start-bot', (req, res) => {
         return res.json({ success: true, message: "New user entered. Rewards processed successfully." });
     }
 
-    // If the user already exists, no rewards are given again
     return res.json({ success: true, message: "User already registered." });
 });
 
@@ -66,7 +59,7 @@ app.post('/api/spin', (req, res) => {
 
     const now = Date.now();
     const lastSpin = usersDatabase[uId].lastSpinTime || 0;
-    const cooldown = 24 * 60 * 60 * 1000; // 24 Hours in milliseconds
+    const cooldown = 24 * 60 * 60 * 1000; // 24 Hours
 
     if (now - lastSpin < cooldown) {
         const timeLeft = cooldown - (now - lastSpin);
@@ -74,11 +67,10 @@ app.post('/api/spin', (req, res) => {
         return res.json({ success: false, message: Come back later! You can spin again in ${hoursLeft} hours. });
     }
 
-    // List of rewards to randomly choose from
+    // Fixed rewards list
     const rewards =;
     const finalReward = rewards[Math.floor(Math.random() * rewards.length)];
 
-    // Update database profiles
     usersDatabase[uId].balance += finalReward;
     usersDatabase[uId].lastSpinTime = now;
 
