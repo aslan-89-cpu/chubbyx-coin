@@ -39,7 +39,7 @@ app.post('/api/start-bot', (req, res) => {
     return res.json({ success: true, message: "Exists." });
 });
 
-// 2. Daily Lucky Spin API
+// 2. Daily Lucky Spin API - Fixed Static Rewards to Prevent Crashes
 app.post('/api/spin', (req, res) => {
     const { userId } = req.body;
     const uId = String(userId);
@@ -55,8 +55,9 @@ app.post('/api/spin', (req, res) => {
         return res.json({ success: false, message: Try again in ${hoursLeft} hours. });
     }
 
-    const rewardList =;
-    const randomReward = rewardList[Math.floor(Math.random() * rewardList.length)];
+    // Direct assignment to prevent syntax errors
+    const rewardOptions =;
+    const randomReward = rewardOptions[Math.floor(Math.random() * rewardOptions.length)];
 
     usersDatabase[uId].balance += randomReward;
     usersDatabase[uId].lastSpinTime = now;
