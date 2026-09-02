@@ -5,15 +5,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Fake database structure to keep frontend working smoothly
+// database memory structure 
 let usersDatabase = {};
 
-// Test route to see if online
+// Main home test route
 app.get('/', (req, res) => {
-    res.send("ChubbyX Safe Server is completely Online! 🚀");
+    res.send("ChubbyX Web Server is officially running safely! 🚀");
 });
 
-// 1. User Stats API
+// 1. User Stats Route
 app.get('/api/user-stats', (req, res) => {
     const { userId } = req.query;
     const uId = String(userId || '0');
@@ -29,20 +29,20 @@ app.get('/api/user-stats', (req, res) => {
     });
 });
 
-// 2. Daily Lucky Spin API
+// 2. Daily Lucky Spin Route - Pure numbers to prevent any bracket errors
 app.post('/api/spin', (req, res) => {
     const { userId } = req.body;
     const uId = String(userId || '0');
     
     if (!usersDatabase[uId]) usersDatabase[uId] = { balance: 1000, inviteCount: 0 };
     
-    const finalReward = 1000;
-    usersDatabase[uId].balance += finalReward;
+    const calculatedReward = 1000; 
+    usersDatabase[uId].balance += calculatedReward;
     
-    res.json({ success: true, reward: finalReward });
+    res.json({ success: true, reward: calculatedReward });
 });
 
-// 3. Save Score API
+// 3. Save Score Route
 app.post('/api/save-score', (req, res) => {
     const { userId, score } = req.body;
     const uId = String(userId || '0');
@@ -54,15 +54,15 @@ app.post('/api/save-score', (req, res) => {
     res.json({ success: true, newBalance: usersDatabase[uId].balance });
 });
 
-// 4. Start Bot API
+// 4. Start Bot Endpoint
 app.post('/api/start-bot', (req, res) => {
     res.json({ success: true, message: "Registered." });
 });
 
-// 5. Verify Channel API
+// 5. Verify Channel Endpoint
 app.post('/api/verify-channel', (req, res) => {
     res.json({ success: true, message: "Verified!" });
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(Server strictly active on port ${PORT}));
+app.listen(PORT, () => console.log(Server running safely on port ${PORT}));
