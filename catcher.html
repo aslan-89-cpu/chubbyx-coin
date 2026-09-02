@@ -16,7 +16,18 @@
             overflow: hidden;
         }
         .catcher-container {
-            margin-top: 50px;
+            margin-top: 20px;
+        }
+        canvas {
+            background-color: #1c2635;
+            display: block;
+            margin: 20px auto;
+            border-radius: 10px;
+            border: 2px solid #9b59b6;
+        }
+        .score-board {
+            font-size: 20px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -24,7 +35,8 @@
 
     <div class="catcher-container">
         <h2>Coin Catcher Game</h2>
-        <!-- Insert your HTML code for the catcher game here -->
+        <div class="score-board">Score: <span id="score">0</span></div>
+        <canvas id="gameCanvas" width="320" height="400"></canvas>
     </div>
 
     <script>
@@ -34,12 +46,69 @@
         // Enable the official Telegram Back Button
         tg.BackButton.show();
         tg.BackButton.onClick(function() {
-            // Smoothly routes back to the main game layout (game.html)
-            window.location.href = "game.html"; 
+            window.location.href = "index.html"; 
             tg.BackButton.hide();
         });
 
-        // Insert your JavaScript gameplay logic here
+        // Basic Catcher Game Logic
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let score = 0;
+        let basket = { x: 135, y: 360, width: 50, height: 20, speed: 15 };
+        let coins = [];
+
+        function spawnCoin() {
+            coins.push({ x: Math.random() * (canvas.width - 20), y: 0, radius: 10, speed: 3 });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Basket
+            ctx.fillStyle = '#9b59b6';
+            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+
+            // Draw & Update Coins
+            ctx.fillStyle = '#f1c40f';
+            for (let i = coins.length - 1; i >= 0; i--) {
+                let c = coins[i];
+                c.y += c.speed;
+
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Collision detection
+                if (c.y + c.radius >= basket.y && c.x >= basket.x && c.x <= basket.x + basket.width) {
+                    score += 10;
+                    document.getElementById('score').innerText = score;
+                    coins.splice(i, 1);
+                    continue;
+                }
+
+                // Remove out of bounds coins
+                if (c.y > canvas.height) {
+                    coins.splice(i, 1);
+                }
+            }
+        }
+
+        function gameLoop() {
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Control basket with touch/click
+        canvas.addEventListener('touchmove', (e) => {
+            let touch = e.touches[0];
+            let rect = canvas.getBoundingClientRect();
+            let touchX = touch.clientX - rect.left;
+            basket.x = Math.max(0, Math.min(canvas.width - basket.width, touchX - basket.width / 2));
+        });
+
+        setInterval(spawnCoin, 1500);
+        gameLoop();
     </script>
 </body>
 </html>
