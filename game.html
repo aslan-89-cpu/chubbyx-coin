@@ -17,7 +17,6 @@
         .wheel-container { position: relative; width: 250px; height: 250px; margin: 20px auto; }
         .wheel { width: 100%; height: 100%; border-radius: 50%; border: 5px solid #9b59b6; transition: transform 4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: conic-gradient(#8e44ad 0deg 60deg, #9b59b6 60deg 120deg, #6c3483 120deg 180deg, #4a235a 180deg 240deg, #af7ac5 240deg 300deg, #2e114d 300deg 360deg); position: relative; }
         
-        /* Centered custom image inside the Spin Wheel */
         .wheel::after { 
             content: ""; 
             position: absolute; 
@@ -75,25 +74,33 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        
+        // فەرمانی چالاککردنی دوگمەی گەڕانەوەی فەرمی تێلیگرام
+        tg.BackButton.show();
+        
+        // کاتێک بەکارهێنەر کلیک لەسەر دوگمەی گەڕانەوە دەکات، ناچار دەبێت بڕواتە سەر پەڕەی سەرەکی
+        tg.BackButton.onClick(function() {
+            // گۆڕینی ناونیشان بۆ پەڕەی سەرەکی پرۆژەکەت (index.html یان هر ناوێکی تر)
+            window.location.href = "index.html"; 
+        });
+
         const userId = tg.initDataUnsafe?.user?.id || 0;
+        const serverUrl = window.location.origin;
 
-        const serverUrl = "https://railway.app";
-
-        // Preload custom coin image for canvas drawing
         const coinImg = new Image();
         coinImg.src = 'image.png.jpeg';
 
         function switchTab(tab) {
-            document.getElementById('spinSection').classList.remove('active');
-            document.getElementById('catcherSection').classList.remove('active');
+            document.getElementById('spinSection').style.display = 'none';
+            document.getElementById('catcherSection').style.display = 'none';
             document.getElementById('btn-spin').classList.remove('active');
             document.getElementById('btn-catcher').classList.remove('active');
 
             if(tab === 'spin') {
-                document.getElementById('spinSection').classList.add('active');
+                document.getElementById('spinSection').style.display = 'block';
                 document.getElementById('btn-spin').classList.add('active');
             } else {
-                document.getElementById('catcherSection').classList.add('active');
+                document.getElementById('catcherSection').style.display = 'block';
                 document.getElementById('btn-catcher').classList.add('active');
                 initCatcher();
             }
@@ -191,7 +198,6 @@
                     ctx.font = "22px Arial";
                     ctx.fillText("💣", item.x, item.y);
                 } else {
-                    // Draw your custom purple image file instead of an emoji emoji
                     ctx.drawImage(coinImg, item.x, item.y, 25, 25);
                 }
 
@@ -212,6 +218,3 @@
         }
 
         async function endGame() {
-            clearInterval(gameInterval);
-            isPlaying = false;
-            document.getElementById('startCatcherBtn').innerText = "Game Over! Save & Restart";
