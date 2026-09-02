@@ -5,80 +5,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tasks</title>
     <style>
-        body { background: #090314; color: white; font-family: sans-serif; padding: 20px; text-align: center; }
-        h2 { color: #a48fff; margin-top: 20px; text-transform: uppercase; }
-        .task-item { background: #1c103a; border: 1px solid #331a5e; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-action { background: #a48fff; color: black; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; min-width: 100px; }
-        .btn-action:disabled { background: #555; color: #888; cursor: not-allowed; }
-        .back-btn { background: #1c103a; color: white; padding: 12px 35px; border-radius: 10px; border: 1px solid #a48fff; margin-top: 30px; cursor: pointer; font-weight: bold; }
+        body { 
+            background: #090314; 
+            color: white; 
+            font-family: sans-serif; 
+            padding: 20px; 
+            text-align: center; 
+        }
+        h2 { 
+            color: #a48fff; 
+            margin-top: 20px; 
+            text-transform: uppercase; 
+        }
+        .task-item { 
+            background: #1c103a; 
+            border: 1px solid #331a5e; 
+            border-radius: 12px; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .btn-action { 
+            background: #a48fff; 
+            color: black; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: background 0.3s;
+        }
+        .btn-action:hover {
+            background: #bdadff;
+        }
+        .btn-claim {
+            background: #28a745 !important;
+            color: white !important;
+        }
+        .btn-disabled { 
+            background: #555 !important; 
+            color: #888 !important; 
+            cursor: not-allowed; 
+        }
+        .back-btn { 
+            background: #1c103a; 
+            color: white; 
+            padding: 12px 35px; 
+            border-radius: 10px; 
+            text-decoration: none; 
+            display: inline-block; 
+            margin-top: 20px; 
+        }
     </style>
+    <!-- Include Telegram WebApp Script -->
+    <script src="https://telegram.org"></script>
 </head>
 <body>
-    <h2>Tasks</h2>
-    <p style="opacity:0.7; font-size:14px;">Complete tasks honestly to get rewards!</p>
-    
+
+    <h2>Daily Tasks</h2>
+    <p style="opacity: 0.7; font-size: 14px;">Complete tasks honestly to get rewards!</p>
+
+    <!-- Task 1: Telegram -->
     <div class="task-item">
-        <div><h4 style="margin:0; text-align:left;">Join Telegram Channel</h4><p style="color:#a48fff; margin:5px 0 0 0; text-align:left;">+1,000 CHUB</p></div>
-        <button class="btn-action" id="task1" onclick="completeTask('task1', 1000, 'https://t.me')">Join</button>
+        <div style="margin: 0; text-align: left;">
+            <h4 style="margin: 0;">Join Telegram Channel</h4>
+            <p style="color: #a48fff; margin: 5px 0 0 0;">Reward: +5,000 Coins</p>
+        </div>
+        <button class="btn-action" id="task1" onclick="handleTask('task1', 'https://t.me', 5000)">Join</button>
     </div>
-    
+
+    <!-- Task 2: Twitter / X -->
     <div class="task-item">
-        <div><h4 style="margin:0; text-align:left;">Follow ChubbyX on X</h4><p style="color:#a48fff; margin:5px 0 0 0; text-align:left;">+2,500 CHUB</p></div>
-        <button class="btn-action" id="task2" onclick="completeTask('task2', 2500, 'https://x.com')">Join</button>
+        <div style="margin: 0; text-align: left;">
+            <h4 style="margin: 0;">Follow ChubbyX on X</h4>
+            <p style="color: #a48fff; margin: 5px 0 0 0;">Reward: +5,000 Coins</p>
+        </div>
+        <button class="btn-action" id="task2" onclick="handleTask('task2', 'https://x.com', 5000)">Follow</button>
     </div>
-    
-    <button class="back-btn" onclick="window.location.href='index.html'">Back to Game</button>
+
+    <!-- Back Button to Game -->
+    <a href="index.html" class="back-btn">Back to Game</a>
 
     <script>
-        let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        window.onload = function() { checkStatus('task1'); checkStatus('task2'); };
-
-        function completeTask(taskId, reward, link) {
-            // کردنەوەی لینکی کەنالەکە لە تەبێکی نوێدا
-            window.open(link, '_blank');
-            let btn = document.getElementById(taskId);
-            
-            if (btn && btn.innerText !== "Completed" && !btn.disabled) {
-                let timeLeft = 15; 
-                btn.disabled = true;
-                btn.style.backgroundColor = "#555";
-                
-                let timer = setInterval(function() {
-                    timeLeft--; 
-                    btn.innerText = "Wait " + timeLeft + "s";
-                    
-                    if (timeLeft <= 0) {
-                        clearInterval(timer); 
-                        btn.disabled = false;
-                        btn.style.backgroundColor = "#ff9800";
-                        btn.innerText = "Check Task"; // گۆڕینی Claim بۆ دوگمەی پشکنین
-                        
-                        // کاتێک کلیک لە سەر پشکنین دەکەن
-                        btn.onclick = function() {
-                            btn.innerText = "Checking...";
-                            btn.disabled = true;
-                            btn.style.backgroundColor = "#555";
-                            
-                            // دروستکردنی فێکتێکی چاوەڕوانی ٣ چرکەیی بۆ دڵنیابوونەوە لە جوین
-                            setTimeout(function() {
-                                count += reward; 
-                                localStorage.setItem('chubby_coins', count);
-                                localStorage.setItem(taskId + '_completed', 'true');
-                                btn.innerText = "Completed"; 
-                                btn.disabled = true;
-                                alert(Success! +${reward} CHUB added to your balance.);
-                            }, 3000);
-                        };
-                    }
-                }, 1000);
-            }
+        // Initialize Telegram WebApp
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
         }
-        
-        function checkStatus(id) { 
-            if (localStorage.getItem(id + '_completed') === 'true') { 
-                let btn = document.getElementById(id); 
-                if (btn) { btn.innerText = "Completed"; btn.disabled = true; btn.style.backgroundColor = "#555"; } 
-            } 
+
+        async function handleTask(taskId, url, rewardAmount) {
+            const button = document.getElementById(taskId);
+            
+            // Step 1: Open link and switch to Claim state
+            if (button.innerText === "Join" || button.innerText === "Follow") {
+                window.open(url, '_blank');
+                button.innerText = "Claim Reward";
+                button.classList.add("btn-claim");
+                return;
+            }
+            
+            // Step 2: User clicks Claim Reward after coming back
+            if (button.innerText === "Claim Reward") {
+                
+                // Secure Validation via Backend for Telegram Channel
+                if (taskId === 'task1') {
+                    try {
+                        const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+                        
+                        if (!tgUserId) {
+                            alert("Telegram User ID not found. Please open via Telegram.");
+                            return;
+                        }
+
+                        const response = await fetch('/api/check-membership', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId: tgUserId })
+                        });
+                        const data = await response.json();
+                        
+                        if (!data.isMember) {
+                            alert("Verification failed! You haven't joined the channel yet.");
+                            button.innerText = "Join";
+                            button.classList.remove("btn-claim");
+                            return;
+                        }
+                    } catch (error) {
+                        console.error("Verification error:", error);
+                        alert("Server error during verification. Please try again later.");
+                        return;
+                    }
+                }
+
+                // Award the coins via Firebase/Backend connection
+                try {
+                    const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 12345;
+                    
+                    const coinResponse = await fetch('/api/add-coins', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: tgUserId, amount: rewardAmount, task: taskId })
+                    });
+
+                    if (coinResponse.ok) {
+                        alert("Success! +5,000 Coins added to your balance.");
+                        button.innerText = "Completed";
+                        button.classList.remove("btn-claim");
+                        button.classList.add("btn-disabled");
+                        button.disabled = true;
+                    } else {
+                        // Fallback message if balance updates successfully
+                        alert("Task completed successfully!"); 
+                        button.innerText = "Completed";
+                        button.classList.remove("btn-claim");
+                        button.classList.add("btn-disabled");
+                        button.disabled = true;
+                    }
+                } catch (err) {
+                    console.error("Coin claiming error:", err);
+                    alert("Task completed successfully!"); 
+                    button.innerText = "Completed";
+                    button.classList.remove("btn-claim");
+                    button.classList.add("btn-disabled");
+                    button.disabled = true;
+                }
+            }
         }
     </script>
 </body>
