@@ -55,8 +55,8 @@ app.post('/api/spin', (req, res) => {
         return res.json({ success: false, message: Try again in ${hoursLeft} hours. });
     }
 
-    // Direct numbers to prevent syntax errors
-    const randomReward = [100, 250, 500, 1000, 2000, 5000][Math.floor(Math.random() * 6)];
+    const rewardList =;
+    const randomReward = rewardList[Math.floor(Math.random() * rewardList.length)];
 
     usersDatabase[uId].balance += randomReward;
     usersDatabase[uId].lastSpinTime = now;
