@@ -1,6 +1,9 @@
 {
   "name": "chubbyx-coin",
   "version": "1.0.5",
+  "engines": {
+    "node": "20.x"
+  },
   "description": "ChubbyX Safe Backend",
   "main": "server.js",
   "scripts": {
