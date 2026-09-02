@@ -1,6 +1,8 @@
 const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
 // Bot Configuration
 const token = '7479707324:AAF1J41IX5YBZMk1L2RNMPSQUOS8T';
@@ -11,15 +13,36 @@ app.use(cors());
 app.use(express.json());
 
 const CHANNEL_ID = '@chubbyx_coin';
-let usersDatabase = {}; 
+const dbPath = path.join(__dirname, 'database.json');
+
+// Helper functions to safely read and write database to file system
+function readDB() {
+    try {
+        if (!fs.existsSync(dbPath)) fs.writeFileSync(dbPath, JSON.stringify({}));
+        const data = fs.readFileSync(dbPath, 'utf8');
+        return JSON.parse(data || '{}');
+    } catch (e) {
+        console.error("Database read error, recovering...", e);
+        return {};
+    }
+}
+
+function writeDB(data) {
+    try {
+        fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+    } catch (e) {
+        console.error("Database write error:", e);
+    }
+}
 
 // 1. Start Bot API
 app.post('/api/start-bot', (req, res) => {
     const { userId, username, refererId } = req.body;
-    if (!userId) return res.status(400).json({ success: false, message: "User ID is required." });
+    if (!userId) return res.status(400).json({ success: false, message: "No User ID" });
 
     const uId = String(userId);
     const refId = refererId ? String(refererId) : null;
+    let usersDatabase = readDB();
 
     if (!usersDatabase[uId]) {
         usersDatabase[uId] = { balance: 1000, inviteCount: 0, referredBy: refId };
@@ -28,21 +51,23 @@ app.post('/api/start-bot', (req, res) => {
             if (usersDatabase[refId].inviteCount < 20) {
                 usersDatabase[refId].balance += 3000; 
                 usersDatabase[refId].inviteCount += 1;
-                bot.sendMessage(refId, 🎉 A friend joined! You got +3000 coins.);
+                bot.sendMessage(refId, "🎉 A friend joined! You got +3000 coins.");
             } else {
                 usersDatabase[refId].inviteCount += 1;
             }
         }
-        bot.sendMessage(uId, Welcome to ChubbyX! Start earning now!);
+        writeDB(usersDatabase);
+        bot.sendMessage(uId, "Welcome to ChubbyX! Start earning now!");
         return res.json({ success: true, message: "Registered." });
     }
     return res.json({ success: true, message: "Exists." });
 });
 
-// 2. Daily Lucky Spin API - Fixed Static Number to Avoid Errors
+// 2. Daily Lucky Spin API
 app.post('/api/spin', (req, res) => {
     const { userId } = req.body;
     const uId = String(userId);
+    let usersDatabase = readDB();
 
     if (!usersDatabase[uId]) return res.json({ success: false, message: "Register first." });
 
@@ -55,19 +80,20 @@ app.post('/api/spin', (req, res) => {
         return res.json({ success: false, message: Try again in ${hoursLeft} hours. });
     }
 
-    // Direct reward amount to prevent syntax crashes
-    const randomReward = 1000;
-
-    usersDatabase[uId].balance += randomReward;
+    const fixedReward = 1000;
+    usersDatabase[uId].balance += fixedReward;
     usersDatabase[uId].lastSpinTime = now;
+    writeDB(usersDatabase);
 
-    return res.json({ success: true, reward: randomReward });
+    return res.json({ success: true, reward: fixedReward });
 });
 
 // 3. User Stats API
 app.get('/api/user-stats', (req, res) => {
     const { userId } = req.query;
     const uId = String(userId);
+    let usersDatabase = readDB();
+
     if (usersDatabase[uId]) {
         return res.json({ success: true, inviteCount: usersDatabase[uId].inviteCount, balance: usersDatabase[uId].balance });
     }
@@ -78,8 +104,11 @@ app.get('/api/user-stats', (req, res) => {
 app.post('/api/save-score', (req, res) => {
     const { userId, score } = req.body;
     const uId = String(userId);
+    let usersDatabase = readDB();
+
     if (usersDatabase[uId] && score > 0) {
         usersDatabase[uId].balance += Number(score);
+        writeDB(usersDatabase);
         return res.json({ success: true, newBalance: usersDatabase[uId].balance });
     }
     return res.json({ success: false, message: "Error." });
@@ -95,7 +124,11 @@ app.post('/api/verify-channel', async (req, res) => {
         const isMember = ['member', 'administrator', 'creator'].includes(chatMember.status);
         if (isMember) {
             const uId = String(userId);
-            if (usersDatabase[uId]) usersDatabase[uId].balance += 5000;
+            let usersDatabase = readDB();
+            if (usersDatabase[uId]) {
+                usersDatabase[uId].balance += 5000;
+                writeDB(usersDatabase);
+            }
             return res.json({ success: true, message: "Verified!" });
         }
         return res.json({ success: false, message: "Not a member." });
@@ -105,4 +138,4 @@ app.post('/api/verify-channel', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(Running on ${PORT}));
+app.listen(PORT, () => console.log("Server running safely."));
