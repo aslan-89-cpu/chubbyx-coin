@@ -26,14 +26,14 @@ app.post('/api/start-bot', (req, res) => {
 
     if (!usersDatabase[uId]) {
         usersDatabase[uId] = {
-            balance: 1000, // New user gets 1000 coins
+            balance: 1000, 
             inviteCount: 0,
             referredBy: refId
         };
 
         if (refId && usersDatabase[refId]) {
             if (usersDatabase[refId].inviteCount < 20) {
-                usersDatabase[refId].balance += 3000; // Inviter gets 3000 coins
+                usersDatabase[refId].balance += 3000; 
                 usersDatabase[refId].inviteCount += 1;
                 bot.sendMessage(refId, 🎉 A friend successfully joined using your link! You received +3000 coins.);
             } else {
@@ -59,7 +59,7 @@ app.post('/api/spin', (req, res) => {
 
     const now = Date.now();
     const lastSpin = usersDatabase[uId].lastSpinTime || 0;
-    const cooldown = 24 * 60 * 60 * 1000; // 24 Hours
+    const cooldown = 24 * 60 * 60 * 1000; 
 
     if (now - lastSpin < cooldown) {
         const timeLeft = cooldown - (now - lastSpin);
@@ -67,7 +67,7 @@ app.post('/api/spin', (req, res) => {
         return res.json({ success: false, message: Come back later! You can spin again in ${hoursLeft} hours. });
     }
 
-    // Fixed rewards list
+    // Fixed rewards list - explicitly defined numbers
     const rewards =;
     const finalReward = rewards[Math.floor(Math.random() * rewards.length)];
 
