@@ -55,7 +55,37 @@ app.post('/api/start-bot', (req, res) => {
     return res.json({ success: true, message: "User already registered." });
 });
 
-// 2. Endpoint to fetch invite stats for invite.js
+// 2. Endpoint for Daily Lucky Spin (24 Hours Restriction)
+app.post('/api/spin', (req, res) => {
+    const { userId } = req.body;
+    const uId = String(userId);
+
+    if (!usersDatabase[uId]) {
+        return res.json({ success: false, message: "Please register via Home first." });
+    }
+
+    const now = Date.now();
+    const lastSpin = usersDatabase[uId].lastSpinTime || 0;
+    const cooldown = 24 * 60 * 60 * 1000; // 24 Hours in milliseconds
+
+    if (now - lastSpin < cooldown) {
+        const timeLeft = cooldown - (now - lastSpin);
+        const hoursLeft = Math.ceil(timeLeft / (1000 * 60 * 60));
+        return res.json({ success: false, message: Come back later! You can spin again in ${hoursLeft} hours. });
+    }
+
+    // List of rewards to randomly choose from
+    const rewards =;
+    const finalReward = rewards[Math.floor(Math.random() * rewards.length)];
+
+    // Update database profiles
+    usersDatabase[uId].balance += finalReward;
+    usersDatabase[uId].lastSpinTime = now;
+
+    return res.json({ success: true, reward: finalReward });
+});
+
+// 3. Endpoint to fetch invite stats for invite.js
 app.get('/api/user-stats', (req, res) => {
     const { userId } = req.query;
     const uId = String(userId);
@@ -71,7 +101,19 @@ app.get('/api/user-stats', (req, res) => {
     }
 });
 
-// 3. Verify Channel Join API
+// 4. Endpoint to save Coin Catcher game scores
+app.post('/api/save-score', (req, res) => {
+    const { userId, score } = req.body;
+    const uId = String(userId);
+
+    if (usersDatabase[uId] && score > 0) {
+        usersDatabase[uId].balance += Number(score);
+        return res.json({ success: true, newBalance: usersDatabase[uId].balance });
+    }
+    return res.json({ success: false, message: "Error saving game data." });
+});
+
+// 5. Verify Channel Join API
 app.post('/api/verify-channel', async (req, res) => {
     const { userId } = req.body;
     if (!userId) {
