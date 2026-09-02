@@ -1,28 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invite Friends</title>
-    <script src="https://telegram.org"></script>
-    <style>
-        body { font-family: Sans-Serif; background-color: #131a26; color: #ffffff; text-align: center; padding: 20px; }
-        .box { background: #1c2635; padding: 20px; border-radius: 12px; margin-top: 20px; }
-        .btn { background: #2481cc; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 15px; }
-    </style>
-</head>
-<body>
+// Initialize Telegram WebApp
+const tg = window.Telegram.WebApp;
+tg.expand(); 
 
-    <h2>Invite Friends</h2>
-    <p>Share your link and earn rewards instantly!</p>
+// Get User ID from Telegram Context safely
+const userId = tg.initDataUnsafe?.user?.id || 0;
 
-    <div class="box">
-        <p>Total Invites: <span id="invite-count">0</span></p>
-        <p>Coins Earned: <span id="earned-coins">0</span></p>
-    </div>
+// IMPORTANT: Change this to your real bot username without the '@'
+const botUsername = "chubbyx_bot"; 
 
-    <button class="btn" onclick="shareInviteLink()">Invite a Friend</button>
+// Function to generate and open Telegram share link
+function shareInviteLink() {
+    if (!userId) {
+        alert("User data not found. Please open via Telegram.");
+        return;
+    }
+    const inviteLink = https://t.me{botUsername}/app?startapp=${userId};
+    const shareUrl = https://t.me{encodeURIComponent(inviteLink)}&text=${encodeURIComponent("Join ChubbyX mini-app and earn +1000 free coins instantly! 🚀")};
+    tg.openTelegramLink(shareUrl);
+}
 
-    <script src="invite.js"></script>
-</body>
-</html>
+// Function to fetch referral data from backend server
+async function checkInviteStatus() {
+    if (!userId) return;
+
+    try {
+        // Fetch stats from your API route
+        const response = await fetch(/api/user-stats?userId=${userId});
+        const data = await response.json();
+
+        console.log("Data received from server:", data);
+
+        if (data.success) {
+            // Update UI elements if they exist in HTML
+            if (document.getElementById("inviteCount")) {
+                document.getElementById("inviteCount").innerText = data.inviteCount;
+            }
+            if (document.getElementById("balance")) {
+                document.getElementById("balance").innerText = data.balance;
+            }
+        }
+    } catch (error) {
+        console.error("Connection error fetching stats:", error);
+    }
+}
+
+// Auto-run when the screen loads
+window.onload = function() {
+    checkInviteStatus();
+};
