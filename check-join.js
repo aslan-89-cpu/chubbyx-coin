@@ -3,7 +3,7 @@ const router = express.Router();
 const TelegramBot = require('node-telegram-bot-api');
 
 // Replace this with your actual bot token from BotFather
-const token = 'YOUR_BOT_TOKEN_HERE'; 
+const token = '8743563190:AAfUeo4eSqsqr7TN2UUXG9UEqUIOIyxNQJU';
 const bot = new TelegramBot(token);
 
 router.post('/check-membership', async (req, res) => {
