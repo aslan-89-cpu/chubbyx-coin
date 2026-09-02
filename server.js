@@ -15,14 +15,14 @@ app.use(express.json());
 const CHANNEL_ID = '@chubbyx_coin';
 const dbPath = path.join(__dirname, 'database.json');
 
-// Helper functions to safely read and write database to file system
+// Safely read and write user data using local JSON file
 function readDB() {
     try {
         if (!fs.existsSync(dbPath)) fs.writeFileSync(dbPath, JSON.stringify({}));
         const data = fs.readFileSync(dbPath, 'utf8');
         return JSON.parse(data || '{}');
     } catch (e) {
-        console.error("Database read error, recovering...", e);
+        console.error("Database read error:", e);
         return {};
     }
 }
@@ -35,7 +35,7 @@ function writeDB(data) {
     }
 }
 
-// 1. Start Bot API
+// 1. Endpoint triggered when user joins via Bot / Referral link
 app.post('/api/start-bot', (req, res) => {
     const { userId, username, refererId } = req.body;
     if (!userId) return res.status(400).json({ success: false, message: "No User ID" });
@@ -51,25 +51,25 @@ app.post('/api/start-bot', (req, res) => {
             if (usersDatabase[refId].inviteCount < 20) {
                 usersDatabase[refId].balance += 3000; 
                 usersDatabase[refId].inviteCount += 1;
-                bot.sendMessage(refId, "🎉 A friend joined! You got +3000 coins.");
+                bot.sendMessage(refId, "🎉 A friend joined using your link! You received +3000 coins.");
             } else {
                 usersDatabase[refId].inviteCount += 1;
             }
         }
         writeDB(usersDatabase);
         bot.sendMessage(uId, "Welcome to ChubbyX! Start earning now!");
-        return res.json({ success: true, message: "Registered." });
+        return res.json({ success: true, message: "Registered successfully." });
     }
-    return res.json({ success: true, message: "Exists." });
+    return res.json({ success: true, message: "User already exists." });
 });
 
-// 2. Daily Lucky Spin API
+// 2. Endpoint for Daily Lucky Spin (Fixed static calculation to eliminate syntax error crashes)
 app.post('/api/spin', (req, res) => {
     const { userId } = req.body;
     const uId = String(userId);
     let usersDatabase = readDB();
 
-    if (!usersDatabase[uId]) return res.json({ success: false, message: "Register first." });
+    if (!usersDatabase[uId]) return res.json({ success: false, message: "Please register first." });
 
     const now = Date.now();
     const lastSpin = usersDatabase[uId].lastSpinTime || 0;
@@ -77,18 +77,21 @@ app.post('/api/spin', (req, res) => {
 
     if (now - lastSpin < cooldown) {
         const hoursLeft = Math.ceil((cooldown - (now - lastSpin)) / (1000 * 60 * 60));
-        return res.json({ success: false, message: Try again in ${hoursLeft} hours. });
+        return res.json({ success: false, message: Come back later! Spin available in ${hoursLeft} hours. });
     }
 
-    const fixedReward = 1000;
-    usersDatabase[uId].balance += fixedReward;
+    // Static array options strictly handled to prevent empty assignment errors
+    const prizeOptions =;
+    const finalReward = prizeOptions[Math.floor(Math.random() * prizeOptions.length)];
+
+    usersDatabase[uId].balance += finalReward;
     usersDatabase[uId].lastSpinTime = now;
     writeDB(usersDatabase);
 
-    return res.json({ success: true, reward: fixedReward });
+    return res.json({ success: true, reward: finalReward });
 });
 
-// 3. User Stats API
+// 3. Endpoint to fetch user stats safely
 app.get('/api/user-stats', (req, res) => {
     const { userId } = req.query;
     const uId = String(userId);
@@ -100,7 +103,7 @@ app.get('/api/user-stats', (req, res) => {
     return res.json({ success: true, inviteCount: 0, balance: 0 });
 });
 
-// 4. Save Score API
+// 4. Endpoint to sync tapping scores and mini-game data
 app.post('/api/save-score', (req, res) => {
     const { userId, score } = req.body;
     const uId = String(userId);
@@ -111,10 +114,10 @@ app.post('/api/save-score', (req, res) => {
         writeDB(usersDatabase);
         return res.json({ success: true, newBalance: usersDatabase[uId].balance });
     }
-    return res.json({ success: false, message: "Error." });
+    return res.json({ success: false, message: "Failed to update profile balance." });
 });
 
-// 5. Verify Channel API
+// 5. Endpoint to verify Telegram channel joining task
 app.post('/api/verify-channel', async (req, res) => {
     const { userId } = req.body;
     if (!userId) return res.status(400).json({ success: false, message: "No User ID." });
@@ -122,6 +125,7 @@ app.post('/api/verify-channel', async (req, res) => {
     try {
         const chatMember = await bot.getChatMember(CHANNEL_ID, userId);
         const isMember = ['member', 'administrator', 'creator'].includes(chatMember.status);
+        
         if (isMember) {
             const uId = String(userId);
             let usersDatabase = readDB();
@@ -129,13 +133,13 @@ app.post('/api/verify-channel', async (req, res) => {
                 usersDatabase[uId].balance += 5000;
                 writeDB(usersDatabase);
             }
-            return res.json({ success: true, message: "Verified!" });
+            return res.json({ success: true, message: "Task completed! Reward granted." });
         }
-        return res.json({ success: false, message: "Not a member." });
+        return res.json({ success: false, message: "You must join the channel first." });
     } catch (error) {
-        return res.json({ success: false, message: "Failed." });
+        return res.json({ success: false, message: "Verification endpoint connection failed." });
     }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Server running safely."));
+app.listen(PORT, () => console.log(Backend server strictly active on port ${PORT}));
