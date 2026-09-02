@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chubbyx Spin Game</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #131a26;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .spin-container {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="spin-container">
+        <h2>Lucky Spin</h2>
+        <!-- Insert your HTML code for the spin wheel and spin button here -->
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Enable the official Telegram Back Button
+        tg.BackButton.show();
+        tg.BackButton.onClick(function() {
+            // Smoothly routes back to the main game layout without closing the app
+            window.location.href = "game.html"; 
+            tg.BackButton.hide();
+        });
+
+        // Insert your JavaScript animation and logic for the spinning wheel here
+    </script>
+</body>
+</html>
