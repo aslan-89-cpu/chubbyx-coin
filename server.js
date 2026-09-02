@@ -62,7 +62,7 @@ app.post('/api/start-bot', (req, res) => {
     return res.json({ success: true, message: "User already exists." });
 });
 
-// 2. Daily Lucky Spin API - Simplified to prevent empty array syntax crashes
+// 2. Daily Lucky Spin API - Stripped from any array format to prevent compile failure
 app.post('/api/spin', (req, res) => {
     const { userId } = req.body;
     const uId = String(userId);
@@ -79,8 +79,9 @@ app.post('/api/spin', (req, res) => {
         return res.json({ success: false, message: Come back later! Spin available in ${hoursLeft} hours. });
     }
 
-    // Fixed static calculations strictly defined as numbers to eliminate crashes
-    const finalReward = 1000;
+    // Mathematical random multiplier between 500 to 5000 to entirely bypass syntax errors
+    const randomMultiplier = Math.floor(Math.random() * 5) + 1; 
+    const finalReward = randomMultiplier * 1000; 
 
     usersDatabase[uId].balance += finalReward;
     usersDatabase[uId].lastSpinTime = now;
