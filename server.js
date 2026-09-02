@@ -1,43 +1,65 @@
 const express = require('express');
 const cors = require('cors');
-const TelegramBot = require('node-telegram-bot-api');
-
-// Bot Configuration
-const token = '7479707324:AAF1J41IX5YBZMk1L2RNMPSQUOS8T';
-const bot = new TelegramBot(token, { polling: true });
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const CHANNEL_ID = '@chubbyx_coin';
+// Fake database structure to keep frontend working smoothly
+let usersDatabase = {};
 
-// Test endpoint to ensure server responds
+// Test route to see if online
 app.get('/', (req, res) => {
-    res.send("ChubbyX Backend is Running Safely!");
+    res.send("ChubbyX Safe Server is completely Online! 🚀");
 });
 
-// 1. Basic User Stats API
+// 1. User Stats API
 app.get('/api/user-stats', (req, res) => {
-    res.json({ success: true, inviteCount: 0, balance: 1000 });
+    const { userId } = req.query;
+    const uId = String(userId || '0');
+    
+    if (!usersDatabase[uId]) {
+        usersDatabase[uId] = { balance: 1000, inviteCount: 0 };
+    }
+    
+    res.json({
+        success: true,
+        inviteCount: usersDatabase[uId].inviteCount,
+        balance: usersDatabase[uId].balance
+    });
 });
 
-// 2. Basic Spin API
+// 2. Daily Lucky Spin API
 app.post('/api/spin', (req, res) => {
-    res.json({ success: true, reward: 1000 });
+    const { userId } = req.body;
+    const uId = String(userId || '0');
+    
+    if (!usersDatabase[uId]) usersDatabase[uId] = { balance: 1000, inviteCount: 0 };
+    
+    const finalReward = 1000;
+    usersDatabase[uId].balance += finalReward;
+    
+    res.json({ success: true, reward: finalReward });
 });
 
-// 3. Basic Save Score API
+// 3. Save Score API
 app.post('/api/save-score', (req, res) => {
-    res.json({ success: true, newBalance: 1500 });
+    const { userId, score } = req.body;
+    const uId = String(userId || '0');
+    
+    if (!usersDatabase[uId]) usersDatabase[uId] = { balance: 1000, inviteCount: 0 };
+    
+    usersDatabase[uId].balance += Number(score || 0);
+    
+    res.json({ success: true, newBalance: usersDatabase[uId].balance });
 });
 
-// 4. Basic Start Bot API
+// 4. Start Bot API
 app.post('/api/start-bot', (req, res) => {
     res.json({ success: true, message: "Registered." });
 });
 
-// 5. Basic Verify Channel API
+// 5. Verify Channel API
 app.post('/api/verify-channel', (req, res) => {
     res.json({ success: true, message: "Verified!" });
 });
