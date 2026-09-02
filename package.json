@@ -1,14 +1,13 @@
 {
   "name": "chubbyx-coin",
-  "version": "1.0.2",
-  "description": "ChubbyX Backend",
+  "version": "1.0.5",
+  "description": "ChubbyX Safe Backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "node-telegram-bot-api": "^0.66.0"
+    "express": "^4.19.2"
   }
 }
