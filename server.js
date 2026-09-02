@@ -2,102 +2,102 @@ const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 const cors = require('cors');
 
-// تۆکنی بۆتەکەت
-const token = '7479707324:AAF1J41IX5Y8Z9MK1L2RNMPSQUOSBT';
+// Bot Configuration
+const token = '7479707324:AAF1J41IX5YBZMk1L2RNMPSQUOS8T';
 const bot = new TelegramBot(token, { polling: true });
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// یوزەرنەیمی فەرمی چەناڵەکەت
 const CHANNEL_ID = '@chubbyx_coin';
+let usersDatabase = {}; // In-memory database
 
-// داتابەیسی کاتی بۆ پاشەکەوتکردنی زانیارییەکان
-let usersDatabase = {};
-
-// ١. ئەپی ئای پشکنینی جۆینبوونی کەناڵ
-app.post('/api/verify-channel', async (req, res) => {
-    const { userId } = req.body;
+// 1. Endpoint triggered ONLY when the new user actually enters/registers in the app
+app.post('/api/start-bot', (req, res) => {
+    const { userId, username, refererId } = req.body;
 
     if (!userId) {
-        return res.json({ success: false, message: "ناسنامەی بەکارهێنەر نەدۆزرایەوە." });
+        return res.status(400).json({ success: false, message: "User ID is required." });
+    }
+
+    const uId = String(userId);
+    const refId = refererId ? String(refererId) : null;
+
+    // Check if this is a completely NEW user joining for the first time
+    if (!usersDatabase[uId]) {
+        usersDatabase[uId] = {
+            balance: 1000, // New user gets 1000 coins for successfully entering
+            inviteCount: 0,
+            referredBy: refId
+        };
+
+        // ONLY reward the inviter if the new user successfully entered the app
+        if (refId && usersDatabase[refId]) {
+            // Check if inviter has less than 20 invites
+            if (usersDatabase[refId].inviteCount < 20) {
+                usersDatabase[refId].balance += 3000; // Inviter gets 3000 coins now
+                usersDatabase[refId].inviteCount += 1;
+                
+                // Send alert to inviter that their friend successfully joined
+                bot.sendMessage(refId, 🎉 A friend successfully joined using your link! You received +3000 coins.);
+            } else {
+                // If they have 20+ invites, just increment the count but don't give coins
+                usersDatabase[refId].inviteCount += 1;
+            }
+        }
+
+        bot.sendMessage(uId, Welcome to ChubbyX! Start earning now!);
+        return res.json({ success: true, message: "New user entered. Rewards processed successfully." });
+    }
+
+    // If the user already exists, no rewards are given again
+    return res.json({ success: true, message: "User already registered." });
+});
+
+// 2. Endpoint to fetch invite stats for invite.js
+app.get('/api/user-stats', (req, res) => {
+    const { userId } = req.query;
+    const uId = String(userId);
+
+    if (usersDatabase[uId]) {
+        return res.json({
+            success: true,
+            inviteCount: usersDatabase[uId].inviteCount,
+            balance: usersDatabase[uId].balance
+        });
+    } else {
+        return res.json({ success: true, inviteCount: 0, balance: 0 });
+    }
+});
+
+// 3. Verify Channel Join API
+app.post('/api/verify-channel', async (req, res) => {
+    const { userId } = req.body;
+    if (!userId) {
+        return res.status(400).json({ success: false, message: "User ID not found." });
     }
 
     try {
-        const member = await bot.getChatMember(CHANNEL_ID, userId);
-        const status = member.status;
+        const chatMember = await bot.getChatMember(CHANNEL_ID, userId);
+        const isMember = ['member', 'administrator', 'creator'].includes(chatMember.status);
 
-        if (['member', 'administrator', 'creator'].includes(status)) {
-            return res.json({ success: true, message: "user verified successfully." });
+        if (isMember) {
+            const uId = String(userId);
+            if (usersDatabase[uId]) {
+                usersDatabase[uId].balance += 5000;
+            }
+            return res.json({ success: true, message: "Successfully verified! Reward granted." });
         } else {
-            return res.json({ success: false, message: "please join the channel first." });
+            return res.json({ success: false, message: "You haven't joined the channel yet." });
         }
     } catch (error) {
-        console.error(error);
-        return res.json({ success: false, message: "an error occurred during verifiction." });
+        console.error("Channel verification error:", error);
+        return res.json({ success: false, message: "Verification failed. Try again later." });
     }
 });
 
-// ٢. ئەپی ئای تۆمارکردنی ئینڤایت کاتێک بەکارهێنەر بۆتەکە Start دەکات
-app.post('/api/start-bot', (req, res) => {
-    const { userId, referrerId } = req.body;
-
-    if (!userId) {
-        return res.json({ success: false, message: "userId userid is required" });
-    }
-
-    // if the user is new
-    if (!usersDatabase[userId]) {
-        usersDatabase[userId] = { balance: 0, inviteCount: 0, invitedBy: referrerId || null };
-
-        // if invited by soone else
-        if (referrerId && usersDatabase[referrerId] && referrerId !== userId) {
-            let referrer = usersDatabase[referrerId];
-            
-            // limit to maximum 20 invites
-            if (referrer.inviteCount < 20) {
-                referrer.inviteCount += 1;
-                referrer.balance += 3000; // پێدانی ٣٠٠٠ کۆین بۆ کەسی داوەتکار
-            }
-        }
-        return res.json({ success: true, message: "بەکارهێنەری نوێ تۆمارکرا و خەڵاتەکە درا." });
-    }
-
-    return res.json({ success: true, message: "ئەم بەکارهێنەرە پێشتر تۆمارکراوە." });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(Server running on port ${PORT});
 });
-
-// ٣. ئەپی ئای ناردنی داتای ئینڤایت بۆ فایلی invite.html
-app.get('/api/invite-status', (req, res) => {
-    const { userId } = req.query;
-    const user = usersDatabase[userId] || { inviteCount: 0, balance: 0 };
-    res.json({ inviteCount: user.inviteCount, balance: user.balance });
-});
-
-// لێدانی فەرمانی /start لە ناو تێلیگرام بۆ خوێندنەوەی لینکی ئینڤایت
-bot.onText(/\/start ?(.*)/, (msg, match) => {
-    const userId = msg.from.id;
-    const startParam = match[1]; // بەشی پاشگری لینکەکە دەخوێنێتەوە (بۆ نموونە ref_12345)
-
-    let referrerId = null;
-    if (startParam && startParam.startsWith('ref_')) {
-        referrerId = startParam.split('_')[1];
-    }
-
-    // لێرەدا بەکارهێنەرەکە لە داتابەیسی سێرڤەرەکەدا تۆمار دەکەین
-    if (!usersDatabase[userId]) {
-        usersDatabase[userId] = { balance: 0, inviteCount: 0, invitedBy: referrerId || null };
-        
-        if (referrerId && usersDatabase[referrerId] && referrerId !== String(userId)) {
-            let referrer = usersDatabase[referrerId];
-            if (referrer.inviteCount < 20) {
-                referrer.inviteCount += 1;
-                referrer.balance += 3000;
-            }
-        }
-    }
-
-    bot.sendMessage(userId, "بەخێرهاتی بۆ بۆتی ChubbyX! ئێستا دەتوانیت مینی ئەپەکە بکەیتەوە.");
-});
-
-app.listen(3000, () => console.log('سێرڤەرەکە کاردەکات لەسەر پۆرتی 3000'));
