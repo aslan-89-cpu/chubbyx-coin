@@ -1,11 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const admin = require('firebase-admin');
-
+const checkJoinRouter = require('./check-join');
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.use('/api', checkJoinRouter);
 // Initialize Firebase
 if (admin.apps.length === 0) {
     admin.initializeApp({
