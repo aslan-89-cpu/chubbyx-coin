@@ -2,130 +2,206 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mini Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChubbyX Arcade</title>
+    <script src="https://telegram.org"></script>
     <style>
-        body { 
-            background: #090314; 
-            color: white; 
-            font-family: sans-serif; 
-            padding: 20px; 
-            text-align: center; 
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow: hidden;
-            user-select: none;
-        }
-        h2 { color: #a48fff; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px; }
-        #zone { 
-            position: relative; 
-            width: 100%; 
-            max-width: 400px;
-            height: 380px; 
-            background: #130a24; 
-            border: 2px dashed #a48fff; 
-            border-radius: 15px; 
-            overflow: hidden; 
-            margin-top: 20px; 
-            touch-action: none;
-        }
-        .falling-coin { 
-            position: absolute; 
-            width: 50px; 
-            height: 50px; 
-            background: url('image_okkb6u.png.jpeg') no-repeat center; 
-            background-size: cover; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            touch-action: manipulation;
-        }
-        .btn-play { 
-            background: #ff9800; 
-            color: white; 
-            border: none; 
-            padding: 12px 30px; 
-            border-radius: 10px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            font-size: 16px;
-            margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
-        }
-        .back-btn { 
-            background: #1c103a; 
-            color: white; 
-            padding: 12px 35px; 
-            border-radius: 10px; 
-            border: 1px solid #a48fff; 
-            margin-top: 25px; 
-            cursor: pointer; 
-            font-weight: bold; 
-        }
+        body { font-family: Arial, sans-serif; background-color: #131a26; color: white; text-align: center; margin: 0; padding: 10px; }
+        .tab-container { display: flex; justify-content: center; margin-bottom: 15px; gap: 10px; }
+        .tab-btn { background: #1c2635; color: white; border: 2px solid #9b59b6; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { background: #9b59b6; box-shadow: 0 0 10px #9b59b6; }
+        .game-section { display: none; background: #1c2635; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-top: 10px; }
+        .game-section.active { display: block; }
+        
+        /* Spin Wheel Styles */
+        .wheel-container { position: relative; width: 250px; height: 250px; margin: 20px auto; }
+        .wheel { width: 100%; height: 100%; border-radius: 50%; border: 5px solid #9b59b6; transition: transform 4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: conic-gradient(#8e44ad 0deg 60deg, #9b59b6 60deg 120deg, #6c3483 120deg 180deg, #4a235a 180deg 240deg, #af7ac5 240deg 300deg, #2e114d 300deg 360deg); position: relative; }
+        .wheel::after { content: "🔮"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 35px; background: #131a26; padding: 5px; border-radius: 50%; border: 3px solid #9b59b6; box-shadow: 0 0 15px #9b59b6; }
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #9b59b6; z-index: 10; }
+        .btn { background: #9b59b6; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; width: 80%; box-shadow: 0 4px 10px rgba(155, 89, 182, 0.4); }
+        .btn:disabled { background: #7f8c8d; cursor: not-allowed; box-shadow: none; }
+
+        /* Catcher Styles */
+        #gameCanvas { background: #0f141d; border: 2px solid #9b59b6; border-radius: 8px; max-width: 100%; display: block; margin: 10px auto; box-shadow: 0 0 15px rgba(155, 89, 182, 0.2); }
     </style>
 </head>
 <body>
-    <h2>Chubby Catch Game</h2>
-    <!-- لێرەدا نووسینە کوردییەکە گۆڕدرا بۆ ئینگلیزی فەرمی -->
-    <p style="opacity: 0.8; font-size: 14px; margin-bottom: 5px;">Coins are falling! Catch them quickly!</p>
+
+    <h2>ChubbyX Purple Arena</h2>
     
-    <button class="btn-play" id="start-btn" onclick="startGame()">Start Game (30s)</button>
-    
-    <div id="zone"></div>
-    
-    <button class="back-btn" onclick="window.location.href='index.html'">Back to Game</button>
+    <div class="tab-container">
+        <button id="btn-spin" class="tab-btn active" onclick="switchTab('spin')">🎡 Daily Spin</button>
+        <button id="btn-catcher" class="tab-btn" onclick="switchTab('catcher')">🔮 Coin Catcher</button>
+    </div>
+
+    <!-- SECTION 1: DAILY SPIN -->
+    <div id="spinSection" class="game-section active">
+        <h3>ChubbyX Lucky Spin</h3>
+        <p>Spin the purple wheel to win mega rewards!</p>
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <div class="wheel" id="wheel"></div>
+        </div>
+        <button class="btn" id="spinBtn" onclick="startSpin()">Spin Now</button>
+        <p id="spinStatus"></p>
+    </div>
+
+    <!-- SECTION 2: COIN CATCHER -->
+    <div id="catcherSection" class="game-section">
+        <h3>Purple Coin Catcher</h3>
+        <p>Catch falling ChubbyX Magic Coins! Avoid the bombs!</p>
+        <div style="font-size: 20px; font-weight: bold; margin: 5px;">Score: <span id="catcherScore">0</span></div>
+        <canvas id="gameCanvas" width="320" height="380"></canvas>
+        <button class="btn" id="startCatcherBtn" onclick="startGame()">Start Game</button>
+    </div>
 
     <script>
-        let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        let gameInterval;
-        
-        function startGame() {
-            document.getElementById('start-btn').disabled = true;
-            document.getElementById('start-btn').style.background = '#444';
-            document.getElementById('start-btn').innerText = "Playing...";
-            const zone = document.getElementById('zone'); 
-            zone.innerHTML = '';
-            
-            gameInterval = setInterval(() => {
-                let coin = document.createElement('div'); 
-                coin.classList.add('falling-coin');
-                coin.style.left = Math.floor(Math.random() * (zone.clientWidth - 50)) + 'px'; 
-                coin.style.top = '0px';
-                zone.appendChild(coin);
-                
-                let top = 0;
-                let fall = setInterval(() => {
-                    if (top > zone.clientHeight - 50) { 
-                        clearInterval(fall); 
-                        coin.remove(); 
-                    } else { 
-                        top += 4; 
-                        coin.style.top = top + 'px'; 
-                    }
-                }, 20);
-                
-                // بەکارهێنانی touchstart بۆ کارکردنی خێرا لەسەر ئایفۆن
-                coin.addEventListener('touchstart', function(e) {
-                    e.preventDefault();
-                    count += 5; 
-                    localStorage.setItem('chubby_coins', count); 
-                    clearInterval(fall); 
-                    coin.remove(); 
-                });
-                
-            }, 750);
-            
-            setTimeout(() => { 
-                clearInterval(gameInterval); 
-                zone.innerHTML = ''; 
-                document.getElementById('start-btn').disabled = false; 
-                document.getElementById('start-btn').style.background = '#ff9800';
-                document.getElementById('start-btn').innerText = "Start Game (30s)";
-                alert("Game Over! Your coins have been saved."); 
-            }, 30000);
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        const userId = tg.initDataUnsafe?.user?.id || 0;
+
+        function switchTab(tab) {
+            document.getElementById('spinSection').classList.remove('active');
+            document.getElementById('catcherSection').classList.remove('active');
+            document.getElementById('btn-spin').classList.remove('active');
+            document.getElementById('btn-catcher').classList.remove('active');
+
+            if(tab === 'spin') {
+                document.getElementById('spinSection').classList.add('active');
+                document.getElementById('btn-spin').classList.add('active');
+            } else {
+                document.getElementById('catcherSection').classList.add('active');
+                document.getElementById('btn-catcher').classList.add('active');
+                initCatcher();
+            }
         }
-    </script>
-</body>
-</html>
+
+        // --- SPIN LOGIC ---
+        async function startSpin() {
+            if (!userId) return alert("Telegram User ID not found.");
+            document.getElementById('spinBtn').disabled = true;
+
+            try {
+                const response = await fetch('/api/spin', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ userId })
+                });
+                const data = await response.json();
+
+                if (!data.success) {
+                    document.getElementById('spinStatus').innerText = data.message;
+                    document.getElementById('spinBtn').disabled = false;
+                    return;
+                }
+
+                const segmentDegrees = { 500: 30, 1000: 90, 2000: 150, 5000: 210, 100: 270, 250: 330 };
+                const baseDegrees = segmentDegrees[data.reward] || 0;
+                const totalRotation = 1800 + (360 - baseDegrees); 
+
+                const wheel = document.getElementById('wheel');
+                wheel.style.transform = rotate(${totalRotation}deg);
+
+                setTimeout(() => {
+                    document.getElementById('spinStatus').innerText = 🎉 Congratulations! You won +${data.reward} coins!;
+                    wheel.style.transition = 'none';
+                    wheel.style.transform = rotate(${360 - baseDegrees}deg);
+                    setTimeout(() => wheel.style.transition = 'transform 4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', 50);
+                }, 4000);
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('spinBtn').disabled = false;
+            }
+        }
+
+        // --- COIN CATCHER GAME LOGIC ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let gameInterval, score, basket, items, isPlaying = false;
+
+        function initCatcher() {
+            basket = { x: 130, y: 350, width: 60, height: 15, speed: 20 };
+            items = [];
+            score = 0;
+            document.getElementById('catcherScore').innerText = score;
+            drawStatic();
+        }
+
+        function drawStatic() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#9b59b6"; 
+            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+        }
+
+        function startGame() {
+            if(isPlaying) return;
+            isPlaying = true;
+            initCatcher();
+            document.getElementById('startCatcherBtn').innerText = "Playing...";
+            document.getElementById('startCatcherBtn').disabled = true;
+
+            canvas.onclick = (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                if(clickX < canvas.width/2) { if(basket.x > 0) basket.x -= basket.speed; }
+                else { if(basket.x < canvas.width - basket.width) basket.x += basket.speed; }
+            };
+
+            gameInterval = setInterval(updateGame, 1000/30);
+        }
+
+        function updateGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Spawning logic: Only Purple Coins and Bombs
+            if(Math.random() < 0.05) {
+                let isBomb = Math.random() < 0.20; // 20% chance bomb, 80% purple coin
+                items.push({ 
+                    x: Math.random() * (canvas.width - 20), 
+                    y: 0, 
+                    speed: 4 + Math.random() * 3, 
+                    isBomb: isBomb 
+                });
+            }
+
+            ctx.fillStyle = "#9b59b6";
+            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+
+            for(let i = items.length - 1; i >= 0; i--) {
+                let item = items[i];
+                item.y += item.speed;
+
+                ctx.font = "22px Arial";
+                ctx.fillText(item.isBomb ? "💣" : "🔮", item.x, item.y); // All falling coins are Purple (🔮)
+
+                if(item.y >= basket.y && item.y <= basket.y + basket.height && item.x >= basket.x - 10 && item.x <= basket.x + basket.width) {
+                    if(item.isBomb) {
+                        endGame();
+                        return;
+                    } else {
+                        score += 10; // Catching purple coin gives points
+                        document.getElementById('catcherScore').innerText = score;
+                    }
+                    items.splice(i, 1);
+                    continue;
+                }
+
+                if(item.y > canvas.height) items.splice(i, 1);
+            }
+        }
+
+        async function endGame() {
+            clearInterval(gameInterval);
+            isPlaying = false;
+            document.getElementById('startCatcherBtn').innerText = "Game Over! Save & Restart";
+            document.getElementById('startCatcherBtn').disabled = false;
+            
+            if(score > 0) {
+                try {
+                    await fetch('/api/save-score', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ userId, score })
+                    });
+                    alert(Game Over! Total score saved: +${score} points!);
