@@ -132,7 +132,6 @@
             const webApp = window.Telegram.WebApp;
             webApp.ready();
             webApp.expand();
-            // ڕەنگی سەرەوە کرا بە وەنەوشەیی تۆخ بۆ تێکەڵبوونی تەواو لەگەڵ ئاسمانە درێژەکەت
             webApp.setHeaderColor('#1c1437');
             webApp.setBackgroundColor('#1c1437');
         }
@@ -141,6 +140,9 @@
         var energy = 500;
         
         document.getElementById('score').innerText = count;
+
+        // دروستکردنی فایلی دەنگی (دەبێت فایلی chubby.mp3 لە گیت هاب دابنێیت)
+        var chubbySound = new Audio('chubby.mp3');
 
         var tapElement = document.getElementById('tapCoin');
         if (tapElement) {
@@ -151,10 +153,31 @@
                     document.getElementById('score').innerText = count; 
                     updateUI(); 
                     localStorage.setItem('chubby_coins', count); 
+                    
+                    // لێدانی دەنگەکە کاتێک کلیک دەکرێت
+                    try {
+                        chubbySound.currentTime = 0;
+                        chubbySound.play();
+                    } catch(err) { console.log("Sound not ready"); }
+
+                    // ١. گۆڕینی باکگراوند بۆ وێنەی چاو داخراوەکە کاتێک دەستی لێدەدەیت
+                    document.body.style.background = "#1c1437 url('background_tapped.png.jpeg') no-repeat center top fixed";
+                    document.body.style.backgroundSize = "cover";
+
+                    // ٢. ئەنیمەیشنی لێدانی زگی کاراکتەرەکە
+                    tapElement.style.transform = 'scale(0.92) translateY(5px)';
                 }
             }, { passive: false });
-        }
 
+            // گەڕانەوە بۆ دۆخی چاو کراوە و قەبارەی ئاسایی کاتێک پەنجە لادەبرێت
+            tapElement.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    document.body.style.background = "#1c1437 url('background.png.jpeg') no-repeat center top fixed";
+                    document.body.style.backgroundSize = "cover";
+                    tapElement.style.transform = 'scale(1) translateY(0)';
+                }, 60);
+            });
+        }
         function updateUI() { 
             document.getElementById('energyText').innerText = energy; 
             document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%'; 
