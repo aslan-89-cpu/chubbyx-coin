@@ -3,107 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChubbyX Lucky Spin</title>
+    <title>ChubbyX Purple Arena</title>
     <style>
-        body { background: #090314; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        h2 { color: #a48fff; margin-top: 20px; text-transform: uppercase; }
-        
-        .wheel-container { position: relative; margin: 30px auto; width: 280px; height: 280px; display: flex; justify-content: center; align-items: center; }
-        
-        .wheel-img { 
-            width: 100%; 
-            height: 100%; 
-            border-radius: 50%; 
-            border: 4px solid #a48fff;
-            box-shadow: 0 0 15px rgba(164, 143, 255, 0.3);
-            transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #090514;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
         }
         
-        .center-logo {
-            position: absolute;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            border: 3px solid #ffd700;
-            background: #090314;
-            z-index: 10;
-            pointer-events: none;
+        .tabs { display: flex; gap: 10px; width: 100%; max-width: 400px; margin-bottom: 25px; }
+        .tab-btn {
+            flex: 1;
+            background: rgba(123, 44, 191, 0.2);
+            border: 1px solid #7b2cbf;
+            color: #9ca3af;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .tab-btn.active { background: #7b2cbf; color: white; }
+
+        .game-area { width: 100%; max-width: 400px; display: none; }
+        .game-area.active { display: flex; flex-direction: column; align-items: center; }
+
+        .game-box {
+            background: #150f2e;
+            border: 1px solid #2e1f5e;
+            border-radius: 20px;
+            padding: 25px 15px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
         }
 
+        h2 { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
+        .info-text { font-size: 13px; color: #9ca3af; margin-bottom: 25px; text-align: center; }
+
+        /* ─── WHEEL DESIGN ─── */
+        .wheel-wrapper { position: relative; width: 260px; height: 260px; margin-bottom: 25px; }
         .pointer {
-            position: absolute;
-            top: -12px;
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 22px solid #ffd700;
-            z-index: 20;
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #eab308; z-index: 100;
+        }
+        .wheel {
+            width: 100%; height: 100%; border-radius: 50%; border: 5px solid #7b2cbf; position: relative; overflow: hidden;
+            transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
+            background: conic-gradient(#5a189a 0deg 60deg, #7b2cbf 60deg 120deg, #9d4edd 120deg 180deg, #5a189a 180deg 240deg, #7b2cbf 240deg 300deg, #9d4edd 300deg 360deg);
+        }
+        .center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #090514; border: 2px solid #eab308; border-radius: 50%; z-index: 10; }
+        .segment-text { position: absolute; width: 100%; height: 100%; text-align: center; font-weight: bold; font-size: 14px; transform-origin: 50% 50%; padding-top: 15px; }
+
+        /* ─── CANVAS DESIGN ─── */
+        #catcherCanvas {
+            background: #0d081b;
+            border: 2px solid #7b2cbf;
+            border-radius: 12px;
+            width: 100%;
+            height: 300px;
+            margin-bottom: 20px;
+            touch-action: none;
         }
 
-        .btn-spin { background: #a48fff; color: black; border: none; padding: 12px 40px; border-radius: 25px; font-weight: bold; font-size: 16px; cursor: pointer; width: 85%; margin-top: 25px; box-shadow: 0 4px 15px rgba(164, 143, 255, 0.3); }
-        .btn-spin:disabled { background: #555; color: #888; cursor: not-allowed; box-shadow: none; }
-        .back-btn { background: #1c103a; color: white; padding: 10px 35px; border-radius: 10px; text-decoration: none; display: inline-block; margin-top: 25px; border: 1px solid #331a5e; }
+        .action-btn {
+            background: #7b2cbf; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: background 0.2s;
+        }
+        .action-btn:disabled { background: rgba(255, 255, 255, 0.05); color: #6b7280; cursor: not-allowed; border: 1px solid rgba(255, 255, 255, 0.1); }
+
+        .back-btn { margin-top: 30px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 12px 35px; border-radius: 12px; font-size: 15px; cursor: pointer; font-weight: bold; }
     </style>
-    <script src="https://telegram.org"></script>
 </head>
 <body>
 
-    <h2>ChubbyX Lucky Spin</h2>
-    <p style="opacity: 0.8; font-size: 14px;">Spin the purple wheel to win mega rewards!</p>
-
-    <div class="wheel-container">
-        <div class="pointer"></div>
-        <img src="image_okk6ou.png.jpeg" id="wheel" class="wheel-img" alt="Lucky Spin">
-        <img src="image.png.jpeg" class="center-logo" alt="ChubbyX">
+    <div class="tabs">
+        <button class="tab-btn active" id="tabSpin" onclick="switchTab('spin')">Daily Spin</button>
+        <button class="tab-btn" id="tabCatcher" onclick="switchTab('catcher')">Coin Catcher</button>
     </div>
 
-    <button id="spinBtn" class="btn-spin" onclick="startSpin()">Spin Now</button>
-    <br>
-    <a href="index.html" class="back-btn">Back to Game</a>
+    <!-- AREA 1: LUCKY SPIN -->
+    <div class="game-area active" id="areaSpin">
+        <div class="game-box">
+            <h2>ChubbyX Lucky Spin</h2>
+            <div class="info-text" id="spinStatus">Spin the purple wheel to win mega rewards!</div>
+            <div class="wheel-wrapper">
+                <div class="pointer"></div>
+                <div class="center-circle"></div>
+                <div class="wheel" id="wheel">
+                    <div class="segment-text" style="transform: rotate(30deg);">5,000</div>
+                    <div class="segment-text" style="transform: rotate(90deg);">500</div>
+                    <div class="segment-text" style="transform: rotate(150deg);">1,000</div>
+                    <div class="segment-text" style="transform: rotate(210deg);">2,000</div>
+                    <div class="segment-text" style="transform: rotate(270deg);">500</div>
+                    <div class="segment-text" style="transform: rotate(330deg);">1,000</div>
+                </div>
+            </div>
+            <button class="action-btn" id="spinBtn" onclick="startSpin()">Spin Now</button>
+        </div>
+    </div>
+
+    <!-- AREA 2: COIN CATCHER -->
+    <div class="game-area" id="areaCatcher">
+        <div class="game-box">
+            <h2>ChubbyX Coin Catcher</h2>
+            <div class="info-text" id="catcherStatus">Catch falling golden coins with your basket!</div>
+            <canvas id="catcherCanvas" width="350" height="300"></canvas>
+            <button class="action-btn" id="catcherBtn" onclick="startCatcherGame()">Start Game</button>
+        </div>
+    </div>
+
+    <button class="back-btn" onclick="goBack()">Back to Game</button>
 
     <script>
-        if (window.Telegram && window.Telegram.WebApp) { window.Telegram.WebApp.ready(); }
+        function switchTab(type) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.game-area').forEach(a => a.classList.remove('active'));
+            
+            if (type === 'spin') {
+                document.getElementById('tabSpin').classList.add('active');
+                document.getElementById('areaSpin').classList.add('active');
+                checkSpinLimit();
+            } else {
+                document.getElementById('tabCatcher').classList.add('active');
+                document.getElementById('areaCatcher').classList.add('active');
+                checkCatcherLimit();
+                initCanvas();
+            }
+        }
 
-        let canSpin = true;
+        // ─── LUCK SPIN ENGINE ───
+        const spinPrizes = [
+            { text: "5,000", value: 5000, minAngle: 0, maxAngle: 60 },
+            { text: "1,000", value: 1000, minAngle: 60, maxAngle: 120 },
+            { text: "500", value: 500, minAngle: 120, maxAngle: 180 },
+            { text: "2,000", value: 2000, minAngle: 180, maxAngle: 240 },
+            { text: "1,000", value: 1000, minAngle: 240, maxAngle: 300 },
+            { text: "500", value: 500, minAngle: 300, maxAngle: 360 }
+        ];
+        let isSpinning = false;
         let currentRotation = 0;
 
-        // Fixed: Added concrete values array so the script logic compiles properly
-        const rewards =;
-        const numSegments = rewards.length;
+        function checkSpinLimit() {
+            const lastSpin = localStorage.getItem('chubby_last_spin');
+            const btn = document.getElementById('spinBtn');
+            const txt = document.getElementById('spinStatus');
+            if (lastSpin && (new Date().getTime() - parseInt(lastSpin) < 24*60*60*1000)) {
+                btn.disabled = true;
+                txt.innerText = "Daily spin completed! Come back tomorrow.";
+                return false;
+            }
+            btn.disabled = false;
+            txt.innerText = "Spin the purple wheel to win mega rewards!";
+            return true;
+        }
 
-        async function startSpin() {
-            if (!canSpin) return;
-            canSpin = false;
+        function startSpin() {
+            if (isSpinning || !checkSpinLimit()) return;
+            isSpinning = true;
+            
+            const wheel = document.getElementById('wheel');
+            const prizeIndex = Math.floor(Math.random() * spinPrizes.length);
+            const prize = spinPrizes[prizeIndex];
+            
+            const targetAngle = 360 - ((prize.minAngle + prize.maxAngle) / 2);
+            currentRotation += (360 * 5) + targetAngle - (currentRotation % 360);
+            
+            wheel.style.transform = rotate(${currentRotation}deg);
             document.getElementById('spinBtn').disabled = true;
 
-            const prizeIndex = Math.floor(Math.random() * numSegments);
-            const segmentAngle = 360 / numSegments;
-            const targetAngle = 360 - (prizeIndex * segmentAngle);
-            const extraRotations = 2880; 
-            
-            currentRotation += extraRotations + targetAngle - (currentRotation % 360);
-            document.getElementById('wheel').style.transform = rotate(${currentRotation}deg);
-
-            setTimeout(async () => {
-                const winAmount = rewards[prizeIndex];
-                alert(Congratulations! You won +${winAmount.toLocaleString()} Coins!);
-
-                try {
-                    const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 12345;
-                    await fetch('/api/add-coins', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: tgUserId, amount: winAmount, task: 'lucky_spin' })
-                    });
-                } catch (e) { 
-                    console.error("Backend error syncing spin rewards:", e); 
-                }
-
-                canSpin = true;
-                document.getElementById('spinBtn').disabled = false;
+            setTimeout(() => {
+                let coins = parseInt(localStorage.getItem('chubby_coins')) || 0;
+                localStorage.setItem('chubby_coins', coins + prize.value);
+                localStorage.setItem('chubby_last_spin', new Date().getTime());
+                alert(You won +${prize.text} ChubbyX Coins!);
+                isSpinning = false;
+                checkSpinLimit();
             }, 4000);
         }
-    </script>
-</body>
-</html>
+
+        // ─── COIN CATCHER ENGINE ───
+        let canvas, ctx;
+        let basket = { x: 140, y: 270, width: 70, height: 15 };
+        let fallingCoins = [];
+        let catcherScore = 0;
+        let gameTimer = 0;
+        let catcherRunning = false;
+
+        function checkCatcherLimit() {
+            const lastCatcher = localStorage.getItem('chubby_last_catcher');
+            const btn = document.getElementById('catcherBtn');
+            const txt = document.getElementById('catcherStatus');
+            if (lastCatcher && (new Date().getTime() - parseInt(lastCatcher) < 24*60*60*1000)) {
+                btn.disabled = true;
+                txt.innerText = "Daily catching completed! Come back tomorrow.";
+                return false;
+            }
+            btn.disabled = false;
+            txt.innerText = "Catch falling golden coins with your basket!";
+            return true;
+        }
+
+        function initCanvas() {
+            canvas = document.getElementById('catcherCanvas');
+            ctx = canvas.getContext('2d');
+            drawCanvasStatic();
+            
+            canvas.addEventListener('touchmove', function(e) {
+                if (!catcherRunning) return;
