@@ -31,7 +31,6 @@
             justify-content: center;
             align-items: center;
         }
-        /* Styling the official TON Connect Button container */
         #ton-connect-btn {
             margin: 10px 0;
         }
@@ -59,29 +58,23 @@
     <p class="status-text">Connect your Web3 wallet to prepare for Airdrop withdrawal. Multiple wallets supported.</p>
 
     <div class="wallet-box">
-        <!-- The multi-wallet button will automatically render inside this div -->
         <div id="ton-connect-btn"></div>
     </div>
 
-    <!-- Back Button to return to the game -->
-    <a href="game.html" class="back-btn">Back to Game</a>
+    <!-- Fixed: Redirects perfectly to main game dashboard index.html -->
+    <a href="index.html" class="back-btn">Back to Game</a>
 
     <script>
-        // Initialize TON Connect UI Configuration
-        // manifestUrl is required by TON Connect to show your game name and icon inside OKX/Tonkeeper
         const tonConnectUI = new TONConnectUI.TonConnectUI({
             manifestUrl: 'https://githubusercontent.com',
             buttonRootId: 'ton-connect-btn'
         });
 
-        // Listen for successful wallet connection event
         tonConnectUI.onStatusChange(async (wallet) => {
             if (wallet) {
-                // Get the user's public raw TON wallet address
                 const walletAddress = wallet.account.address;
                 console.log("Wallet connected successfully:", walletAddress);
                 
-                // Optional Backend Secure Check: save address to your server
                 try {
                     const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 12345;
                     await fetch('/api/save-wallet', {
