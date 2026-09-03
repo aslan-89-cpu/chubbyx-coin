@@ -44,7 +44,7 @@
             z-index: 5;
         }
 
-        /* ─── بەشی لێدان و کارەکتەر لەگەڵ ئەنیمەیشن ─── */
+        /* ─── بازنەی لێدان لەسەر زکی کارەکتەرەکە ─── */
         .tap-zone {
             position: absolute;
             top: 25%;
@@ -56,23 +56,34 @@
             -webkit-tap-highlight-color: transparent;
             z-index: 999;
             touch-action: manipulation;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* وێنەی کارەکتەرەکەت کە ناوی دروستەکەی پێدراوە */
-        .character-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            transition: transform 0.05s ease;
-            pointer-events: none; /* لێدانەکە لەڕێی دەرەوەی وێنەکە دەبێت */
-        }
-
-        /* ئەنیمەیشنی جوڵانی زگ کاتێک کلیک چالاک دەبێت */
         .tap-zone-active {
-            transform: scale(1.12) translateY(-8px) !important;
+            transform: scale(0.93) !important; /* کەمێک داچوونی بازنەکە بۆ هەستی لێدان */
+        }
+
+        /* ─── ئەنیمەیشنی فڕینی ناوی کۆینەکە بە زەردی ─── */
+        .floating-text {
+            position: absolute;
+            color: #eab308; /* ڕەنگی زەردی درەوشاوە */
+            font-weight: bold;
+            font-size: 22px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: floatUpAndFade 0.6s ease-out forwards;
+            text-shadow: 0 0 8px rgba(234, 179, 8, 0.6); /* درەوشانەوەی دەقەکە */
+        }
+
+        @keyframes floatUpAndFade {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-120px) scale(0.8); /* بەرەو سەرەوە دەفڕێت و بچووک دەبێتەوە */
+            }
         }
 
         .energy-container {
@@ -118,11 +129,8 @@
         <h1 id="score">0</h1>
     </div>
 
-    <div class="coin-container">
-        <!-- لێرەدا وێنەی کارەکتەرەکەت خراوەتە ناو بازنەی لێدانەکەوە بۆ ئەوەی دیار بێت و بجوڵێت -->
-        <div class="tap-zone" id="tapCoin">
-            <img src="image.png.jpeg" class="character-img" id="charImg" alt="ChubbyX Character">
-        </div>
+    <div class="coin-container" id="coinContainer">
+        <div class="tap-zone" id="tapCoin"></div>
     </div>
 
     <div class="energy-container">
@@ -156,7 +164,7 @@
 
         var chubbSound = new Audio('chubb.mp3');
         var tapElement = document.getElementById('tapCoin');
-        var charImg = document.getElementById('charImg');
+        var coinContainer = document.getElementById('coinContainer');
 
         if (tapElement) {
             tapElement.addEventListener('touchstart', function(e) {
@@ -172,17 +180,41 @@
                         chubbSound.play();
                     } catch(err) { console.log("Sound error"); }
 
-                    // ئەنیمەیشنی نوێی جوڵانی زگی کارەکتەر بە شێوازێکی زۆر نەرم
-                    charImg.classList.add('tap-zone-active');
+                    // چالاککردنی ئەنیمەیشنی جووڵەی ناوچەی لێدانەکە
+                    tapElement.classList.add('tap-zone-active');
+
+                    // وەرگرتنی شوێنی ڕێکی پەنجەکە لەسەر شاشەکە
+                    var touch = e.touches[0];
+                    var rect = coinContainer.getBoundingClientRect();
+                    var x = touch.clientX - rect.left;
+                    var y = touch.clientY - rect.top;
+
+                    // دروستکردنی دەقی نوێی فڕیو بە ناوی کۆینەکەتەوە
+                    createFloatingText(x, y);
                 }
             }, { passive: false });
 
             tapElement.addEventListener('touchend', function() {
                 setTimeout(() => {
-                    // گەڕانەوەی زگی کارەکتەرەکە بۆ باری ئاسایی دوای لێدان
-                    charImg.classList.remove('tap-zone-active');
+                    tapElement.classList.remove('tap-zone-active');
                 }, 50);
             });
+        }
+
+        // فەنکشن بۆ دروستکردن و فڕاندنی ناوی کۆینەکە لە شوێنی لێدانەکە
+        function createFloatingText(x, y) {
+            var textNode = document.createElement('div');
+            textNode.className = 'floating-text';
+            textNode.innerText = 'ChubbyX +1'; /* لێرەدا ناوی کۆینەکە و بڕەکە دیاریکراوە */
+            textNode.style.left = (x - 40) + 'px'; /* ڕێکخستنی جێگای دەقەکە لە ناوەڕاستی پەنجەکە */
+            textNode.style.top = (y - 20) + 'px';
+
+            coinContainer.appendChild(textNode);
+
+            // سڕینەوەی دەقەکە لە ناو شاشەکە دوای تەواوبوونی ئەنیمەیشنەکە بۆ ئەوەی پڕۆژەکە قورس نەبێت
+            setTimeout(() => {
+                textNode.remove();
+            }, 600);
         }
 
         function updateUI() {
