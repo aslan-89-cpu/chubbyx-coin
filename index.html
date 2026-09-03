@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ChubbyX Premium Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ChubbyX Hub</title>
     <script src="https://telegram.org"></script>
     <style>
         * {
@@ -12,8 +12,8 @@
             padding: 0;
         }
         body { 
-            /* ڕەنگی بنەڕەتی شاشە کرا بە هاوڕەنگی تەواوی ئاسمانی وێنەکەت تا ڕەشی سەرەوە ون بێت */
-            background: #1c1437 url('background.png.jpeg') no-repeat center center fixed; 
+            /* ڕەنگی بنەڕەتی کرا بە ڕەش تا بە تەواوی لەگەڵ سەرەوەی تێلیگرام تێکەڵ ببێت */
+            background: #000000 url('background.png.jpeg') no-repeat center center fixed; 
             background-size: 100% 100%; 
             color: white; 
             font-family: sans-serif; 
@@ -45,24 +45,24 @@
             z-index: 5; 
         }
         
-        /* دروستکردنی ناوچەی کلیک لەسەر کاراکتەرە مۆرەکە بە ئەنیمەیشنی ڕاستەقینە */
+        /* شوێنی تاپ-تاپەکە بە ڕێژەی % ڕێکخرا تا ڕێک بکەوێتە سەر زگی کاراکتەرەکە لە ئایفۆندا */
         .tap-zone { 
-            width: 200px; 
-            height: 200px; 
+            position: absolute;
+            top: 15%;
+            width: 250px; 
+            height: 250px; 
             border-radius: 50%; 
             cursor: pointer; 
-            background: transparent; 
+            background: rgba(255, 0, 0, 0); /* نەبینراوە */
             -webkit-tap-highlight-color: transparent;
             z-index: 50;
             touch-action: manipulation;
-            position: relative;
-            /* هێزی ئەنیمەیشن بۆ کاتی کلیککردن */
             transition: transform 0.05s ease-out;
         }
         
-        /* کاتێک پەنجەی پێدا دەنێیت، کاراکتەرەکە کەمێک دێتە پێشەوە و دەچێتەوە دواوە (بەرز و نزم دەبێت) */
+        /* ئەنیمەیشنی کشان و لێدان بۆ کاراکتەرەکە */
         .tap-zone:active {
-            transform: scale(0.88) translateY(5px);
+            transform: scale(0.90);
         }
         
         .energy-container { 
@@ -128,13 +128,13 @@
     </div>
     
     <script>
-        // ڕێکخستنی فەرمی تێلیگرام بۆ ئەوەی هێڵی ڕەشی سەرەوە ون ببێت
         if (window.Telegram && window.Telegram.WebApp) {
             const webApp = window.Telegram.WebApp;
             webApp.ready();
             webApp.expand();
-            webApp.setHeaderColor('#1c1437');
-            webApp.setBackgroundColor('#1c1437');
+            // ڕەنگی سەرەوە کرا بە ڕەش تا بە تەواوی لەگەڵ هێڵەکەی تێلیگرام یەکبگرێت
+            webApp.setHeaderColor('#000000');
+            webApp.setBackgroundColor('#000000');
         }
 
         var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
@@ -168,7 +168,6 @@
             const frame = document.getElementById('appFrame');
             frame.src = url;
             frame.style.display = 'block';
-            
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             event.currentTarget.classList.add('active');
         }
