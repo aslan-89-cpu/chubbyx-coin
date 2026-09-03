@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>ChubbyX</title>
-    <!-- لۆدکردنی سکریپتی فەرمی تێلیگرام بۆ کۆنترۆڵکردنی شاشە -->
     <script src="https://telegram.org"></script>
-    
     <style>
         * {
             box-sizing: border-box;
@@ -24,12 +22,12 @@
             overflow: hidden;
             user-select: none;
             touch-action: none;
-            /* کشان و جێگیرکردنی باکگراوند بە تەواوی شاشە */
-            background: #090314 url('background.png.jpeg') no-repeat center center fixed;
+            /* ڕەنگی بنەڕەتی پشتەوە دەکرێتە وەنەوشەیی تۆخ بۆ ئەوەی لەگەڵ سەرەوەی شاشە یەکبگرێت */
+            background: #231942 url('background.png.jpeg') no-repeat center center fixed;
             background-size: 100% 100%;
         }
         .header { 
-            margin-top: 40px; 
+            margin-top: 20px; 
             text-align: center; 
             z-index: 10; 
         }
@@ -61,7 +59,7 @@
         .energy-container {
             width: 100%;
             text-align: center;
-            margin-bottom: 55px;
+            margin-bottom: 75px; /* کەمێک بەرزکرایەوە بۆ ئەوەی نەچێتە پشتی مینیو */
             z-index: 10;
         }
         .energy-bar-bg { 
@@ -105,16 +103,53 @@
 </head>
 <body>
 
-    <!-- لێرەدا بەشەکانی ناوەوەی HTML (وەک دەق و دوگمەکان) دابنێ کە پێشتر هەت بوو -->
+    <!-- گەڕاندنەوەی بەشەکانی HTML یارییەکە بۆ سەر شاشە -->
+    <div class="header">
+        <h2 style="font-size: 16px; opacity: 0.8;">CHUBBYX BALANCE</h2>
+        <h1 style="font-size: 42px; font-weight: bold; margin-top: 5px;">713</h1>
+    </div>
+
+    <div class="coin-container">
+        <div class="tap-zone" id="tapBtn"></div>
+    </div>
+
+    <div class="energy-container">
+        <div style="font-size: 16px; margin-bottom: 5px;">⚡ 500 / 500</div>
+        <div class="energy-bar-bg">
+            <div class="energy-bar-fill"></div>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-item" href="#">Tasks</a>
+        <a class="nav-item" href="#">Mini-Game</a>
+        <a class="nav-item" href="#">Games</a>
+        <a class="nav-item active" href="#">Invite</a>
+        <a class="nav-item" href="#">Airdrop</a>
+        <a class="nav-item" href="#">Wallet</a>
+    </div>
 
     <script>
-        // چالاککردنی ڕێکخستنی تایبەتی تێلیگرام
+        // چالاککردنی ڕێکخستنەکانی تێلیگرام
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
         
-        // ناچارکردنی تێلیگرام بۆ گۆڕینی ڕەنگی سەرەوەی ڕەش بۆ هاوڕەنگی باکگراوندەکەت
-        window.Telegram.WebApp.setHeaderColor('#0d071c'); 
-        window.Telegram.WebApp.setBackgroundColor('#090314');
+        // گۆڕینی ڕەنگی سەرەوەی شاشە بۆ وەنەوشەیی پەمەیی بۆ ئەوەی ڕەشییەکە نەمێنێت و تێکەڵ بە ئاسمانی وێنەکە بێت
+        window.Telegram.WebApp.setHeaderColor('#231942'); 
+        window.Telegram.WebApp.setBackgroundColor('#231942');
+
+        // ئەنیمەیشنی کلیککردنی سەر کۆینەکە
+        const tapBtn = document.getElementById('tapBtn');
+        if(tapBtn) {
+            tapBtn.addEventListener('touchstart', () => {
+                tapBtn.classList.add('pulse-effect');
+            });
+            tapBtn.addEventListener('touchend', () => {
+                setTimeout(() => {
+                    tapBtn.classList.remove('pulse-effect');
+                }, 50);
+            });
+        }
     </script>
 </body>
 </html>
