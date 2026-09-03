@@ -70,30 +70,22 @@
         <div class="reward-text">+3,000 Coins</div>
         <p style="margin: 0 0 20px 0; font-size: 12px; color: #a48fff;">When your friend joins the game using your link</p>
         
-        <!-- Button to generate and share link -->
         <button class="btn-share" onclick="shareInviteLink()">Invite a Friend</button>
     </div>
 
-    <!-- Back Button to return to the main game -->
-    <a href="game.html" class="back-btn">Back to Game</a>
+    <!-- Fixed: Redirects perfectly to main game dashboard index.html -->
+    <a href="index.html" class="back-btn">Back to Game</a>
 
     <script>
-        // Ensure Telegram WebApp is ready
         if (window.Telegram && window.Telegram.WebApp) { 
             window.Telegram.WebApp.ready(); 
         }
 
         function shareInviteLink() {
-            // Get user's Telegram ID dynamically, fallback to 12345 for browser testing
             const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || '12345';
-            
-            // Create the official link format that triggers the start_param inside Telegram
             const inviteUrl = https://t.me{tgUserId};
-            
-            // The default message text that will be sent to the friend
             const shareText = "🚀 Join ChubbyX Coin! Tap to earn, complete tasks, and win rewards together! 💎";
             
-            // This natively opens the Telegram user/chat selection screen inside the Mini App
             window.Telegram.WebApp.openTelegramLink(https://t.me{encodeURIComponent(inviteUrl)}&text=${encodeURIComponent(shareText)});
         }
     </script>
