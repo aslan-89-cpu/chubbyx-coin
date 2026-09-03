@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Airdrop Withdraw</title>
+    <style>
+        body { 
+            background: #090314; 
+            color: white; 
+            font-family: sans-serif; 
+            text-align: center; 
+            padding: 20px; 
+        }
+        h2 { 
+            color: #a48fff; 
+            margin-top: 20px; 
+            text-transform: uppercase;
+        }
+        .withdraw-box { 
+            background: #1c103a; 
+            border: 1px solid #331a5e; 
+            border-radius: 12px; 
+            padding: 30px 20px; 
+            margin: 25px 0; 
+        }
+        .balance-title {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+        .balance-amount {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            background: #ffa500;
+            color: black;
+            padding: 6px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .btn-withdraw { 
+            background: #555; 
+            color: #888; 
+            border: none; 
+            padding: 12px 30px; 
+            border-radius: 25px; 
+            font-weight: bold; 
+            font-size: 16px;
+            cursor: not-allowed; 
+            width: 100%; 
+        }
+        .back-btn { 
+            background: #1c103a; 
+            color: white; 
+            padding: 10px 30px; 
+            border-radius: 10px; 
+            text-decoration: none; 
+            display: inline-block; 
+            margin-top: 20px; 
+            border: 1px solid #331a5e; 
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Airdrop Claim</h2>
+    <p style="font-size: 14px; opacity: 0.7; max-width: 280px; margin: 0 auto;">Verify your token balance and prepare for the upcoming distribution.</p>
+
+    <div class="withdraw-box">
+        <div class="balance-title">Your Total Balance</div>
+        <!-- This will load the user's coins dynamically from the dashboard -->
+        <div class="balance-amount" id="userCoins">0 CHUBB</div>
+        
+        <div class="status-badge">Phase 1: Accumulation</div>
+        
+        <!-- Button is locked as 'Coming Soon' to build hype and protect the rollout -->
+        <button class="btn-withdraw" id="claimBtn" disabled>Withdrawal Locked</button>
+    </div>
+
+    <!-- Back Button to return directly to index.html -->
+    <a href="index.html" class="back-btn">Back to Game</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Withdraw page loaded. Status: Phase 1 (Locked).");
+            
+            // Optional: retrieve coins from local storage if your dashboard saves it there
+            const localCoins = localStorage.getItem('user_coins') || '0';
+            document.getElementById('userCoins').innerText = parseInt(localCoins).toLocaleString() + ' CHUBB';
+        });
+    </script>
+</body>
+</html>
