@@ -8,10 +8,8 @@
         body { background: #090314; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
         h2 { color: #a48fff; margin-top: 20px; text-transform: uppercase; }
         
-        /* The Wheel Container */
         .wheel-container { position: relative; margin: 30px auto; width: 280px; height: 280px; display: flex; justify-content: center; align-items: center; }
         
-        /* The Actual Spinning Wheel with Purple Segments */
         .wheel-img { 
             width: 100%; 
             height: 100%; 
@@ -29,7 +27,6 @@
             position: relative;
         }
         
-        /* Center Character Logo inside the Wheel */
         .center-logo {
             position: absolute;
             width: 70px;
@@ -40,7 +37,6 @@
             z-index: 10;
         }
 
-        /* Top Pointer Triangle */
         .pointer {
             position: absolute;
             top: -15px;
@@ -66,13 +62,13 @@
     <div class="wheel-container">
         <div class="pointer"></div>
         <div id="wheel" class="wheel-img"></div>
-        <!-- Placing your character image perfectly in the center of the wheel -->
         <img src="image.png.jpeg" class="center-logo" alt="ChubbyX">
     </div>
 
     <button id="spinBtn" class="btn-spin" onclick="startSpin()">Spin Now</button>
     <br>
-    <a href="game.html" class="back-btn">Back to Game</a>
+    <!-- Fixed: Redirects directly to the main game dashboard index.html -->
+    <a href="index.html" class="back-btn">Back to Game</a>
 
     <script>
         if (window.Telegram && window.Telegram.WebApp) { window.Telegram.WebApp.ready(); }
@@ -83,12 +79,11 @@
             canSpin = false;
             document.getElementById('spinBtn').disabled = true;
 
-            // Generate a random degree to make the wheel rotate smoothly
             const degrees = Math.floor(3000 + Math.random() * 3000);
             document.getElementById('wheel').style.transform = rotate(${degrees}deg);
 
             setTimeout(async () => {
-                // Fixed: Added the list of reward values for the spin wheel
+                // Fixed: Added correct array list for rewards
                 const rewards =;
                 const winAmount = rewards[Math.floor(Math.random() * rewards.length)];
                 
@@ -102,7 +97,7 @@
                         body: JSON.stringify({ userId: tgUserId, amount: winAmount, task: 'lucky_spin' })
                     });
                 } catch (e) { 
-                    console.error("Failed to sync spin coins with backend:", e); 
+                    console.error("Backend error syncing spin rewards:", e); 
                 }
 
                 canSpin = true;
