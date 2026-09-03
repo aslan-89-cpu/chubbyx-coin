@@ -60,30 +60,24 @@
         }
 
         .tap-zone-active {
-            transform: scale(0.93) !important; /* کەمێک داچوونی بازنەکە بۆ هەستی لێدان */
+            transform: scale(0.93) !important;
         }
 
         /* ─── ئەنیمەیشنی فڕینی ناوی کۆینەکە بە زەردی ─── */
         .floating-text {
             position: absolute;
-            color: #eab308; /* ڕەنگی زەردی درەوشاوە */
+            color: #eab308;
             font-weight: bold;
             font-size: 22px;
             pointer-events: none;
             z-index: 1000;
             animation: floatUpAndFade 0.6s ease-out forwards;
-            text-shadow: 0 0 8px rgba(234, 179, 8, 0.6); /* درەوشانەوەی دەقەکە */
+            text-shadow: 0 0 8px rgba(234, 179, 8, 0.6);
         }
 
         @keyframes floatUpAndFade {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-120px) scale(0.8); /* بەرەو سەرەوە دەفڕێت و بچووک دەبێتەوە */
-            }
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-120px) scale(0.8); }
         }
 
         .energy-container {
@@ -162,7 +156,6 @@
 
         document.getElementById('score').innerText = count;
 
-        var chubbSound = new Audio('chubb.mp3');
         var tapElement = document.getElementById('tapCoin');
         var coinContainer = document.getElementById('coinContainer');
 
@@ -175,21 +168,16 @@
                     updateUI();
                     localStorage.setItem('chubby_coins', count);
 
-                    try {
-                        chubbSound.currentTime = 0;
-                        chubbSound.play();
-                    } catch(err) { console.log("Sound error"); }
+                    // ─── بەرهەمهێنانی دەنگی ئۆتۆماتیکی "Chubb" ───
+                    playChubbVoice();
 
-                    // چالاککردنی ئەنیمەیشنی جووڵەی ناوچەی لێدانەکە
                     tapElement.classList.add('tap-zone-active');
 
-                    // وەرگرتنی شوێنی ڕێکی پەنجەکە لەسەر شاشەکە
                     var touch = e.touches[0];
                     var rect = coinContainer.getBoundingClientRect();
                     var x = touch.clientX - rect.left;
                     var y = touch.clientY - rect.top;
 
-                    // دروستکردنی دەقی نوێی فڕیو بە ناوی کۆینەکەتەوە
                     createFloatingText(x, y);
                 }
             }, { passive: false });
@@ -201,20 +189,31 @@
             });
         }
 
-        // فەنکشن بۆ دروستکردن و فڕاندنی ناوی کۆینەکە لە شوێنی لێدانەکە
+        // فەنکشن بۆ دروستکردنی دەنگی ڕۆبۆتی خۆکاری یارییەکە
+        function playChubbVoice() {
+            if ('speechSynthesis' in window) {
+                // وەستاندنی هەر دەنگێکی پێشوو بۆ ئەوەی لەگەڵ لێدانی خێزادا تێکەڵ نەبێت
+                window.speechSynthesis.cancel();
+                
+                var utterance = new SpeechSynthesisUtterance('Chubb');
+                utterance.lang = 'en-US';
+                utterance.pitch = 1.4; // دەنگەکەی کەمێک منداڵانە و کارتۆنی دەکات
+                utterance.rate = 1.6;  // خێرایی گۆکردنەکە زیاد دەکات بۆ ئەوەی خێرا بێت
+                
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
         function createFloatingText(x, y) {
             var textNode = document.createElement('div');
             textNode.className = 'floating-text';
-            textNode.innerText = 'ChubbyX +1'; /* لێرەدا ناوی کۆینەکە و بڕەکە دیاریکراوە */
-            textNode.style.left = (x - 40) + 'px'; /* ڕێکخستنی جێگای دەقەکە لە ناوەڕاستی پەنجەکە */
+            textNode.innerText = 'ChubbyX +1';
+            textNode.style.left = (x - 40) + 'px';
             textNode.style.top = (y - 20) + 'px';
 
             coinContainer.appendChild(textNode);
 
-            // سڕینەوەی دەقەکە لە ناو شاشەکە دوای تەواوبوونی ئەنیمەیشنەکە بۆ ئەوەی پڕۆژەکە قورس نەبێت
-            setTimeout(() => {
-                textNode.remove();
-            }, 600);
+            setTimeout(() => { textNode.remove(); }, 600);
         }
 
         function updateUI() {
