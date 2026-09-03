@@ -45,25 +45,24 @@
             z-index: 5; 
         }
         
-        /* بازنەی نەبینراوی تاپ-تاپ ڕێک لەسەر زگی کاراکتەرە مۆرەکە */
         .tap-zone { 
-            position: absolute;
-            top: 22%;
-            width: 240px; 
-            height: 240px; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            background: transparent; 
-            -webkit-tap-highlight-color: transparent;
-            z-index: 50;
-            touch-action: manipulation;
-            transition: transform 0.05s ease-out;
-        }
-        
-        /* ئەنیمەیشنی لێدان و بەرز و نزم بوون لە کاتی کلیکدا */
-        .tap-zone:active {
-            transform: scale(0.90);
-        }
+    position: absolute;
+    top: 25%; /* جێگیرکردنی بازنەی کلیکەکە ڕێک لەسەر زگی کاراکتەرە مۆرەکە */
+    width: 260px; 
+    height: 260px; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    background: transparent; 
+    -webkit-tap-highlight-color: transparent;
+    z-index: 999; /* هێنراوەتە سەروو هەموو شتێک تا دڵنیابین کلیکەکە بە تەواوی دەگرێت */
+    touch-action: manipulation;
+    transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* کاتێک پەنجەی پێدا دەنێیت، کاراکتەرەکە بە نەرمی و بەهێزی دەجوڵێتەوە و بەرز و نزم دەبێت */
+.tap-zone:active {
+    transform: scale(0.85) translateY(8px);
+}
         
         .energy-container { 
             width: 80%; 
