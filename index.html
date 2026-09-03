@@ -2,56 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChubbyX Coin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ChubbyX</title>
+    <!-- لۆدکردنی سکریپتی فەرمی تێلیگرام بۆ کۆنترۆڵکردنی شاشە -->
+    <script src="https://telegram.org"></script>
+    
     <style>
-    * {
-        box-sizing: border-box;
-    }
-    body {
-        margin: 0;
-        padding: 0;
-        width: 100vw;
-        height: 100vh;
-        color: white;
-        font-family: sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        overflow: hidden;
-        user-select: none;
-        touch-action: none;
-        
-        /* دروستکردنی باکگراوندێک کە تەواوی شاشەکە پڕ دەکاتەوە بێ زووم */
-        background-image: url('background.png.jpeg');
-        background-size: 100% 100%;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
-    * {
-        box-sizing: border-box;
-    }
-    body {
-        margin: 0;
-        padding: 0;
-        width: 100vw;
-        height: 100vh;
-        color: white;
-        font-family: sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        overflow: hidden;
-        user-select: none;
-        touch-action: none;
-        
-        
-    }
-</style>
-        .energy-bar-bg { width: 80%; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #a48fff; margin: 10px auto; }
-        .energy-bar-fill { width: 100%; height: 12px; background: #a48fff; transition: width 0.1s ease; }
-        
-        /* گەڕانەوە بۆ مێنووە جوانەکەی پێشوو بە چاککردنی کۆدەکان */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            width: 100vw;
+            height: 100vh;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+            touch-action: none;
+            /* کشان و جێگیرکردنی باکگراوند بە تەواوی شاشە */
+            background: #090314 url('background.png.jpeg') no-repeat center center fixed;
+            background-size: 100% 100%;
+        }
+        .header { 
+            margin-top: 40px; 
+            text-align: center; 
+            z-index: 10; 
+        }
+        .coin-container { 
+            flex: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            width: 100%; 
+            position: relative; 
+        }
+        .tap-zone {
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: url('image_okkb6u.png.jpeg') no-repeat center center;
+            background-size: cover;
+            box-shadow: 0 0 30px rgba(164, 143, 255, 0.6);
+            border: 4px solid #a48fff;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            z-index: 10;
+            transition: transform 0.05s ease;
+        }
+        .tap-zone.pulse-effect {
+            transform: scale(0.9);
+        }
+        .energy-container {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 55px;
+            z-index: 10;
+        }
+        .energy-bar-bg { 
+            width: 80%; 
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 10px; 
+            overflow: hidden; 
+            border: 1px solid #a48fff; 
+            margin: 10px auto; 
+        }
+        .energy-bar-fill { 
+            width: 100%; 
+            height: 12px; 
+            background: #a48fff; 
+            transition: width 0.1s ease; 
+        }
         .nav-bar { 
             position: fixed; 
             bottom: 0; 
@@ -63,75 +89,32 @@
             border-top: 1px solid #331a5e; 
             z-index: 20; 
         }
-        .nav-item { color: #a48fff; text-decoration: none; font-size: 14px; cursor: pointer; font-weight: bold; opacity: 0.7; }
-        .nav-item.active { opacity: 1; color: white; }
+        .nav-item { 
+            color: #a48fff; 
+            text-decoration: none; 
+            font-size: 14px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            opacity: 0.7; 
+        }
+        .nav-item.active { 
+            opacity: 1; 
+            color: white; 
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div style="opacity: 0.8; font-size: 14px; letter-spacing: 1px;">CHUBBYX BALANCE</div>
-        <h1 id="score" style="margin: 5px 0; font-size: 48px;">0</h1>
-    </div>
-
-    <div class="coin-container">
-        <div class="tap-zone" id="tapcoin"></div>
-    </div>
-
-    <div class="energy-container">
-        <div>⚡ <span id="energyText">500</span> / 500</div>
-        <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyFill"></div></div>
-    </div>
-
-    <div class="nav-bar">
-        <div class="nav-item" onclick="window.location.href='tasks.html'">Tasks</div>
-        <div class="nav-item" onclick="window.location.href='game.html'">Mini-Game</div>
-        <div class="nav-item active">Games</div>
-        <div class="nav-item" onclick="window.location.href='invite.html'">Invite</div>
-        <div class="nav-item" onclick="window.location.href='withdraw.html'">Airdrop</div>
-        <div class="nav-item" onclick="window.location.href='wallet.html'">Wallet</div>
-    </div>
+    <!-- لێرەدا بەشەکانی ناوەوەی HTML (وەک دەق و دوگمەکان) دابنێ کە پێشتر هەت بوو -->
 
     <script>
-        let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        let energy = 500;
-        document.getElementById('score').innerText = count;
-
-        function playVoiceSound() {
-            let utterance = new SpeechSynthesisUtterance("Chubby"); 
-            utterance.lang = 'en-US';
-            utterance.rate = 2.2; 
-            utterance.pitch = 1.3; 
-            window.speechSynthesis.cancel(); 
-            window.speechSynthesis.speak(utterance);
-        }
-
-        var tapElement = document.getElementById('tapcoin');
-        tapElement.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            if (energy > 0) {
-                count++; energy--;
-                document.getElementById('score').innerText = count;
-                document.getElementById('energyText').innerText = energy;
-                document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%';
-                localStorage.setItem('chubby_coins', count);
-                
-                playVoiceSound();
-                
-                tapElement.classList.add('pulse-effect');
-                setTimeout(() => {
-                    tapElement.classList.remove('pulse-effect');
-                }, 50);
-            }
-        });
-
-        setInterval(function() {
-            if (energy < 500) {
-                energy++;
-                document.getElementById('energyText').innerText = energy;
-                document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%';
-            }
-        }, 1500);
+        // چالاککردنی ڕێکخستنی تایبەتی تێلیگرام
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+        
+        // ناچارکردنی تێلیگرام بۆ گۆڕینی ڕەنگی سەرەوەی ڕەش بۆ هاوڕەنگی باکگراوندەکەت
+        window.Telegram.WebApp.setHeaderColor('#0d071c'); 
+        window.Telegram.WebApp.setBackgroundColor('#090314');
     </script>
 </body>
 </html>
