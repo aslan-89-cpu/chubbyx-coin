@@ -22,7 +22,8 @@
             overflow: hidden;
             user-select: none;
             touch-action: none;
-            background: #4a3b7d url('background.png.jpeg') no-repeat center center fixed;
+            /* ڕەنگی پشتەوە کرا بە وەنەوشەیی تۆخی هاوشێوەی وێنەکە */
+            background: #231942 url('background.png.jpeg') no-repeat center center fixed;
             background-size: 100% 100%;
         }
         .header { 
@@ -31,37 +32,19 @@
             z-index: 10; 
             pointer-events: none;
         }
-        
-        /* لابردنی بازنە گەورەکەی ناوەند و دروستکردنی ناوچەی نوێ بۆ دوو کۆینەکە */
         .coins-container { 
             flex: 1; 
             width: 100%; 
             position: relative; 
             z-index: 5;
         }
-        
-        /* دوگمەی کۆینی لای چەپ (ڕێک لەسەر کۆینە زەردەکەی باکگراوند) */
+        /* لێرەدا شوێنی دوگمەکان ڕێکخرایەوە بۆ سەر دوو کۆینە زەردەکەی خوارەوە */
         .tap-coin-left {
             position: absolute;
-            left: 8%;
+            left: 10%;
             bottom: 22%;
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            cursor: pointer;
-            background: transparent; /* نەبینراو دەبێت بۆ ئەوەی کۆینە ئەسڵییەکە تێک نەچێت */
-            -webkit-tap-highlight-color: transparent;
-            z-index: 30;
-            transition: transform 0.05s ease;
-        }
-        
-        /* دوگمەی کۆینی لای ڕاست (ڕێک لەسەر کۆینە زەردەکەی باکگراوند) */
-        .tap-coin-right {
-            position: absolute;
-            right: 8%;
-            bottom: 26%;
-            width: 110px;
-            height: 110px;
+            width: 115px;
+            height: 115px;
             border-radius: 50%;
             cursor: pointer;
             background: transparent;
@@ -69,12 +52,22 @@
             z-index: 30;
             transition: transform 0.05s ease;
         }
-
-        /* ئەنیمەیشنی بچووکبوونەوە کاتێک پەنجەی پێدا دەنێیت */
+        .tap-coin-right {
+            position: absolute;
+            right: 10%;
+            bottom: 26%;
+            width: 115px;
+            height: 115px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: transparent;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 30;
+            transition: transform 0.05s ease;
+        }
         .tap-coin-left:active, .tap-coin-right:active {
             transform: scale(0.92);
         }
-        
         .energy-container {
             width: 100%;
             text-align: center;
@@ -129,7 +122,6 @@
         <h1 style="font-size: 42px; font-weight: bold; margin-top: 2px;">713</h1>
     </div>
 
-    <!-- لێرەدا بازنە گەورەکە سڕدراوەتەوە و دوو دوگمەی نەبینراو بۆ کۆینە زەردەکان دانراون -->
     <div class="coins-container">
         <div class="tap-coin-left" id="coinLeft"></div>
         <div class="tap-coin-right" id="coinRight"></div>
@@ -152,20 +144,20 @@
     </div>
 
     <script>
+        // دڵنیابوون لە لۆدبوونی تەواوی ئەپەکە
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
         
-        window.Telegram.WebApp.setHeaderColor('#4a3b7d'); 
-        window.Telegram.WebApp.setBackgroundColor('#4a3b7d');
+        // گۆڕینی ڕەنگی سەرەوە بۆ وەنەوشەیی تۆخ بۆ شاردنەوەی بەشە ڕەشەکە
+        window.Telegram.WebApp.setHeaderColor('#231942'); 
+        window.Telegram.WebApp.setBackgroundColor('#231942');
 
-        // بەستنەوەی جاڤاسکریت بە هەردوو کۆینەکەوە بۆ ئەژمارکردنی کلیکەکان
         const coinLeft = document.getElementById('coinLeft');
         const coinRight = document.getElementById('coinRight');
 
         function handleTap(e) {
             e.preventDefault();
-            // لێرەدا دەتوانیت کۆدی زیادکردنی باڵانس (Score +1) دابنێیت
-            console.log("Tapped a coin!");
+            console.log("Tapped!");
         }
 
         if(coinLeft) {
