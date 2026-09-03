@@ -83,10 +83,12 @@
             canSpin = false;
             document.getElementById('spinBtn').disabled = true;
 
+            // Generate a random degree to make the wheel rotate smoothly
             const degrees = Math.floor(3000 + Math.random() * 3000);
             document.getElementById('wheel').style.transform = rotate(${degrees}deg);
 
             setTimeout(async () => {
+                // Fixed: Added the list of reward values for the spin wheel
                 const rewards =;
                 const winAmount = rewards[Math.floor(Math.random() * rewards.length)];
                 
@@ -99,7 +101,9 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ userId: tgUserId, amount: winAmount, task: 'lucky_spin' })
                     });
-                } catch (e) { console.error(e); }
+                } catch (e) { 
+                    console.error("Failed to sync spin coins with backend:", e); 
+                }
 
                 canSpin = true;
                 document.getElementById('spinBtn').disabled = false;
