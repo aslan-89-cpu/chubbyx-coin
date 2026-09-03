@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ChubbyX Hub</title>
+    <title>ChubbyX Premium Hub</title>
     <script src="https://telegram.org"></script>
     <style>
         * {
@@ -12,7 +12,7 @@
             padding: 0;
         }
         body { 
-            /* ڕەنگی باکگراوند گۆڕدرا بۆ ڕەنگی تۆخی وەنەوشەیی ئاسمانی وێنەکە (#1c1437) تا ڕەشی سەرەوە ون بێت */
+            /* ڕەنگی بنەڕەتی شاشە کرا بە هاوڕەنگی تەواوی ئاسمانی وێنەکەت تا ڕەشی سەرەوە ون بێت */
             background: #1c1437 url('background.png.jpeg') no-repeat center center fixed; 
             background-size: 100% 100%; 
             color: white; 
@@ -45,7 +45,7 @@
             z-index: 5; 
         }
         
-        /* ناوچەی تاپ-تاپ ڕێک لەسەر زگی کاراکتەرە مۆرەکە جێگیر کراوە */
+        /* دروستکردنی ناوچەی کلیک لەسەر کاراکتەرە مۆرەکە بە ئەنیمەیشنی ڕاستەقینە */
         .tap-zone { 
             width: 200px; 
             height: 200px; 
@@ -56,13 +56,13 @@
             z-index: 50;
             touch-action: manipulation;
             position: relative;
-            /* زیادکردنی ئەنیمەیشنی نەرم بۆ کاتی لێدان */
+            /* هێزی ئەنیمەیشن بۆ کاتی کلیککردن */
             transition: transform 0.05s ease-out;
         }
         
-        /* کاتێک پەنجەی پێدا دەنێیت، کاراکتەرەکە کەمێک بچووک دەبێتەوە و وەک لێدان (Pulse) دیار دەبێت */
-        .tap-zone.active-tap {
-            transform: scale(0.90);
+        /* کاتێک پەنجەی پێدا دەنێیت، کاراکتەرەکە کەمێک دێتە پێشەوە و دەچێتەوە دواوە (بەرز و نزم دەبێت) */
+        .tap-zone:active {
+            transform: scale(0.88) translateY(5px);
         }
         
         .energy-container { 
@@ -121,19 +121,18 @@
     
     <div class="nav-bar">
         <div class="nav-item" onclick="loadExternalPage('tasks.html')">Tasks</div>
-        <div class="nav-item" onclick="openInvitePage()">Invite</div>
+        <div class="nav-item" onclick="loadExternalPage('invite.html')">Invite</div>
         <div class="nav-item" onclick="loadExternalPage('game.html')">Games</div>
         <div class="nav-item" onclick="loadExternalPage('wallet.html')">Wallet</div>
         <div class="nav-item" onclick="loadExternalPage('withdraw.html')">Withdraw</div>
     </div>
     
     <script>
-        // ڕێکخستنی فەرمی تێلیگرام بۆ شاردنەوەی ڕەشی سەرەوە
+        // ڕێکخستنی فەرمی تێلیگرام بۆ ئەوەی هێڵی ڕەشی سەرەوە ون ببێت
         if (window.Telegram && window.Telegram.WebApp) {
             const webApp = window.Telegram.WebApp;
             webApp.ready();
             webApp.expand();
-            // گۆڕینی ڕەنگی هێڵی سەرەوە بۆ هاوڕەنگی وەنەوشەیی ئاسمانەکە تا ڕەشییەکە ون بێت
             webApp.setHeaderColor('#1c1437');
             webApp.setBackgroundColor('#1c1437');
         }
@@ -145,7 +144,6 @@
 
         var tapElement = document.getElementById('tapCoin');
         if (tapElement) {
-            // سیستەمی ئەنیمەیشنی لێدان (بۆ ئەوەی بەرز و نزم بێت لە کاتی کلیکدا)
             tapElement.addEventListener('touchstart', function(e) {
                 e.preventDefault(); 
                 if (energy > 0) { 
@@ -153,18 +151,8 @@
                     document.getElementById('score').innerText = count; 
                     updateUI(); 
                     localStorage.setItem('chubby_coins', count); 
-                    
-                    // چالاککردنی کاتیی ئەنیمەیشنەکە
-                    tapElement.classList.add('active-tap');
                 }
             }, { passive: false });
-
-            tapElement.addEventListener('touchend', function() {
-                // لابردنی ئەنیمەیشنەکە دوای لادانی پەنجە بۆ گەڕانەوەی بۆ دۆخی ئاسایی
-                setTimeout(() => {
-                    tapElement.classList.remove('active-tap');
-                }, 50);
-            });
         }
 
         function updateUI() { 
@@ -183,11 +171,6 @@
             
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             event.currentTarget.classList.add('active');
-        }
-
-        // بۆ فایلی invite.html بە جیا
-        function openInvitePage() {
-            loadExternalPage('invite.html');
         }
 
         window.addEventListener('message', function(event) {
