@@ -12,8 +12,8 @@
             padding: 0;
         }
         body { 
-            /* ڕەنگی باکگراوند لێرەدا کرا بە ڕەنگی ڕەشی فەرمی بۆ تێکەڵبوون لەگەڵ سەرەوەی تێلیگرام */
-            background: #000000 url('background.png.jpeg') no-repeat center bottom fixed; 
+            /* لێرەدا ڕێکخرا بۆ center top بۆ ئەوەی ئاسمانە نوێیەکە بچێتە بەرزترین خاڵ */
+            background: #1c1437 url('background.png.jpeg') no-repeat center top fixed; 
             background-size: cover; 
             color: white; 
             font-family: sans-serif; 
@@ -45,7 +45,7 @@
             z-index: 5; 
         }
         
-        /* بازنەی نەبینراوی کلیککردن ڕێک خرا بۆ سەر زگی کاراکتەرە مۆرەکە لە شاشەی ئایفۆندا */
+        /* بازنەی نەبینراوی تاپ-تاپ ڕێک لەسەر زگی کاراکتەرە مۆرەکە */
         .tap-zone { 
             position: absolute;
             top: 22%;
@@ -57,11 +57,10 @@
             -webkit-tap-highlight-color: transparent;
             z-index: 50;
             touch-action: manipulation;
-            /* زیادکردنی هێزی ئەنیمەیشن بۆ جووڵانەوەی کاراکتەرەکە */
             transition: transform 0.05s ease-out;
         }
         
-        /* کاتێک پەنجەی پێدا دەنێیت، لێدانەکە (Pulse) کار دەکات و بەرز و نزم دەبێت */
+        /* ئەنیمەیشنی لێدان و بەرز و نزم بوون لە کاتی کلیکدا */
         .tap-zone:active {
             transform: scale(0.90);
         }
@@ -70,7 +69,7 @@
             width: 80%; 
             text-align: center; 
             z-index: 10; 
-            margin-bottom: 105px; /* بۆشایی زیاتر بۆ خوارەوە بۆ پڕبوونی شاشە */
+            margin-bottom: 105px; 
             pointer-events: none;
         }
         .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; margin-top: 8px; }
@@ -133,9 +132,9 @@
             const webApp = window.Telegram.WebApp;
             webApp.ready();
             webApp.expand();
-            // هاوڕەنگکردنی تەواوی سەرەوە لەگەڵ هێڵە ڕەشەکەی ئایفۆن
-            webApp.setHeaderColor('#000000');
-            webApp.setBackgroundColor('#000000');
+            // ڕەنگی سەرەوە کرا بە وەنەوشەیی تۆخ بۆ تێکەڵبوونی تەواو لەگەڵ ئاسمانە درێژەکەت
+            webApp.setHeaderColor('#1c1437');
+            webApp.setBackgroundColor('#1c1437');
         }
 
         var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
