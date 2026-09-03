@@ -6,28 +6,72 @@
     <title>ChubbyX Lucky Spin</title>
     <style>
         body { background: #090314; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        h2 { color: #a48fff; margin-top: 20px; }
-        .wheel-container { position: relative; margin: 30px auto; width: 260px; height: 260px; }
-        .wheel-img { width: 100%; height: 100%; border-radius: 50%; transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); }
-        .btn-spin { background: #a48fff; color: black; border: none; padding: 12px 40px; border-radius: 25px; font-weight: bold; font-size: 16px; cursor: pointer; width: 80%; margin-top: 20px; }
-        .btn-spin:disabled { background: #555; color: #888; cursor: not-allowed; }
-        .back-btn { background: #1c103a; color: white; padding: 10px 30px; border-radius: 10px; text-decoration: none; display: inline-block; margin-top: 30px; border: 1px solid #331a5e; }
+        h2 { color: #a48fff; margin-top: 20px; text-transform: uppercase; }
+        
+        /* The Wheel Container */
+        .wheel-container { position: relative; margin: 30px auto; width: 280px; height: 280px; display: flex; justify-content: center; align-items: center; }
+        
+        /* The Actual Spinning Wheel with Purple Segments */
+        .wheel-img { 
+            width: 100%; 
+            height: 100%; 
+            border-radius: 50%; 
+            border: 5px solid #a48fff;
+            background: conic-gradient(
+                #3a1d5d 0deg 60deg, 
+                #5c2e91 60deg 120deg, 
+                #1f0f33 120deg 180deg, 
+                #3a1d5d 180deg 240deg, 
+                #5c2e91 240deg 300deg, 
+                #1f0f33 300deg 360deg
+            );
+            transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); 
+            position: relative;
+        }
+        
+        /* Center Character Logo inside the Wheel */
+        .center-logo {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid #ffd700;
+            background: #090314;
+            z-index: 10;
+        }
+
+        /* Top Pointer Triangle */
+        .pointer {
+            position: absolute;
+            top: -15px;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid #ffd700;
+            z-index: 20;
+        }
+
+        .btn-spin { background: #a48fff; color: black; border: none; padding: 12px 40px; border-radius: 25px; font-weight: bold; font-size: 16px; cursor: pointer; width: 85%; margin-top: 25px; box-shadow: 0 4px 15px rgba(164, 143, 255, 0.3); }
+        .btn-spin:disabled { background: #555; color: #888; cursor: not-allowed; box-shadow: none; }
+        .back-btn { background: #1c103a; color: white; padding: 10px 35px; border-radius: 10px; text-decoration: none; display: inline-block; margin-top: 25px; border: 1px solid #331a5e; }
     </style>
     <script src="https://telegram.org"></script>
 </head>
 <body>
 
     <h2>ChubbyX Lucky Spin</h2>
-    <p style="opacity: 0.8;">Spin the purple wheel to win mega rewards!</p>
+    <p style="opacity: 0.8; font-size: 14px;">Spin the purple wheel to win mega rewards!</p>
 
     <div class="wheel-container">
-        <!-- Using your official image inside the spinning wheel -->
-        <img src="image.png.jpeg" id="wheel" class="wheel-img" alt="Lucky Spin">
+        <div class="pointer"></div>
+        <div id="wheel" class="wheel-img"></div>
+        <!-- Placing your character image perfectly in the center of the wheel -->
+        <img src="image.png.jpeg" class="center-logo" alt="ChubbyX">
     </div>
 
     <button id="spinBtn" class="btn-spin" onclick="startSpin()">Spin Now</button>
     <br>
-    <!-- Back button to return to main game -->
     <a href="game.html" class="back-btn">Back to Game</a>
 
     <script>
@@ -39,16 +83,15 @@
             canSpin = false;
             document.getElementById('spinBtn').disabled = true;
 
-            const degrees = Math.floor(2000 + Math.random() * 2000);
+            const degrees = Math.floor(3000 + Math.random() * 3000);
             document.getElementById('wheel').style.transform = rotate(${degrees}deg);
 
             setTimeout(async () => {
                 const rewards =;
                 const winAmount = rewards[Math.floor(Math.random() * rewards.length)];
                 
-                alert(Congratulations! You won +${winAmount} Coins!);
+                alert(Congratulations! You won +${winAmount.toLocaleString()} Coins!);
 
-                // Send reward to server
                 try {
                     const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 12345;
                     await fetch('/api/add-coins', {
