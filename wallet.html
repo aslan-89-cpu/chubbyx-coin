@@ -4,65 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Connect Wallet</title>
+    <!-- Importing Official TON Connect SDK for multi-wallet support (OKX, Tonkeeper, etc.) -->
+    <script src="https://unpkg.com"></script>
     <style>
         body { 
             background: #090314; 
             color: white; 
             font-family: sans-serif; 
-            padding: 20px; 
             text-align: center; 
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 20px; 
         }
-        h2 { color: #a48fff; margin-top: 30px; text-transform: uppercase; }
+        h2 { 
+            color: #a48fff; 
+            margin-top: 20px; 
+            text-transform: uppercase;
+        }
         .wallet-box { 
             background: #1c103a; 
             border: 1px solid #331a5e; 
-            border-radius: 15px; 
-            padding: 30px; 
-            width: 100%;
-            max-width: 380px;
-            margin-top: 40px;
-            box-sizing: border-box;
-        }
-        .btn-wallet { 
-            background: #0098ea; 
-            color: white; 
-            border: none; 
-            padding: 14px 20px; 
             border-radius: 12px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            width: 100%;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(0, 152, 234, 0.3);
+            padding: 30px 20px; 
+            margin: 30px 0; 
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        /* Styling the official TON Connect Button container */
+        #ton-connect-btn {
+            margin: 10px 0;
+        }
+        .status-text {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 15px;
+            max-width: 280px;
         }
         .back-btn { 
             background: #1c103a; 
             color: white; 
-            padding: 12px 35px; 
+            padding: 10px 30px; 
             border-radius: 10px; 
-            border: 1px solid #a48fff; 
-            margin-top: 40px; 
-            cursor: pointer; 
-            font-weight: bold; 
+            text-decoration: none; 
+            display: inline-block; 
+            margin-top: 20px; 
+            border: 1px solid #331a5e; 
         }
     </style>
 </head>
 <body>
 
     <h2>Connect Wallet</h2>
-    <p style="opacity: 0.8; font-size: 14px;">Connect your Web3 wallet to prepare for Airdrop withdrawal.</p>
+    <p class="status-text">Connect your Web3 wallet to prepare for Airdrop withdrawal. Multiple wallets supported.</p>
 
     <div class="wallet-box">
-        <p style="font-size:15px; opacity:0.7; margin-bottom:25px;">TON Wallet connectivity will be available soon. Stay tuned!</p>
-        <button class="btn-wallet" onclick="alert('TON Space integration is loading... Please check back later.')">Connect TON Wallet</button>
+        <!-- The multi-wallet button will automatically render inside this div -->
+        <div id="ton-connect-btn"></div>
     </div>
 
-    <button class="back-btn" onclick="window.location.href='index.html'">Back to Game</button>
+    <!-- Back Button to return to the game -->
+    <a href="game.html" class="back-btn">Back to Game</a>
 
+    <script>
+        // Initialize TON Connect UI Configuration
+        // manifestUrl is required by TON Connect to show your game name and icon inside OKX/Tonkeeper
+        const tonConnectUI = new TONConnectUI.TonConnectUI({
+            manifestUrl: 'https://githubusercontent.com',
+            buttonRootId: 'ton-connect-btn'
+        });
+
+        // Listen for successful wallet connection event
+        tonConnectUI.onStatusChange(async (wallet) => {
+            if (wallet) {
+                // Get the user's public raw TON wallet address
+                const walletAddress = wallet.account.address;
+                console.log("Wallet connected successfully:", walletAddress);
+                
+                // Optional Backend Secure Check: save address to your server
+                try {
+                    const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 12345;
+                    await fetch('/api/save-wallet', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: tgUserId, address: walletAddress })
+                    });
+                } catch (e) {
+                    console.error("Failed to sync wallet address with server:", e);
+                }
+            } else {
+                console.log("Wallet disconnected.");
+            }
+        });
+    </script>
 </body>
 </html>
