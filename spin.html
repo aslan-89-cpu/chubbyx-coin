@@ -8,10 +8,8 @@
         body { background: #090314; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
         h2 { color: #a48fff; margin-top: 20px; text-transform: uppercase; }
         
-        /* Wheel Container */
         .wheel-container { position: relative; margin: 30px auto; width: 280px; height: 280px; display: flex; justify-content: center; align-items: center; }
         
-        /* The main wheel image loaded directly from your repository files */
         .wheel-img { 
             width: 100%; 
             height: 100%; 
@@ -21,7 +19,6 @@
             transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); 
         }
         
-        /* Center character logo stays fixed in the middle */
         .center-logo {
             position: absolute;
             width: 70px;
@@ -33,7 +30,6 @@
             pointer-events: none;
         }
 
-        /* Top Pointer Triangle */
         .pointer {
             position: absolute;
             top: -12px;
@@ -58,9 +54,7 @@
 
     <div class="wheel-container">
         <div class="pointer"></div>
-        <!-- Fixed: Using your official purple and yellow wheel image directly -->
         <img src="image_okk6ou.png.jpeg" id="wheel" class="wheel-img" alt="Lucky Spin">
-        <!-- Placing your character image fixed in the center -->
         <img src="image.png.jpeg" class="center-logo" alt="ChubbyX">
     </div>
 
@@ -74,7 +68,7 @@
         let canSpin = true;
         let currentRotation = 0;
 
-        // Reward values mapping list (English only)
+        // Fixed: Added concrete values array so the script logic compiles properly
         const rewards =;
         const numSegments = rewards.length;
 
@@ -83,13 +77,10 @@
             canSpin = false;
             document.getElementById('spinBtn').disabled = true;
 
-            // Pick a random reward index from the array safely
             const prizeIndex = Math.floor(Math.random() * numSegments);
-            
-            // Calculate a random target rotation to make the spin animation smooth
             const segmentAngle = 360 / numSegments;
             const targetAngle = 360 - (prizeIndex * segmentAngle);
-            const extraRotations = 2880; // 8 full smooth loops
+            const extraRotations = 2880; 
             
             currentRotation += extraRotations + targetAngle - (currentRotation % 360);
             document.getElementById('wheel').style.transform = rotate(${currentRotation}deg);
