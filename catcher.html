@@ -3,112 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chubbyx Coin Catcher</title>
-    <script src="https://telegram.org"></script>
+    <title>Coin Catcher Game</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #131a26;
-            color: white;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-            overflow: hidden;
-        }
-        .catcher-container {
-            margin-top: 20px;
-        }
-        canvas {
-            background-color: #1c2635;
-            display: block;
-            margin: 20px auto;
-            border-radius: 10px;
-            border: 2px solid #9b59b6;
-        }
-        .score-board {
-            font-size: 20px;
-            font-weight: bold;
-        }
+        body { background: #090314; color: white; font-family: sans-serif; text-align: center; padding: 20px; overflow: hidden; }
+        h2 { color: #a48fff; margin: 10px 0; }
+        #gameCanvas { background: #1c103a; border: 2px solid #a48fff; border-radius: 12px; display: block; margin: 10px auto; max-width: 100%; }
+        .back-btn { background: #1c103a; color: white; padding: 10px 30px; border-radius: 10px; text-decoration: none; display: inline-block; margin-top: 15px; border: 1px solid #331a5e; }
+        .start-btn { background: #28a745; color: white; border: none; padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; }
     </style>
+    <script src="https://telegram.org"></script>
 </head>
 <body>
 
-    <div class="catcher-container">
-        <h2>Coin Catcher Game</h2>
-        <div class="score-board">Score: <span id="score">0</span></div>
-        <canvas id="gameCanvas" width="320" height="400"></canvas>
-    </div>
+    <h2>Coin Catcher Game</h2>
+    <div style="font-size: 18px; margin-bottom: 10px;">Score: <span id="scoreVal">0</span></div>
+
+    <canvas id="gameCanvas" width="320" height="400"></canvas>
+    
+    <button class="start-btn" onclick="startGame()">Start Game</button>
+    <br>
+    <a href="game.html" class="back-btn">Back to Game</a>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        if (window.Telegram && window.Telegram.WebApp) { window.Telegram.WebApp.ready(); }
 
-        // Enable the official Telegram Back Button
-        tg.BackButton.show();
-        tg.BackButton.onClick(function() {
-            window.location.href = "index.html"; 
-            tg.BackButton.hide();
-        });
-
-        // Basic Catcher Game Logic
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-
         let score = 0;
-        let basket = { x: 135, y: 360, width: 50, height: 20, speed: 15 };
+        let gameActive = false;
+        
+        let basket = { x: 135, y: 360, width: 50, height: 15 };
         let coins = [];
 
-        function spawnCoin() {
-            coins.push({ x: Math.random() * (canvas.width - 20), y: 0, radius: 10, speed: 3 });
+        function startGame() {
+            if (gameActive) return;
+            score = 0;
+            document.getElementById('scoreVal').innerText = score;
+            coins = [];
+            gameActive = true;
+            gameLoop();
         }
 
-        function draw() {
+        // Touch control for Telegram Mobile
+        canvas.addEventListener('touchmove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const root = e.touches[0].clientX - rect.left;
+            basket.x = Math.max(0, Math.min(canvas.width - basket.width, root - basket.width/2));
+        });
+
+        function gameLoop() {
+            if (!gameActive) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw Basket
-            ctx.fillStyle = '#9b59b6';
+            ctx.fillStyle = '#a48fff';
             ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
 
-            // Draw & Update Coins
-            ctx.fillStyle = '#f1c40f';
+            // Spawn Coins
+            if (Math.random() < 0.02) {
+                coins.push({ x: Math.random() * (canvas.width - 15), y: 0, speed: 3, radius: 8 });
+            }
+
+            // Move & Draw Coins
             for (let i = coins.length - 1; i >= 0; i--) {
                 let c = coins[i];
                 c.y += c.speed;
 
                 ctx.beginPath();
                 ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffd700';
                 ctx.fill();
+                ctx.closePath();
 
-                // Collision detection
+                // Collision with basket
                 if (c.y + c.radius >= basket.y && c.x >= basket.x && c.x <= basket.x + basket.width) {
                     score += 10;
-                    document.getElementById('score').innerText = score;
+                    document.getElementById('scoreVal').innerText = score;
                     coins.splice(i, 1);
                     continue;
                 }
 
-                // Remove out of bounds coins
+                // Missed coin
                 if (c.y > canvas.height) {
-                    coins.splice(i, 1);
+                    gameActive = false;
+                    alert(Game Over! Final Score: ${score});
+                    saveScore(score);
                 }
             }
+
+            if (gameActive) requestAnimationFrame(gameLoop);
         }
 
-        function gameLoop() {
-            draw();
-            requestAnimationFrame(gameLoop);
+        async function saveScore(finalScore) {
+            try {
+                const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 12345;
+                await fetch('/api/add-coins', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: tgUserId, amount: finalScore, task: 'coin_catcher' })
+                });
+            } catch(e) { console.error(e); }
         }
-
-        // Control basket with touch/click
-        canvas.addEventListener('touchmove', (e) => {
-            let touch = e.touches[0];
-            let rect = canvas.getBoundingClientRect();
-            let touchX = touch.clientX - rect.left;
-            basket.x = Math.max(0, Math.min(canvas.width - basket.width, touchX - basket.width / 2));
-        });
-
-        setInterval(spawnCoin, 1500);
-        gameLoop();
     </script>
 </body>
 </html>
