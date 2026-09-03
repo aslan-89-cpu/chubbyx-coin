@@ -5,20 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin</title>
     <style>
-        body {
-    background: #090314 url('background.png.jpeg') no-repeat center center fixed;
-    background-size: 100% 100%; /* لێرەدا contain بکە بە cover */
-    margin: 0;
-    color: white;
-    font-family: sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    width: 100vw; /* ئەم دێڕە زانیاری تەواو بە پانی شاشەکە دەدات */
-    overflow: hidden;
-    user-select: none;
-    touch-action: none;
+    * {
+        box-sizing: border-box;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        color: white;
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow: hidden;
+        user-select: none;
+        touch-action: none;
+        
+        /* دروستکردنی باکگراوندێک کە تەواوی شاشەکە پڕ دەکاتەوە بێ زووم */
+        background-image: url('background.png.jpeg');
+        background-size: 100% 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
 }
         }
         .header { margin-top: 40px; text-align: center; z-index: 10; }
