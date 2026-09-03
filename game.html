@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChubbyX Lucky Spin</title>
+    <title>ChubbyX Purple Arena</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -15,6 +15,7 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden;
         }
         
         .tabs { display: flex; gap: 10px; width: 100%; max-width: 400px; margin-bottom: 25px; }
@@ -31,13 +32,15 @@
         }
         .tab-btn.active { background: #7b2cbf; color: white; }
 
+        .game-area { width: 100%; max-width: 400px; display: none; }
+        .game-area.active { display: flex; flex-direction: column; align-items: center; }
+
         .game-box {
             background: #150f2e;
             border: 1px solid #2e1f5e;
             border-radius: 20px;
             padding: 25px 15px;
             width: 100%;
-            max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -47,138 +50,98 @@
         h2 { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
         .info-text { font-size: 13px; color: #9ca3af; margin-bottom: 25px; text-align: center; }
 
-        /* ─── دیزاینی خەرۆکەی بەختەکە (Lucky Wheel) ─── */
-        .wheel-wrapper { position: relative; width: 280px; height: 280px; margin-bottom: 25px; }
-        
-        /* دەرزی ئاڕاستەکەر لە سەرەوەی خەرۆکەکە */
+        /* ─── WHEEL DESIGN ─── */
+        .wheel-wrapper { position: relative; width: 260px; height: 260px; margin-bottom: 25px; }
         .pointer {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 25px solid #a855f7;
-            z-index: 100;
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #eab308; z-index: 100;
         }
-
         .wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 5px solid #7b2cbf;
-            position: relative;
-            overflow: hidden;
-            transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1);
-            background: conic-gradient(
-                #5a189a 0deg 60deg,
-                #7b2cbf 60deg 120deg,
-                #9d4edd 120deg 180deg,
-                #5a189a 180deg 240deg,
-                #7b2cbf 240deg 300deg,
-                #9d4edd 300deg 360deg
-            );
-            box-shadow: 0 0 20px rgba(123, 44, 191, 0.5);
+            width: 100%; height: 100%; border-radius: 50%; border: 5px solid #7b2cbf; position: relative; overflow: hidden;
+            transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
+            background: conic-gradient(#5a189a 0deg 60deg, #7b2cbf 60deg 120deg, #9d4edd 120deg 180deg, #5a189a 180deg 240deg, #7b2cbf 240deg 300deg, #9d4edd 300deg 360deg);
         }
+        .center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #090514; border: 2px solid #eab308; border-radius: 50%; z-index: 10; }
+        .segment-text { position: absolute; width: 100%; height: 100%; text-align: center; font-weight: bold; font-size: 14px; transform-origin: 50% 50%; padding-top: 15px; }
 
-        /* لۆگۆی ناوەڕاستی خەرۆکەکە */
-        .center-circle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            background: #090514;
-            border: 3px solid #eab308;
-            border-radius: 50%;
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .center-circle img { width: 30px; height: 30px; object-fit: contain; }
-
-        /* نووسینی ژمارەی خەڵاتەکان لەسەر سێگۆشەکان */
-        .segment-text {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            font-weight: bold;
-            font-size: 14px;
-            color: white;
-            transform-origin: 50% 50%;
-            padding-top: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        }
-
-        .spin-btn {
-            background: #7b2cbf;
-            color: white;
-            border: none;
-            padding: 14px;
+        /* ─── CANVAS DESIGN ─── */
+        #catcherCanvas {
+            background: #0d081b;
+            border: 2px solid #7b2cbf;
             border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
             width: 100%;
-            transition: background 0.2s;
+            height: 300px;
+            margin-bottom: 20px;
+            touch-action: none;
         }
-        .spin-btn:disabled { background: rgba(255, 255, 255, 0.05); color: #6b7280; cursor: not-allowed; border: 1px solid rgba(255, 255, 255, 0.1); }
 
-        .back-btn {
-            margin-top: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            padding: 12px 35px;
-            border-radius: 12px;
-            font-size: 15px;
-            cursor: pointer;
-            font-weight: bold;
+        .action-btn {
+            background: #7b2cbf; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: background 0.2s;
         }
+        .action-btn:disabled { background: rgba(255, 255, 255, 0.05); color: #6b7280; cursor: not-allowed; border: 1px solid rgba(255, 255, 255, 0.1); }
+
+        .back-btn { margin-top: 30px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 12px 35px; border-radius: 12px; font-size: 15px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- TOP NAVIGATION TABS -->
     <div class="tabs">
-        <button class="tab-btn active">Daily Spin</button>
-        <button class="tab-btn" onclick="alert('Coin Catcher game is coming soon in the next update!')">Coin Catcher</button>
+        <button class="tab-btn active" id="tabSpin" onclick="switchTab('spin')">Daily Spin</button>
+        <button class="tab-btn" id="tabCatcher" onclick="switchTab('catcher')">Coin Catcher</button>
     </div>
 
-    <!-- LUCKY SPIN ARENA -->
-    <div class="game-box">
-        <h2>ChubbyX Lucky Spin</h2>
-        <div class="info-text" id="statusText">Spin the purple wheel to win mega rewards!</div>
-
-        <div class="wheel-wrapper">
-            <div class="pointer"></div>
-            <div class="center-circle">
-                <img src="image.png.jpeg" alt="Center">
+    <!-- AREA 1: LUCKY SPIN -->
+    <div class="game-area active" id="areaSpin">
+        <div class="game-box">
+            <h2>ChubbyX Lucky Spin</h2>
+            <div class="info-text" id="spinStatus">Spin the purple wheel to win mega rewards!</div>
+            <div class="wheel-wrapper">
+                <div class="pointer"></div>
+                <div class="center-circle"></div>
+                <div class="wheel" id="wheel">
+                    <div class="segment-text" style="transform: rotate(30deg);">5,000</div>
+                    <div class="segment-text" style="transform: rotate(90deg);">500</div>
+                    <div class="segment-text" style="transform: rotate(150deg);">1,000</div>
+                    <div class="segment-text" style="transform: rotate(210deg);">2,000</div>
+                    <div class="segment-text" style="transform: rotate(270deg);">500</div>
+                    <div class="segment-text" style="transform: rotate(330deg);">1,000</div>
+                </div>
             </div>
-            <!-- Dynamic Prize Segments Wheel -->
-            <div class="wheel" id="wheel">
-                <div class="segment-text" style="transform: rotate(30deg);">5,000</div>
-                <div class="segment-text" style="transform: rotate(90deg);">500</div>
-                <div class="segment-text" style="transform: rotate(150deg);">1,000</div>
-                <div class="segment-text" style="transform: rotate(210deg);">2,000</div>
-                <div class="segment-text" style="transform: rotate(270deg);">500</div>
-                <div class="segment-text" style="transform: rotate(330deg);">1,000</div>
-            </div>
+            <button class="action-btn" id="spinBtn" onclick="startSpin()">Spin Now</button>
         </div>
+    </div>
 
-        <button class="spin-btn" id="spinBtn" onclick="startSpin()">Spin Now</button>
+    <!-- AREA 2: COIN CATCHER -->
+    <div class="game-area" id="areaCatcher">
+        <div class="game-box">
+            <h2>ChubbyX Coin Catcher</h2>
+            <div class="info-text" id="catcherStatus">Catch falling golden coins with your basket!</div>
+            <canvas id="catcherCanvas" width="350" height="300"></canvas>
+            <button class="action-btn" id="catcherBtn" onclick="startCatcherGame()">Start Game</button>
+        </div>
     </div>
 
     <button class="back-btn" onclick="goBack()">Back to Game</button>
 
     <script>
-        // List of prizes mapped to exact angles on the circle
-        const prizes = [
+        function switchTab(type) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.game-area').forEach(a => a.classList.remove('active'));
+            
+            if (type === 'spin') {
+                document.getElementById('tabSpin').classList.add('active');
+                document.getElementById('areaSpin').classList.add('active');
+                checkSpinLimit();
+            } else {
+                document.getElementById('tabCatcher').classList.add('active');
+                document.getElementById('areaCatcher').classList.add('active');
+                checkCatcherLimit();
+                initCanvas();
+            }
+        }
+
+        // ─── LUCK SPIN ENGINE ───
+        const spinPrizes = [
             { text: "5,000", value: 5000, minAngle: 0, maxAngle: 60 },
             { text: "1,000", value: 1000, minAngle: 60, maxAngle: 120 },
             { text: "500", value: 500, minAngle: 120, maxAngle: 180 },
@@ -186,75 +149,72 @@
             { text: "1,000", value: 1000, minAngle: 240, maxAngle: 300 },
             { text: "500", value: 500, minAngle: 300, maxAngle: 360 }
         ];
-
         let isSpinning = false;
+        let currentRotation = 0;
 
-        function checkDailyLimit() {
+        function checkSpinLimit() {
             const lastSpin = localStorage.getItem('chubby_last_spin');
-            const spinBtn = document.getElementById('spinBtn');
-            const statusText = document.getElementById('statusText');
-
-            if (lastSpin) {
-                const now = new Date().getTime();
-                const timePassed = now - parseInt(lastSpin);
-                const cooldown = 24 * 60 * 60 * 1000; // 24 hours lock timer
-
-                if (timePassed < cooldown) {
-                    spinBtn.disabled = true;
-                    
-                    // Calculate remaining cooldown time
-                    const timeLeft = cooldown - timePassed;
-                    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                    
-                    statusText.innerText = Come back in ${hours}h ${minutes}m for your next daily spin!;
-                    return false;
-                }
+            const btn = document.getElementById('spinBtn');
+            const txt = document.getElementById('spinStatus');
+            if (lastSpin && (new Date().getTime() - parseInt(lastSpin) < 24*60*60*1000)) {
+                btn.disabled = true;
+                txt.innerText = "Daily spin completed! Come back tomorrow.";
+                return false;
             }
-            spinBtn.disabled = false;
-            statusText.innerText = "Spin the purple wheel to win mega rewards!";
+            btn.disabled = false;
+            txt.innerText = "Spin the purple wheel to win mega rewards!";
             return true;
         }
 
         function startSpin() {
-            if (isSpinning || !checkDailyLimit()) return;
-
+            if (isSpinning || !checkSpinLimit()) return;
             isSpinning = true;
+            
             const wheel = document.getElementById('wheel');
-            const spinBtn = document.getElementById('spinBtn');
-
-            // Generate a random win prize sector index
-            const prizeIndex = Math.floor(Math.random() * prizes.length);
-            const selectedPrize = prizes[prizeIndex];
-
-            // Math algorithm to center the needle pointer inside the sector box
-            const targetAngle = 360 - ((selectedPrize.minAngle + selectedPrize.maxAngle) / 2);
-            const totalRotation = (360 * 5) + targetAngle; // 5 full starter rounds plus target degree
-
-            wheel.style.transform = rotate(${totalRotation}deg);
-            spinBtn.disabled = true;
+            const prizeIndex = Math.floor(Math.random() * spinPrizes.length);
+            const prize = spinPrizes[prizeIndex];
+            
+            const targetAngle = 360 - ((prize.minAngle + prize.maxAngle) / 2);
+            currentRotation += (360 * 5) + targetAngle - (currentRotation % 360);
+            
+            wheel.style.transform = rotate(${currentRotation}deg);
+            document.getElementById('spinBtn').disabled = true;
 
             setTimeout(() => {
-                // Credit won coins directly into the master balance database
-                let currentCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
-                currentCoins += selectedPrize.value;
-                localStorage.setItem('chubby_coins', currentCoins);
-                
-                // Save current timestamp lock token
+                let coins = parseInt(localStorage.getItem('chubby_coins')) || 0;
+                localStorage.setItem('chubby_coins', coins + prize.value);
                 localStorage.setItem('chubby_last_spin', new Date().getTime());
-
-                alert(Congratulations! You won +${selectedPrize.text} ChubbyX Coins!);
-                
+                alert(You won +${prize.text} ChubbyX Coins!);
                 isSpinning = false;
-                checkDailyLimit();
-            }, 4000); // exact match with CSS cubic-bezier transition time
+                checkSpinLimit();
+            }, 4000);
         }
 
-        function goBack() {
-            window.parent.postMessage('closePage', '*');
+        // ─── COIN CATCHER ENGINE ───
+        let canvas, ctx;
+        let basket = { x: 140, y: 270, width: 70, height: 15 };
+        let fallingCoins = [];
+        let catcherScore = 0;
+        let gameTimer = 0;
+        let catcherRunning = false;
+
+        function checkCatcherLimit() {
+            const lastCatcher = localStorage.getItem('chubby_last_catcher');
+            const btn = document.getElementById('catcherBtn');
+            const txt = document.getElementById('catcherStatus');
+            if (lastCatcher && (new Date().getTime() - parseInt(lastCatcher) < 24*60*60*1000)) {
+                btn.disabled = true;
+                txt.innerText = "Daily catching completed! Come back tomorrow.";
+                return false;
+            }
+            btn.disabled = false;
+            txt.innerText = "Catch falling golden coins with your basket!";
+            return true;
         }
 
-        window.onload = checkDailyLimit;
-    </script>
-</body>
-</html>
+        function initCanvas() {
+            canvas = document.getElementById('catcherCanvas');
+            ctx = canvas.getContext('2d');
+            drawCanvasStatic();
+            
+            canvas.addEventListener('touchmove', function(e) {
