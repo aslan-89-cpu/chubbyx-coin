@@ -1,8 +1,8 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Hub</title>
     <script src="https://telegram.org"></script>
     <style>
@@ -11,80 +11,91 @@
             margin: 0;
             padding: 0;
         }
-        body { 
-            /* لێرەدا ڕێکخرا بۆ center top بۆ ئەوەی ئاسمانە نوێیەکە بچێتە بەرزترین خاڵ */
-            background: #1c1437 url('background.png.jpeg') no-repeat center top fixed; 
-            background-size: cover; 
-            color: white; 
-            font-family: sans-serif; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden; 
+        body {
+            background: #1c1437 url('background.png.jpeg') no-repeat center top fixed;
+            background-size: cover;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
             user-select: none;
-            touch-action: none; 
+            touch-action: none;
         }
-        
-        .header { 
-            margin-top: 35px; 
-            text-align: center; 
-            z-index: 10; 
+
+        .header {
+            margin-top: 35px;
+            text-align: center;
+            z-index: 10;
             pointer-events: none;
         }
         .header div { font-size: 14px; opacity: 0.8; letter-spacing: 1px; }
         .header h1 { font-size: 44px; font-weight: bold; margin-top: 5px; }
 
-        .coin-container { 
-            flex: 1; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
+        .coin-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 100%;
             position: relative;
-            z-index: 5; 
+            z-index: 5;
         }
-        
-        .tap-zone { 
-    position: absolute;
-    top: 25%; /* جێگیرکردنی بازنەی کلیکەکە ڕێک لەسەر زگی کاراکتەرە مۆرەکە */
-    width: 260px; 
-    height: 260px; 
-    border-radius: 50%; 
-    cursor: pointer; 
-    background: transparent; 
-    -webkit-tap-highlight-color: transparent;
-    z-index: 999; /* هێنراوەتە سەروو هەموو شتێک تا دڵنیابین کلیکەکە بە تەواوی دەگرێت */
-    touch-action: manipulation;
-    transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
 
-/* کاتێک پەنجەی پێدا دەنێیت، کاراکتەرەکە بە نەرمی و بەهێزی دەجوڵێتەوە و بەرز و نزم دەبێت */
-.tap-zone:active {
-    transform: scale(0.85) translateY(8px);
-}
-        
-        .energy-container { 
-            width: 80%; 
-            text-align: center; 
-            z-index: 10; 
-            margin-bottom: 105px; 
+        /* ─── بەشی لێدان و کارەکتەر لەگەڵ ئەنیمەیشن ─── */
+        .tap-zone {
+            position: absolute;
+            top: 25%;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: transparent;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 999;
+            touch-action: manipulation;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* وێنەی کارەکتەرەکەت کە ناوی دروستەکەی پێدراوە */
+        .character-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.05s ease;
+            pointer-events: none; /* لێدانەکە لەڕێی دەرەوەی وێنەکە دەبێت */
+        }
+
+        /* ئەنیمەیشنی جوڵانی زگ کاتێک کلیک چالاک دەبێت */
+        .tap-zone-active {
+            transform: scale(1.12) translateY(-8px) !important;
+        }
+
+        .energy-container {
+            width: 80%;
+            text-align: center;
+            z-index: 10;
+            margin-bottom: 105px;
             pointer-events: none;
         }
-        .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 1px solid #7b2cbf; margin-top: 8px; }
+        .energy-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; margin-top: 8px; }
         .energy-bar-fill { width: 100%; height: 100%; background: #eab308; transition: width 0.1s ease; }
-        
-        .nav-bar { 
-            width: 100%; 
-            background: rgba(13, 8, 27, 0.96); 
-            border-top: 2px solid #7b2cbf; 
-            display: flex; 
-            position: fixed; 
-            bottom: 0; 
-            padding: 15px 0 calc(15px + env(safe-area-inset-bottom)); 
-            z-index: 2000; 
+
+        .nav-bar {
+            width: 100%;
+            background: rgba(13, 8, 27, 0.96);
+            border-top: 2px solid #7b2cbf;
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            padding: 15px 15px calc(15px + env(safe-area-inset-bottom));
+            z-index: 2000;
         }
-        .nav-item { font-size: 12px; color: #9d4edd; text-decoration: none; flex: 1; text-align: center; font-weight: bold; z-index: 2001; cursor: pointer; }
+        .nav-item { font-size: 12px; color: #8d4add; text-decoration: none; flex: 1; text-align: center; font-weight: bold; cursor: pointer; }
         .nav-item.active { color: white; }
 
         .app-iframe {
@@ -108,16 +119,17 @@
     </div>
 
     <div class="coin-container">
-        <div class="tap-zone" id="tapCoin"></div>
+        <!-- لێرەدا وێنەی کارەکتەرەکەت خراوەتە ناو بازنەی لێدانەکەوە بۆ ئەوەی دیار بێت و بجوڵێت -->
+        <div class="tap-zone" id="tapCoin">
+            <img src="image.png.jpeg" class="character-img" id="charImg" alt="ChubbyX Character">
+        </div>
     </div>
 
     <div class="energy-container">
         <div>⚡ <span id="energyText">500</span> / 500</div>
         <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyFill"></div></div>
     </div>
-    
-    <iframe id="appFrame" class="app-iframe"></iframe>
-    
+
     <div class="nav-bar">
         <div class="nav-item" onclick="loadExternalPage('tasks.html')">Tasks</div>
         <div class="nav-item" onclick="loadExternalPage('invite.html')">Invite</div>
@@ -125,79 +137,80 @@
         <div class="nav-item" onclick="loadExternalPage('wallet.html')">Wallet</div>
         <div class="nav-item" onclick="loadExternalPage('withdraw.html')">Withdraw</div>
     </div>
-    
+
+    <iframe id="appFrame" class="app-iframe"></iframe>
+
     <script>
-    if (window.Telegram && window.Telegram.WebApp) {
-        const webApp = window.Telegram.WebApp;
-        webApp.ready();
-        webApp.expand();
-        webApp.setHeaderColor('#1c1437');
-        webApp.setBackgroundColor('#1c1437');
-    }
-
-    var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-    var energy = 500;
-    
-    document.getElementById('score').innerText = count;
-
-    // لۆدکردنی دەنگی Chubb
-    var chubbSound = new Audio('chubb.mp3');
-
-    var tapElement = document.getElementById('tapCoin');
-    if (tapElement) {
-        tapElement.addEventListener('touchstart', function(e) {
-            e.preventDefault(); 
-            if (energy > 0) { 
-                count++; energy--; 
-                document.getElementById('score').innerText = count; 
-                updateUI(); 
-                localStorage.setItem('chubby_coins', count); 
-                
-                // ١. لێدانی دەنگی Chubb
-                try {
-                    chubbSound.currentTime = 0;
-                    chubbSound.play();
-                } catch(err) { console.log("Sound error"); }
-
-                // ٢. ئەنیمەیشنی جووڵانی بەهێزی زگی کاراکتەرەکە
-                tapElement.style.transform = 'scale(0.85) translateY(8px)';
-            }
-        }, { passive: false });
-
-        tapElement.addEventListener('touchend', function() {
-            setTimeout(() => {
-                tapElement.style.transform = 'scale(1) translateY(0)';
-            }, 50);
-        });
-    }
-
-    function updateUI() { 
-        document.getElementById('energyText').innerText = energy; 
-        document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%'; 
-    }
-    
-    setInterval(function() { 
-        if (energy < 500) { energy += 3; if (energy > 500) energy = 500; updateUI(); } 
-    }, 1000);
-    
-    function loadExternalPage(url) {
-        const frame = document.getElementById('appFrame');
-        frame.src = url;
-        frame.style.display = 'block';
-        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-    }
-
-    window.addEventListener('message', function(event) {
-        if (event.data === 'closePage') {
-            document.getElementById('appFrame').style.display = 'none';
-            document.getElementById('appFrame').src = '';
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-            document.getElementById('score').innerText = count;
+        if (window.Telegram && window.Telegram.WebApp) {
+            const webApp = window.Telegram.WebApp;
+            webApp.ready();
+            webApp.expand();
+            webApp.setHeaderColor('#1c1437');
+            webApp.setBackgroundColor('#1c1437');
         }
-    });
-</script>
+
+        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+        var energy = 500;
+
+        document.getElementById('score').innerText = count;
+
+        var chubbSound = new Audio('chubb.mp3');
+        var tapElement = document.getElementById('tapCoin');
+        var charImg = document.getElementById('charImg');
+
+        if (tapElement) {
+            tapElement.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                if (energy > 0) {
+                    count++; energy--;
+                    document.getElementById('score').innerText = count;
+                    updateUI();
+                    localStorage.setItem('chubby_coins', count);
+
+                    try {
+                        chubbSound.currentTime = 0;
+                        chubbSound.play();
+                    } catch(err) { console.log("Sound error"); }
+
+                    // ئەنیمەیشنی نوێی جوڵانی زگی کارەکتەر بە شێوازێکی زۆر نەرم
+                    charImg.classList.add('tap-zone-active');
+                }
+            }, { passive: false });
+
+            tapElement.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    // گەڕانەوەی زگی کارەکتەرەکە بۆ باری ئاسایی دوای لێدان
+                    charImg.classList.remove('tap-zone-active');
+                }, 50);
+            });
+        }
+
+        function updateUI() {
+            document.getElementById('energyText').innerText = energy;
+            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%';
+        }
+
+        setInterval(function() {
+            if (energy < 500) { energy += 3; if (energy > 500) energy = 500; updateUI(); }
+        }, 1000);
+
+        function loadExternalPage(url) {
+            const frame = document.getElementById('appFrame');
+            frame.src = url;
+            frame.style.display = 'block';
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        window.addEventListener('message', function(event) {
+            if (event.data === 'closePage') {
+                document.getElementById('appFrame').style.display = 'none';
+                document.getElementById('appFrame').src = '';
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+                document.getElementById('score').innerText = count;
+            }
+        });
+    </script>
 </body>
 </html>
-    
