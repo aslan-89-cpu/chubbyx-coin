@@ -127,82 +127,77 @@
     </div>
     
     <script>
-        if (window.Telegram && window.Telegram.WebApp) {
-            const webApp = window.Telegram.WebApp;
-            webApp.ready();
-            webApp.expand();
-            webApp.setHeaderColor('#1c1437');
-            webApp.setBackgroundColor('#1c1437');
-        }
+    if (window.Telegram && window.Telegram.WebApp) {
+        const webApp = window.Telegram.WebApp;
+        webApp.ready();
+        webApp.expand();
+        webApp.setHeaderColor('#1c1437');
+        webApp.setBackgroundColor('#1c1437');
+    }
 
-        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        var energy = 500;
-        
-        document.getElementById('score').innerText = count;
+    var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+    var energy = 500;
+    
+    document.getElementById('score').innerText = count;
 
-        // دروستکردنی فایلی دەنگی (دەبێت فایلی chubby.mp3 لە گیت هاب دابنێیت)
-        var chubbySound = new Audio('chubby.mp3');
+    // لۆدکردنی دەنگی Chubb
+    var chubbSound = new Audio('chubb.mp3');
 
-        var tapElement = document.getElementById('tapCoin');
-        if (tapElement) {
-            tapElement.addEventListener('touchstart', function(e) {
-                e.preventDefault(); 
-                if (energy > 0) { 
-                    count++; energy--; 
-                    document.getElementById('score').innerText = count; 
-                    updateUI(); 
-                    localStorage.setItem('chubby_coins', count); 
-                    
-                    // لێدانی دەنگەکە کاتێک کلیک دەکرێت
-                    try {
-                        chubbySound.currentTime = 0;
-                        chubbySound.play();
-                    } catch(err) { console.log("Sound not ready"); }
+    var tapElement = document.getElementById('tapCoin');
+    if (tapElement) {
+        tapElement.addEventListener('touchstart', function(e) {
+            e.preventDefault(); 
+            if (energy > 0) { 
+                count++; energy--; 
+                document.getElementById('score').innerText = count; 
+                updateUI(); 
+                localStorage.setItem('chubby_coins', count); 
+                
+                // ١. لێدانی دەنگی Chubb
+                try {
+                    chubbSound.currentTime = 0;
+                    chubbSound.play();
+                } catch(err) { console.log("Sound error"); }
 
-                    // ١. گۆڕینی باکگراوند بۆ وێنەی چاو داخراوەکە کاتێک دەستی لێدەدەیت
-                    document.body.style.background = "#1c1437 url('background.png.jpeg') no-repeat center top fixed";
-                    document.body.style.backgroundSize = "cover";
-
-                    // ٢. ئەنیمەیشنی لێدانی زگی کاراکتەرەکە
-                    tapElement.style.transform = 'scale(0.92) translateY(5px)';
-                }
-            }, { passive: false });
-
-            // گەڕانەوە بۆ دۆخی چاو کراوە و قەبارەی ئاسایی کاتێک پەنجە لادەبرێت
-            tapElement.addEventListener('touchend', function() {
-                setTimeout(() => {
-                    document.body.style.background = "#1c1437 url('background.png.jpeg') no-repeat center top fixed";
-                    document.body.style.backgroundSize = "cover";
-                    tapElement.style.transform = 'scale(1) translateY(0)';
-                }, 60);
-            });
-        }
-        function updateUI() { 
-            document.getElementById('energyText').innerText = energy; 
-            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%'; 
-        }
-        
-        setInterval(function() { 
-            if (energy < 500) { energy += 3; if (energy > 500) energy = 500; updateUI(); } 
-        }, 1000);
-        
-        function loadExternalPage(url) {
-            const frame = document.getElementById('appFrame');
-            frame.src = url;
-            frame.style.display = 'block';
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-        }
-
-        window.addEventListener('message', function(event) {
-            if (event.data === 'closePage') {
-                document.getElementById('appFrame').style.display = 'none';
-                document.getElementById('appFrame').src = '';
-                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-                count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-                document.getElementById('score').innerText = count;
+                // ٢. ئەنیمەیشنی جووڵانی بەهێزی زگی کاراکتەرەکە
+                tapElement.style.transform = 'scale(0.85) translateY(8px)';
             }
+        }, { passive: false });
+
+        tapElement.addEventListener('touchend', function() {
+            setTimeout(() => {
+                tapElement.style.transform = 'scale(1) translateY(0)';
+            }, 50);
         });
-    </script>
+    }
+
+    function updateUI() { 
+        document.getElementById('energyText').innerText = energy; 
+        document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%'; 
+    }
+    
+    setInterval(function() { 
+        if (energy < 500) { energy += 3; if (energy > 500) energy = 500; updateUI(); } 
+    }, 1000);
+    
+    function loadExternalPage(url) {
+        const frame = document.getElementById('appFrame');
+        frame.src = url;
+        frame.style.display = 'block';
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    window.addEventListener('message', function(event) {
+        if (event.data === 'closePage') {
+            document.getElementById('appFrame').style.display = 'none';
+            document.getElementById('appFrame').src = '';
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+            document.getElementById('score').innerText = count;
+        }
+    });
+</script>
 </body>
 </html>
+    
