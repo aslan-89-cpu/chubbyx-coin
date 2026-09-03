@@ -59,7 +59,7 @@
         .wheel {
             width: 100%; height: 100%; border-radius: 50%; border: 5px solid #7b2cbf; position: relative; overflow: hidden;
             transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
-            background: conic-gradient(#5a189a 0deg 60deg, #7b2cbf 60deg 120deg, #9d4edd 120deg 180deg, #5a189a 180deg 240deg, #7b2cbf 240deg 300deg, #9d4edd 300deg 360deg);
+            background: conic-gradient(#5a189a 0deg 60deg, #7b2cbf 60deg 120deg, #9d4edd 120deg 180deg, #5a189a 180deg 240deg, #7b2cbf 240deg 300deg, #9d4edd 3000deg 360deg);
         }
         .center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #090514; border: 2px solid #eab308; border-radius: 50%; z-index: 10; }
         .segment-text { position: absolute; width: 100%; height: 100%; text-align: center; font-weight: bold; font-size: 14px; transform-origin: 50% 50%; padding-top: 15px; }
@@ -79,8 +79,6 @@
             background: #7b2cbf; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: background 0.2s;
         }
         .action-btn:disabled { background: rgba(255, 255, 255, 0.05); color: #6b7280; cursor: not-allowed; border: 1px solid rgba(255, 255, 255, 0.1); }
-
-        .back-btn { margin-top: 30px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 12px 35px; border-radius: 12px; font-size: 15px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -120,8 +118,6 @@
             <button class="action-btn" id="catcherBtn" onclick="startCatcherGame()">Start Game</button>
         </div>
     </div>
-
-    <button class="back-btn" onclick="goBack()">Back to Game</button>
 
     <script>
         function switchTab(type) {
@@ -167,7 +163,6 @@
         }
 
         function startSpin() {
-            if (isSpinning || !checkSpinLimit()) return;
             isSpinning = true;
             
             const wheel = document.getElementById('wheel');
@@ -187,7 +182,10 @@
                 alert(You won +${prize.text} ChubbyX Coins!);
                 isSpinning = false;
                 checkSpinLimit();
-            }, 4000);
+                
+                // گەڕانەوەی ئۆتۆماتیکی بۆ لاپەڕەی سەرەکی دوای بردنەوە بە سەلامەتی
+                window.parent.postMessage('closePage', '*');
+            }, 4100);
         }
 
         // ─── COIN CATCHER ENGINE ───
@@ -219,3 +217,5 @@
             
             canvas.addEventListener('touchmove', function(e) {
                 if (!catcherRunning) return;
+                let rect = canvas.getBoundingClientRect();
+                let touchX = e.touches.clientX - rect.left;
