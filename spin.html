@@ -59,9 +59,32 @@
         .wheel {
             width: 100%; height: 100%; border-radius: 50%; border: 5px solid #7b2cbf; position: relative; overflow: hidden;
             transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
-            background: conic-gradient(#5a189a 0deg 60deg, #7b2cbf 60deg 120deg, #9d4edd 120deg 180deg, #5a189a 180deg 240deg, #7b2cbf 240deg 300deg, #9d4edd 3000deg 360deg);
+            background: conic-gradient(#5a189a 0deg 60deg, #7b2cbf 60deg 120deg, #9d4edd 120deg 180deg, #5a189a 180deg 240deg, #7b2cbf 240deg 300deg, #9d4edd 300deg 360deg);
         }
-        .center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #090514; border: 2px solid #eab308; border-radius: 50%; z-index: 10; }
+        
+        /* لێرەدا قەبارەی بازنەی ناوەڕاستەکە بە تەواوی ڕاستکرایەوە بۆ 50px تا شاشەکە کفل نەکات */
+        .center-circle { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: 50px; 
+            height: 50px; 
+            background: #090514; 
+            border: 2px solid #eab308; 
+            border-radius: 50%; 
+            z-index: 10; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .center-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
         .segment-text { position: absolute; width: 100%; height: 100%; text-align: center; font-weight: bold; font-size: 14px; transform-origin: 50% 50%; padding-top: 15px; }
 
         /* ─── CANVAS DESIGN ─── */
@@ -79,6 +102,21 @@
             background: #7b2cbf; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: background 0.2s;
         }
         .action-btn:disabled { background: rgba(255, 255, 255, 0.05); color: #6b7280; cursor: not-allowed; border: 1px solid rgba(255, 255, 255, 0.1); }
+
+        .back-btn { 
+            margin-top: 25px; 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: white; 
+            padding: 12px 35px; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -95,14 +133,16 @@
             <div class="info-text" id="spinStatus">Spin the purple wheel to win mega rewards!</div>
             <div class="wheel-wrapper">
                 <div class="pointer"></div>
-                <div class="center-circle"></div>
+                <div class="center-circle">
+                    <img src="image.png.jpeg" alt="ChubbyX">
+                </div>
                 <div class="wheel" id="wheel">
                     <div class="segment-text" style="transform: rotate(30deg);">5,000</div>
                     <div class="segment-text" style="transform: rotate(90deg);">500</div>
                     <div class="segment-text" style="transform: rotate(150deg);">1,000</div>
                     <div class="segment-text" style="transform: rotate(210deg);">2,000</div>
-                    <div class="segment-text" style="transform: rotate(270deg);">500</div>
-                    <div class="segment-text" style="transform: rotate(330deg);">1,000</div>
+                    <div class="segment-text" style="transform: rotate(330deg);">500</div>
+                    <div class="segment-text" style="transform: rotate(270deg);">1,000</div>
                 </div>
             </div>
             <button class="action-btn" id="spinBtn" onclick="startSpin()">Spin Now</button>
@@ -118,6 +158,8 @@
             <button class="action-btn" id="catcherBtn" onclick="startCatcherGame()">Start Game</button>
         </div>
     </div>
+
+    <button class="back-btn" onclick="goBack()">Back to Game</button>
 
     <script>
         function switchTab(type) {
@@ -142,8 +184,8 @@
             { text: "1,000", value: 1000, minAngle: 60, maxAngle: 120 },
             { text: "500", value: 500, minAngle: 120, maxAngle: 180 },
             { text: "2,000", value: 2000, minAngle: 180, maxAngle: 240 },
-            { text: "1,000", value: 1000, minAngle: 240, maxAngle: 300 },
-            { text: "500", value: 500, minAngle: 300, maxAngle: 360 }
+            { text: "500", value: 500, minAngle: 240, maxAngle: 300 },
+            { text: "1,000", value: 1000, minAngle: 300, maxAngle: 360 }
         ];
         let isSpinning = false;
         let currentRotation = 0;
@@ -163,6 +205,7 @@
         }
 
         function startSpin() {
+            if (isSpinning || !checkSpinLimit()) return;
             isSpinning = true;
             
             const wheel = document.getElementById('wheel');
@@ -182,10 +225,7 @@
                 alert(You won +${prize.text} ChubbyX Coins!);
                 isSpinning = false;
                 checkSpinLimit();
-                
-                // گەڕانەوەی ئۆتۆماتیکی بۆ لاپەڕەی سەرەکی دوای بردنەوە بە سەلامەتی
-                window.parent.postMessage('closePage', '*');
-            }, 4100);
+            }, 4000);
         }
 
         // ─── COIN CATCHER ENGINE ───
@@ -197,25 +237,3 @@
         let catcherRunning = false;
 
         function checkCatcherLimit() {
-            const lastCatcher = localStorage.getItem('chubby_last_catcher');
-            const btn = document.getElementById('catcherBtn');
-            const txt = document.getElementById('catcherStatus');
-            if (lastCatcher && (new Date().getTime() - parseInt(lastCatcher) < 24*60*60*1000)) {
-                btn.disabled = true;
-                txt.innerText = "Daily catching completed! Come back tomorrow.";
-                return false;
-            }
-            btn.disabled = false;
-            txt.innerText = "Catch falling golden coins with your basket!";
-            return true;
-        }
-
-        function initCanvas() {
-            canvas = document.getElementById('catcherCanvas');
-            ctx = canvas.getContext('2d');
-            drawCanvasStatic();
-            
-            canvas.addEventListener('touchmove', function(e) {
-                if (!catcherRunning) return;
-                let rect = canvas.getBoundingClientRect();
-                let touchX = e.touches.clientX - rect.left;
