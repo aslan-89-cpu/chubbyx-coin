@@ -3,91 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Invite Friends</title>
+    <title>ChubbyX Invite Friends</title>
     <style>
-        body { 
-            background: #090314; 
-            color: white; 
-            font-family: sans-serif; 
-            text-align: center; 
-            padding: 20px; 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #090514;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 30px 20px;
         }
-        h2 { 
-            color: #a48fff; 
-            margin-top: 20px; 
-            text-transform: uppercase;
+        h1 { font-size: 28px; font-weight: bold; color: #a855f7; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .subtitle { font-size: 14px; color: #9ca3af; margin-bottom: 25px; text-align: center; }
+
+        .stats-container {
+            background: #150f2e;
+            border: 1px solid #2e1f5e;
+            border-radius: 15px;
+            padding: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
         }
-        .invite-box { 
-            background: #1c103a; 
-            border: 1px solid #331a5e; 
-            border-radius: 12px; 
-            padding: 25px; 
-            margin: 20px 0; 
+        .stat-box { text-align: center; }
+        .stat-box div { font-size: 12px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px; }
+        .stat-box h2 { font-size: 20px; color: #eab308; }
+
+        .tier-card {
+            background: rgba(123, 44, 191, 0.1);
+            border: 1px dashed #7b2cbf;
+            border-radius: 12px;
+            padding: 12px;
+            width: 100%;
+            font-size: 13px;
+            color: #d8b4fe;
+            margin-bottom: 25px;
+            line-height: 1.6;
         }
-        .reward-text {
-            color: #ffd700;
-            font-size: 20px;
+
+        .input-card {
+            background: #150f2e;
+            border: 1px solid #2e1f5e;
+            border-radius: 15px;
+            padding: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .input-card h3 { font-size: 15px; font-weight: bold; color: white; }
+        .input-field {
+            background: #090514;
+            border: 1px solid #4c1d95;
+            border-radius: 10px;
+            padding: 12px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+        }
+        .input-field::placeholder { color: #4b5563; }
+
+        .invite-btn {
+            background: #7b2cbf;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: bold;
-            margin: 10px 0;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
         }
-        .btn-share { 
-            background: #0088cc; 
-            color: white; 
-            border: none; 
-            padding: 12px 30px; 
-            border-radius: 25px; 
-            font-weight: bold; 
-            font-size: 16px;
-            cursor: pointer; 
-            width: 100%; 
-            margin-bottom: 10px; 
-            transition: background 0.3s;
+        .invite-btn:hover { background: #9d4edd; }
+
+        .back-btn {
+            margin-top: auto;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 35px;
+            border-radius: 12px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
         }
-        .btn-share:hover {
-            background: #00a2f3;
-        }
-        .back-btn { 
-            background: #1c103a; 
-            color: white; 
-            padding: 10px 30px; 
-            border-radius: 10px; 
-            text-decoration: none; 
-            display: inline-block; 
-            margin-top: 20px; 
-            border: 1px solid #331a5e; 
-        }
+        .back-btn:hover { background: rgba(255, 255, 255, 0.1); }
     </style>
-    <!-- Include Telegram WebApp Script -->
-    <script src="https://telegram.org"></script>
 </head>
 <body>
 
-    <h2>Invite Friends</h2>
-    <p style="opacity: 0.8; font-size: 14px;">Invite your friends and grow your balance together!</p>
+    <h1>Invite Friends</h1>
+    <div class="subtitle">Bring your friends and multiply your earnings!</div>
 
-    <div class="invite-box">
-        <p style="margin: 0; opacity: 0.7;">You will receive:</p>
-        <div class="reward-text">+3,000 Coins</div>
-        <p style="margin: 0 0 20px 0; font-size: 12px; color: #a48fff;">When your friend joins the game using your link</p>
-        
-        <button class="btn-share" onclick="shareInviteLink()">Invite a Friend</button>
+    <!-- REFERRAL SYSTEMS TIERS INFO -->
+    <div class="tier-card">
+        <strong>🎁 Referral Reward Tiers:</strong><br>
+        • 1 - 5 Friends: +2,000 Coins each<br>
+        • 6 - 10 Friends: +5,000 Coins each<br>
+        • 11 - 20 Friends: +7,500 Coins each<br>
+        • 21+ Friends: +12,000 Coins each
     </div>
 
-    <!-- Fixed: Redirects perfectly to main game dashboard index.html -->
-    <a href="index.html" class="back-btn">Back to Game</a>
+    <!-- REFS STATS -->
+    <div class="stats-container">
+        <div class="stat-box">
+            <div>Total Invited</div>
+            <h2 id="totalInvites">0</h2>
+        </div>
+        <div class="stat-box">
+            <div>Current Tier Bonus</div>
+            <h2 id="currentTier">2,000</h2>
+        </div>
+    </div>
+
+    <!-- ANTI-CHEAT VERIFICATION INPUT CARD -->
+    <div class="input-card">
+        <h3>Claim Friend Referral</h3>
+        <input type="text" id="friendUsername" class="input-field" placeholder="Enter friend's Telegram username (e.g. @alex)">
+        <button class="invite-btn" onclick="claimReferral()">Verify & Claim</button>
+    </div>
+
+    <!-- BACK TO MAIN MENU BUTTON -->
+    <button class="back-btn" onclick="goBack()">Back to Game</button>
 
     <script>
-        if (window.Telegram && window.Telegram.WebApp) { 
-            window.Telegram.WebApp.ready(); 
+        // Load count data from database
+        let invitedFriends = JSON.parse(localStorage.getItem('chubby_invited_list')) || [];
+        
+        function updateStatsUI() {
+            document.getElementById('totalInvites').innerText = invitedFriends.length;
+            
+            // Calculate dynamic bonus price based on user tier count
+            let nextBonus = 2000;
+            if (invitedFriends.length >= 20) { nextBonus = 12000; }
+            else if (invitedFriends.length >= 10) { nextBonus = 7500; }
+            else if (invitedFriends.length >= 5) { nextBonus = 5000; }
+            
+            document.getElementById('currentTier').innerText = nextBonus.toLocaleString();
         }
 
-        function shareInviteLink() {
-            const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || '12345';
-            const inviteUrl = https://t.me{tgUserId};
-            const shareText = "🚀 Join ChubbyX Coin! Tap to earn, complete tasks, and win rewards together! 💎";
+        // Anti-cheat verification function
+        function claimReferral() {
+            let inputField = document.getElementById('friendUsername');
+            let username = inputField.value.trim().toLowerCase();
+
+            if (username === "" || !username.startsWith('@') || username.length < 3) {
+                alert("Please enter a valid Telegram username starting with @");
+                return;
+            }
+
+            // Check if this friend has already been claimed before
+            if (invitedFriends.includes(username)) {
+                alert("Error: You have already claimed the reward for this friend!");
+                return;
+            }
+
+            // Dynamic reward calculation algorithm
+            let reward = 2000;
+            let currentCount = invitedFriends.length + 1; // plus current new one
+
+            if (currentCount > 20) { reward = 12000; }
+            else if (currentCount > 10) { reward = 7500; }
+            else if (currentCount > 5) { reward = 5000; }
+
+            // Add new friend to memory list database
+            invitedFriends.push(username);
+            localStorage.setItem('chubby_invited_list', JSON.stringify(invitedFriends));
+
+            // Credit coins to master wallet database
+            let currentCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
+            currentCoins += reward;
+            localStorage.setItem('chubby_coins', currentCoins);
+
+            updateStatsUI();
+            inputField.value = ""; // clear input
             
-            window.Telegram.WebApp.openTelegramLink(https://t.me{encodeURIComponent(inviteUrl)}&text=${encodeURIComponent(shareText)});
+            alert("Success! " + username + " verified. +" + reward.toLocaleString() + " Coins added!");
         }
+
+        function goBack() {
+            window.parent.postMessage('closePage', '*');
+        }
+
+        // Initialize UI stats on page load
+        window.onload = updateStatsUI;
     </script>
 </body>
 </html>
