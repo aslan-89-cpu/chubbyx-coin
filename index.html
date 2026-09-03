@@ -23,7 +23,7 @@
             user-select: none;
             touch-action: none;
             /* ڕەنگی پشتەوە کرا بە وەنەوشەیی تۆخی هاوشێوەی وێنەکە */
-            background: #231942 url('background.png.jpeg') no-repeat center center fixed;
+            background: #231942 url('background.png.jpeg?v=2') no-repeat center center fixed;
             background-size: 100% 100%;
         }
         .header { 
@@ -146,26 +146,24 @@
     <script>
         // دڵنیابوون لە لۆدبوونی تەواوی ئەپەکە
         window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
-        
-        // گۆڕینی ڕەنگی سەرەوە بۆ وەنەوشەیی تۆخ بۆ شاردنەوەی بەشە ڕەشەکە
-        window.Telegram.WebApp.setHeaderColor('#231942'); 
-        window.Telegram.WebApp.setBackgroundColor('#231942');
+window.Telegram.WebApp.expand();
+window.Telegram.WebApp.setHeaderColor('#231942');
+window.Telegram.WebApp.setBackgroundColor('#231942');
 
-        const coinLeft = document.getElementById('coinLeft');
-        const coinRight = document.getElementById('coinRight');
+    const coinLeft = document.getElementById('coinLeft');
+    const coinRight = document.getElementById('coinRight');
 
-        function handleTap(e) {
-            e.preventDefault();
-            console.log("Tapped!");
-        }
+    function handleTap(e) {
+        e.preventDefault();
+        console.log("Tapped!");
+    }
 
-        if(coinLeft) {
-            coinLeft.addEventListener('touchstart', handleTap);
-        }
-        if(coinRight) {
-            coinRight.addEventListener('touchstart', handleTap);
-        }
+    if (coinLeft) {
+        coinLeft.addEventListener('touchstart', handleTap);
+    }
+    if (coinRight) {
+        coinRight.addEventListener('touchstart', handleTap);
+    }
     </script>
 </body>
 </html>
