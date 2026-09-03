@@ -3,65 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChubbyX Invite Friends</title>
-    <script src="https://telegram.org"></script>
+    <title>Invite Friends</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #131a26;
-            color: white;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
+        body { 
+            background: #090314; 
+            color: white; 
+            font-family: sans-serif; 
+            text-align: center; 
+            padding: 20px; 
         }
-        .invite-container {
-            margin-top: 50px;
+        h2 { 
+            color: #a48fff; 
+            margin-top: 20px; 
+            text-transform: uppercase;
         }
-        .btn {
-            background-color: #9b59b6;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
+        .invite-box { 
+            background: #1c103a; 
+            border: 1px solid #331a5e; 
+            border-radius: 12px; 
+            padding: 25px; 
+            margin: 20px 0; 
+        }
+        .reward-text {
+            color: #ffd700;
+            font-size: 20px;
             font-weight: bold;
+            margin: 10px 0;
+        }
+        .btn-share { 
+            background: #0088cc; 
+            color: white; 
+            border: none; 
+            padding: 12px 30px; 
+            border-radius: 25px; 
+            font-weight: bold; 
             font-size: 16px;
-            margin-top: 20px;
-            width: 80%;
+            cursor: pointer; 
+            width: 100%; 
+            margin-bottom: 10px; 
+            transition: background 0.3s;
+        }
+        .btn-share:hover {
+            background: #00a2f3;
+        }
+        .back-btn { 
+            background: #1c103a; 
+            color: white; 
+            padding: 10px 30px; 
+            border-radius: 10px; 
+            text-decoration: none; 
+            display: inline-block; 
+            margin-top: 20px; 
+            border: 1px solid #331a5e; 
         }
     </style>
+    <!-- Include Telegram WebApp Script -->
+    <script src="https://telegram.org"></script>
 </head>
 <body>
 
-    <div class="invite-container">
-        <h2>Invite Friends</h2>
-        <p>Invite your friends and earn mega rewards!</p>
+    <h2>Invite Friends</h2>
+    <p style="opacity: 0.8; font-size: 14px;">Invite your friends and grow your balance together!</p>
+
+    <div class="invite-box">
+        <p style="margin: 0; opacity: 0.7;">You will receive:</p>
+        <div class="reward-text">+3,000 Coins</div>
+        <p style="margin: 0 0 20px 0; font-size: 12px; color: #a48fff;">When your friend joins the game using your link</p>
         
-        <!-- دوگمەی فەرمی بۆ بانگهێشتکردنی هاوڕێیان -->
-        <button class="btn" onclick="inviteFriend()">Invite a Friend</button>
+        <!-- Button to generate and share link -->
+        <button class="btn-share" onclick="shareInviteLink()">Invite a Friend</button>
     </div>
 
+    <!-- Back Button to return to the main game -->
+    <a href="game.html" class="back-btn">Back to Game</a>
+
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        // Ensure Telegram WebApp is ready
+        if (window.Telegram && window.Telegram.WebApp) { 
+            window.Telegram.WebApp.ready(); 
+        }
 
-        // ١. چارەسەری کێشەی نەبوونی دوگمەی گەڕانەوە (Back Button)
-        tg.BackButton.show();
-        tg.BackButton.onClick(function() {
-            // بە دروستی دەتگەڕێنێتەوە سەر لاپەڕە سەرەکییەکە
-            window.location.href = "index.html"; 
-            tg.BackButton.hide();
-        });
-
-        // ٢. چارەسەری کێشەی کارنەکردنی بانگهێشت (Invite Logic)
-        function inviteFriend() {
-            // ناوی بۆتەکەی خۆت لێرە لە جیاتی chubbyx_coin_bot بنووسە
-            const botUsername = "chubbyx_coin_bot"; 
-            const inviteLink = https://t.me{botUsername}?start=r_${tg.initDataUnsafe.user?.id || 0};
-            const text = encodeURIComponent("Join ChubbyX Coin and start earning rewards now! 🚀");
+        function shareInviteLink() {
+            // Get user's Telegram ID dynamically, fallback to 12345 for browser testing
+            const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || '12345';
             
-            // ئەم بەستەرە فەرمییەی تێلێگرام لیستی هاوڕێکان بۆ بەکارهێنەر دەکاتەوە بۆ ناردنی لینکەکە
-            tg.openTelegramLink(https://t.me{encodeURIComponent(inviteLink)}&text=${text});
+            // Create the official link format that triggers the start_param inside Telegram
+            const inviteUrl = https://t.me{tgUserId};
+            
+            // The default message text that will be sent to the friend
+            const shareText = "🚀 Join ChubbyX Coin! Tap to earn, complete tasks, and win rewards together! 💎";
+            
+            // This natively opens the Telegram user/chat selection screen inside the Mini App
+            window.Telegram.WebApp.openTelegramLink(https://t.me{encodeURIComponent(inviteUrl)}&text=${encodeURIComponent(shareText)});
         }
     </script>
 </body>
