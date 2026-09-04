@@ -147,21 +147,29 @@
                 c.style.opacity = "0.5";
             });
 
-            // هەڵبژاردنی خەڵاتێکی هەرەمەکی
             const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
 
             setTimeout(() => {
-                // پاشەکەوتکردنی کوین لەسەر مۆبایلی بەکارهێنەر (بۆ ئەوەی نەفەوتێت)
                 let coins = parseInt(localStorage.getItem('chubby_coins')) || 0;
                 coins += randomReward;
                 localStorage.setItem('chubby_coins', coins);
                 localStorage.setItem('chubby_last_chest_timestamp', new Date().getTime());
 
-                // گۆڕینی دەقی سەر شاشە بە سەرکەوتوویی لەجیاتی alertی کۆن
                 if (txt) {
                     txt.innerText = "Congratulations! You won +" + randomReward.toLocaleString() + " ChubbyX coins!";
                     txt.style.color = "#45f3ff";
                 }
+
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.showAlert) {
+                    window.Telegram.WebApp.showAlert("Congratulations! You found " + randomReward.toLocaleString() + " ChubbyX coins. 🎉");
+                }
+
+                document.querySelectorAll('.chest').forEach(c => {
+                    c.style.pointerEvents = "auto";
+                    c.style.opacity = "1";
+                });
+            }, 800);
+        }
 
                 // پیشاندانی نامەی فەرمی و مۆدێرنی تێلیگرام
                 if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.showAlert) {
