@@ -96,7 +96,6 @@
 </head>
 <body>
 
-    <!-- TOP NAVIGATION TABS -->
     <div class="tabs">
         <button class="tab-btn active" id="tabSpin" onclick="switchTab('spin')">Daily Spin</button>
         <button class="tab-btn" id="tabCatcher" onclick="switchTab('catcher')">Coin Catcher</button>
@@ -136,7 +135,6 @@
     <button class="back-btn" onclick="goBack()">Back to Game</button>
 
     <script>
-        // TAB SWITCH ENGINE
         function switchTab(type) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.game-area').forEach(a => a.classList.remove('active'));
@@ -180,7 +178,7 @@
         }
 
         function startSpin() {
-            if (isSpinning) return;
+            if (isSpinning || !checkSpinLimit()) return;
             isSpinning = true;
             
             const wheel = document.getElementById('wheel');
@@ -198,9 +196,6 @@
                 localStorage.setItem('chubby_coins', coins + prize.value);
                 localStorage.setItem('chubby_last_spin_timestamp', new Date().getTime());
                 
-                // ناردنی پەیامی فەرمی بۆ لاپەڕەی سەرەکی بەبێ کراش
-                window.parent.postMessage({type: 'addCoins', amount: prize.value}, '*');
-                
                 alert(You won +${prize.text} ChubbyX Coins!);
                 isSpinning = false;
                 checkSpinLimit();
@@ -217,3 +212,6 @@
         let animationFrameId;
 
         function checkCatcherLimit() {
+            const lastCatcher = localStorage.getItem('chubby_last_catcher_timestamp');
+            const btn = document.getElementById('catcherBtn');
+            const txt = document.getElementById('catcherStatus');
