@@ -3,107 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Coin Catcher Game</title>
+    <title>ChubbyX Coin Catcher</title>
     <style>
-        body { background: #090314; color: white; font-family: sans-serif; text-align: center; padding: 20px; overflow: hidden; }
-        h2 { color: #a48fff; margin: 10px 0; }
-        #gameCanvas { background: #1c103a; border: 2px solid #a48fff; border-radius: 12px; display: block; margin: 10px auto; max-width: 100%; }
-        .back-btn { background: #1c103a; color: white; padding: 10px 30px; border-radius: 10px; text-decoration: none; display: inline-block; margin-top: 15px; border: 1px solid #331a5e; }
-        .start-btn { background: #28a745; color: white; border: none; padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #090514; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
+        .game-box { background: #150f2e; border: 1px solid #2e1f5e; border-radius: 20px; padding: 25px 15px; width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; position: relative; }
+        h2 { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
+        .info-text { font-size: 13px; color: #9ca3af; margin-bottom: 25px; text-align: center; }
+        #catcherCanvas { background: #0d081b; border: 2px solid #7b2cbf; border-radius: 12px; width: 100%; height: 300px; margin-bottom: 20px; touch-action: none; }
+        .action-btn { background: #7b2cbf; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; }
+        .action-btn:disabled { background: rgba(255, 255, 255, 0.05); color: #6b7280; cursor: not-allowed; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .back-btn { margin-top: 25px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 12px 35px; border-radius: 12px; font-size: 15px; cursor: pointer; font-weight: bold; width: 100%; max-width: 400px; text-align: center; }
     </style>
-    <script src="https://telegram.org"></script>
 </head>
 <body>
-
-    <h2>Coin Catcher Game</h2>
-    <div style="font-size: 18px; margin-bottom: 10px;">Score: <span id="scoreVal">0</span></div>
-
-    <canvas id="gameCanvas" width="320" height="400"></canvas>
-    
-    <button class="start-btn" onclick="startGame()">Start Game</button>
-    <br>
-    <a href="game.html" class="back-btn">Back to Game</a>
-
+    <div class="game-box">
+        <h2>ChubbyX Coin Catcher</h2>
+        <div class="info-text" id="catcherStatus">Catch falling golden coins with your basket!</div>
+        <canvas id="catcherCanvas" width="350" height="300"></canvas>
+        <button class="action-btn" id="catcherBtn" onclick="startCatcherGame()">Start Game</button>
+    </div>
+    <button class="back-btn" onclick="location.href='game.html'">Back to Menu</button>
     <script>
-        if (window.Telegram && window.Telegram.WebApp) { window.Telegram.WebApp.ready(); }
-
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        let score = 0;
-        let gameActive = false;
-        
-        let basket = { x: 135, y: 360, width: 50, height: 15 };
-        let coins = [];
-
-        function startGame() {
-            if (gameActive) return;
-            score = 0;
-            document.getElementById('scoreVal').innerText = score;
-            coins = [];
-            gameActive = true;
-            gameLoop();
+        let canvas, ctx; let basket = { x: 140, y: 270, width: 70, height: 15 }; let fallingCoins = []; let catcherScore = 0; let gameTimer = 0; let catcherRunning = false;
+        function checkCatcherLimit() {
+            const lastCatcher = localStorage.getItem('chubby_last_catcher'); const btn = document.getElementById('catcherBtn'); const txt = document.getElementById('catcherStatus');
+            if (lastCatcher && (new Date().getTime() - parseInt(lastCatcher) < 24*60*60*1000)) { btn.disabled = true; txt.innerText = "Daily catching completed! Come back tomorrow."; return false; }
+            btn.disabled = false; txt.innerText = "Catch falling golden coins with your basket!"; return true;
         }
-
-        // Touch control for Telegram Mobile
-        canvas.addEventListener('touchmove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const root = e.touches[0].clientX - rect.left;
-            basket.x = Math.max(0, Math.min(canvas.width - basket.width, root - basket.width/2));
-        });
-
-        function gameLoop() {
-            if (!gameActive) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw Basket
-            ctx.fillStyle = '#a48fff';
-            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
-
-            // Spawn Coins
-            if (Math.random() < 0.02) {
-                coins.push({ x: Math.random() * (canvas.width - 15), y: 0, speed: 3, radius: 8 });
+        function initCanvas() {
+            canvas = document.getElementById('catcherCanvas'); ctx = canvas.getContext('2d'); drawCanvasStatic();
+            canvas.addEventListener('touchmove', function(e) {
+                if (!catcherRunning) return; let rect = canvas.getBoundingClientRect(); let touchX = e.touches.clientX - rect.left;
+                basket.x = touchX - basket.width / 2; if (basket.x < 0) basket.x = 0; if (basket.x > canvas.width - basket.width) basket.x = canvas.width - basket.width;
+            });
+        }
+        function drawCanvasStatic() { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = "#7b2cbf"; ctx.fillRect(basket.x, basket.y, basket.width, basket.height); ctx.fillStyle = "#9ca3af"; ctx.font = "14px sans-serif"; ctx.fillText("Press Start to Play (60s)", 100, 140); }
+        function startCatcherGame() {
+            if (catcherRunning || !checkCatcherLimit()) return; catcherRunning = true; catcherScore = 0; gameTimer = 60; fallingCoins = []; document.getElementById('catcherBtn').disabled = true;
+            let gameInterval = setInterval(() => { gameTimer--; if (gameTimer <= 0) { clearInterval(gameInterval); endCatcherGame(); } }, 1000);
+            animateCatcher();
+        }
+        function animateCatcher() {
+            if (!catcherRunning) return; ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (Math.random() < 0.05) { fallingCoins.push({ x: Math.random() * (canvas.width - 20) + 10, y: 0, speed: Math.random() * 2 + 2 }); }
+            ctx.fillStyle = "#eab308"; ctx.fillRect(basket.x, basket.y, basket.width, basket.height); ctx.fillStyle = "#ffdf00";
+            for (let i = fallingCoins.length - 1; i >= 0; i--) {
+                let c = fallingCoins[i]; c.y += c.speed; ctx.beginPath(); ctx.arc(c.x, c.y, 8, 0, Math.PI * 2); ctx.fill();
+                if (c.y >= basket.y && c.y <= basket.y + basket.height && c.x >= basket.x && c.x <= basket.x + basket.width) { catcherScore += 50; fallingCoins.splice(i, 1); continue; }
+                if (c.y > canvas.height) fallingCoins.splice(i, 1);
             }
-
-            // Move & Draw Coins
-            for (let i = coins.length - 1; i >= 0; i--) {
-                let c = coins[i];
-                c.y += c.speed;
-
-                ctx.beginPath();
-                ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2);
-                ctx.fillStyle = '#ffd700';
-                ctx.fill();
-                ctx.closePath();
-
-                // Collision with basket
-                if (c.y + c.radius >= basket.y && c.x >= basket.x && c.x <= basket.x + basket.width) {
-                    score += 10;
-                    document.getElementById('scoreVal').innerText = score;
-                    coins.splice(i, 1);
-                    continue;
-                }
-
-                // Missed coin
-                if (c.y > canvas.height) {
-                    gameActive = false;
-                    alert(Game Over! Final Score: ${score});
-                    saveScore(score);
-                }
-            }
-
-            if (gameActive) requestAnimationFrame(gameLoop);
+            ctx.fillStyle = "white"; ctx.font = "12px sans-serif"; ctx.fillText(Score: ${catcherScore}, 15, 25); ctx.fillText(Time: ${gameTimer}s, canvas.width - 75, 25); requestAnimationFrame(animateCatcher);
         }
-
-        async function saveScore(finalScore) {
-            try {
-                const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 12345;
-                await fetch('/api/add-coins', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: tgUserId, amount: finalScore, task: 'coin_catcher' })
-                });
-            } catch(e) { console.error(e); }
+        function endCatcherGame() {
+            catcherRunning = false; let coins = parseInt(localStorage.getItem('chubby_coins')) || 0; localStorage.setItem('chubby_coins', coins + catcherScore); localStorage.setItem('chubby_last_catcher', new Date().getTime());
+            alert(Game Over! You earned +${catcherScore} ChubbyX Coins!); checkCatcherLimit(); drawCanvasStatic();
         }
+        window.onload = function() { checkCatcherLimit(); initCanvas(); };
     </script>
 </body>
 </html>
