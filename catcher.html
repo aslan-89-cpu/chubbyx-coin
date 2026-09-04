@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin Catcher</title>
+    <!-- لێرەدا فایلی فەرمی تێلیگرام بۆ مۆڵەتی کارکردن زیادکرا -->
+    <script src="https://telegram.org"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #090514; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
@@ -40,7 +42,7 @@
         }
         function drawCanvasStatic() { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = "#7b2cbf"; ctx.fillRect(basket.x, basket.y, basket.width, basket.height); ctx.fillStyle = "#9ca3af"; ctx.font = "14px sans-serif"; ctx.fillText("Press Start to Play (60s)", 100, 140); }
         function startCatcherGame() {
-            if (catcherRunning || !checkCatcherLimit()) return; catcherRunning = true; catcherScore = 0; gameTimer = 60; fallingCoins = []; document.getElementById('catcherBtn').disabled = true;
+            if (catcherRunning) return; catcherRunning = true; catcherScore = 0; gameTimer = 60; fallingCoins = []; document.getElementById('catcherBtn').disabled = true;
             let gameInterval = setInterval(() => { gameTimer--; if (gameTimer <= 0) { clearInterval(gameInterval); endCatcherGame(); } }, 1000);
             animateCatcher();
         }
