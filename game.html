@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>chubbyX Lucky Chests</title>
+    <title>chubbyX Lucky Spin</title>
     <script src="https://telegram.org"></script>
     <style>
         body {
@@ -35,49 +35,110 @@
 
         h2 {
             color: #45f3ff;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             font-size: 24px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .info-text {
-            font-size: 16px;
+            font-size: 15px;
             color: #c5c6c7;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             min-height: 40px;
         }
 
-        .chests-container {
-            display: flex;
-            justify-content: space-around;
-            gap: 15px;
-            margin-bottom: 40px;
+        /* 💜 دیزاینی چەرخەکە بە ٦ کەرت و نوسینی ژمارەکان 💜 */
+        .wheel-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 30px auto;
         }
 
-        .chest {
-            background: #241a49;
-            border: 2px solid #7c2cbf;
-            border-radius: 15px;
-            width: 30%;
-            height: 110px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 40px;
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid #7c2cbf;
+            /* دروستکردنی ٦ کەرتی جیاواز بە ڕەنگەکانی پڕۆژەکەت */
+            background: conic-gradient(
+                #241a49 0deg 60deg,
+                #3c165a 60deg 120deg,
+                #1f2833 120deg 180deg,
+                #241a49 180deg 240deg,
+                #3c165a 240deg 300deg,
+                #1f2833 300deg 360deg
+            );
+            box-shadow: 0 0 25px rgba(124, 44, 191, 0.6);
+            transition: transform 5s cubic-bezier(0.1, 0.8, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* نوسینی ژمارەی خەڵاتەکان لە ناو خودی کەرتەکانی چەرخەکەدا */
+        .segment-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: #45f3ff;
+            transform-origin: 50% 50%;
+        }
+        .s1 { transform: rotate(30deg) translateY(20px); }
+        .s2 { transform: rotate(90deg) translateY(20px); color: #ffffff; }
+        .s3 { transform: rotate(15deg) translateY(20px); color: #15eff2; }
+        .s4 { transform: rotate(210deg) translateY(20px); }
+        .s5 { transform: rotate(270deg) translateY(20px); color: #ffffff; }
+        .s6 { transform: rotate(330deg) translateY(20px); color: #15eff2; }
+
+        .pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid #15eff2;
+            z-index: 10;
+        }
+
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #15eff2;
+            border-radius: 50%;
+            border: 4px solid #ffffff;
+            z-index: 5;
+            box-shadow: 0 0 10px rgba(21, 239, 242, 0.8);
+        }
+
+        .spin-btn {
+            display: inline-block;
+            background: #7c2cbf;
+            color: #ffffff;
+            border: 2px solid #45f3ff;
+            padding: 12px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
             cursor: pointer;
-            transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 15px rgba(124, 44, 191, 0.4);
+            width: 80%;
+            margin-bottom: 15px;
         }
 
-        .chest:hover {
-            transform: scale(1.05);
-            background: #2e225d;
-            box-shadow: 0 0 15px rgba(124, 44, 191, 0.5);
-        }
-
-        .chest:active {
-            transform: scale(0.95);
+        .spin-btn:active {
+            transform: scale(0.96);
         }
 
         .back-btn {
@@ -85,38 +146,42 @@
             background: #15eff2;
             color: #0b0c10;
             border: none;
-            padding: 12px 30px;
-            font-size: 16px;
+            padding: 10px 30px;
+            font-size: 15px;
             font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
             text-decoration: none;
-            transition: background 0.2s, transform 0.1s;
-            box-shadow: 0 4px 10px rgba(21, 239, 242, 0.3);
-            margin-top: 20px;
+            transition: background 0.2s;
             width: 80%;
             text-align: center;
-        }
-
-        .back-btn:active {
-            transform: scale(0.98);
         }
     </style>
 </head>
 <body>
 
     <div class="game-box">
-        <h2>CHUBBYX LUCKY CHESTS</h2>
-        <div class="info-text" id="gamestatus">Tap on any lucky chest to claim your daily reward!</div>
+        <h2>CHUBBYX LUCKY SPIN</h2>
+        <div class="info-text" id="gamestatus">Spin the lucky wheel to claim your ChubbyX coins!</div>
         
-        <div class="chests-container">
-            <div class="chest" onclick="openchest(1)">🎁</div>
-            <div class="chest" onclick="openchest(2)">🎁</div>
-            <div class="chest" onclick="openchest(3)">🎁</div>
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <div class="center-circle"></div>
+            <div class="wheel" id="lucky-wheel">
+                <!-- دابەشکردنی دەقی خەڵاتەکان لەسەر ڕووی چەرخەکە -->
+                <div class="segment-text s1">500</div>
+                <div class="segment-text s2">1000</div>
+                <div class="segment-text s3">3000</div>
+                <div class="segment-text s4">5000</div>
+                <div class="segment-text s5">1000</div>
+                <div class="segment-text s6">500</div>
+            </div>
         </div>
-    </div>
 
-    <a href="index.html" class="back-btn">Back to Game</a>
+        <button class="spin-btn" id="spin-trigger" onclick="startSpinning()">SPIN NOW</button>
+        <br>
+        <a href="index.html" class="back-btn">Back to Game</a>
+    </div>
 
     <script>
         window.onload = function() {
@@ -126,44 +191,51 @@
             }
         };
 
-        // بڕی خەڵاتەکان لێرە جێگیر کراون
-        const rewards =;
+        let isSpinning = false;
+        
+        // ٦ بەشی فەرمی خەڵاتەکان ڕێک بەپێی داواکارییەکەت
+        const rewards = ;
 
-        function openchest(chestNumber) {
+        function startSpinning() {
+            if (isSpinning) return;
+
+            const wheel = document.getElementById('lucky-wheel');
+            const btn = document.getElementById('spin-trigger');
             const txt = document.getElementById('gamestatus');
+
+            isSpinning = true;
+            if (btn) btn.style.opacity = "0.5";
             if (txt) {
-                txt.innerText = "Opening chest...";
+                txt.innerText = "The wheel is spinning...";
                 txt.style.color = "#15eff2";
             }
 
-            // کاڵکردنەوەی کاتی سندوقەکان
-            document.querySelectorAll('.chest').forEach(c => {
-                c.style.pointerEvents = "none";
-                c.style.opacity = "0.5";
-            });
+            // دیاریکردنی پلەی خولانەوە بە شێوەیەک هەمیشە چەند خولێکی تەواو بخولێتەوە
+            const randomDegree = Math.floor(Math.random() * 3600) + 2880; 
+            if (wheel) {
+                wheel.style.transform = rotate(${randomDegree}deg);
+            }
 
-            const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
-
+            // دوای ٥ چرکە ئەنیمەیشنەکە دەوەستێت و خەڵاتەکە دیاری دەکات
             setTimeout(() => {
+                const finalReward = rewards[Math.floor(Math.random() * rewards.length)];
+                
                 // پاشەکەوتکردنی کوینەکان بە سەلامەتی
                 let coins = parseInt(localStorage.getItem('chubby_coins')) || 0;
-                coins += randomReward;
+                coins += finalReward;
                 localStorage.setItem('chubby_coins', coins);
 
                 if (txt) {
-                    txt.innerText = "Congratulations! You won +" + randomReward.toLocaleString() + " ChubbyX coins!";
+                    txt.innerText = "Congratulations! You won +" + finalReward.toLocaleString() + " ChubbyX coins!";
                     txt.style.color = "#45f3ff";
                 }
 
-                // پیشاندانی نامەی سەرکەوتن
-                alert("Congratulations! You found " + randomReward.toLocaleString() + " ChubbyX coins! 🎉");
+                alert("Congratulations! You won " + finalReward.toLocaleString() + " ChubbyX coins! 🎉");
 
-                // گەڕانەوەی سندوقەکان بۆ دۆخی چالاک
-                document.querySelectorAll('.chest').forEach(c => {
-                    c.style.pointerEvents = "auto";
-                    c.style.opacity = "1";
-                });
-            }, 800);
+                isSpinning = false;
+                if (btn) btn.style.opacity = "1";
+
+            }, 5000); // ٥ چرکە ئەنیمەیشنی خولانەوەی نەرم
         }
     </script>
 
