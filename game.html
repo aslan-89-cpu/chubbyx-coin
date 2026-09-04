@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>chubbyX Ultimate Game Hub</title>
+    <!-- ئەسکریپتی فەرمی و نوێی تێلیگرام -->
+    <script src="https://telegram.org"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0b0c10;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        .hub-container {
+            background-color: #1f2833;
+            border: 2px solid #45f3ff;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 0 20px rgba(69, 243, 255, 0.15);
+            box-sizing: border-box;
+        }
+
+        .balance-box {
+            background: rgba(69, 243, 255, 0.1);
+            border: 1px solid #45f3ff;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #45f3ff;
+        }
+
+        /* ستایلی بەشی کوین کلیکەر */
+        .coin-section {
+            margin: 20px 0 35px 0;
+        }
+
+        .coin-btn {
+            width: 160px;
+            height: 160px;
+            background: linear-gradient(145deg, #ffb703, #fb8500);
+            border-radius: 50%;
+            border: 5px solid #fff;
+            box-shadow: 0 0 25px rgba(251, 133, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 65px;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            user-select: none;
+        }
+
+        .coin-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* ستایلی بەشی سندوقەکان */
+        .chests-title {
+            font-size: 18px;
+            color: #15eff2;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-text {
+            font-size: 14px;
+            color: #c5c6c7;
+            margin-bottom: 15px;
+            min-height: 20px;
+        }
+
+        .chests-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .chest {
+            background: #241a49;
+            border: 2px solid #7c2cbf;
+            border-radius: 15px;
+            flex: 1;
+            height: 90px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 35px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .chest:active {
+            transform: scale(0.95);
+        }
+
+        .back-link {
+            display: block;
+            background: #15eff2;
+            color: #0b0c10;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.1s;
+            box-shadow: 0 4px 10px rgba(21, 239, 242, 0.2);
+            margin-top: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .back-link:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hub-container">
+        <!-- پیشاندانی باڵانسی گشتی هاوبەش -->
+        <div class="balance-box">
+            ChubbyX Balance: <span id="balance-display">0</span> 🪙
+        </div>
+
+        <!-- بەشی یەکەم: یاری کلیکەر (Tap Game) -->
+        <div class="coin-section">
+            <div class="coin-btn" id="coin-trigger">🐻</div>
+            <p style="color: #c5c6c7; font-size: 14px; margin-top: 10px;">Tap the Chubby to mine coins!</p>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid rgba(21, 239, 242, 0.2); margin: 25px 0;">
+
+        <!-- بەشی دووەم: یاری سندوقەکان (Daily Chests) -->
+        <div class="chests-title">Lucky Chests Reward</div>
+        <div class="status-text" id="game-status">Choose a chest to find daily bonus!</div>
+        
+        <div class="chests-grid">
+            <div class="chest" onclick="openLuckyChest(1)">🎁</div>
+            <div class="chest" onclick="openLuckyChest(2)">🎁</div>
+            <div class="chest" onclick="openLuckyChest(3)">🎁</div>
+        </div>
+
+        <!-- دوگمەی گەڕانەوەی ڕاستەوخۆ بە لینک بۆ index.html -->
+        <a href="index.html" class="back-link">Back to Main Hub</a>
+    </div>
+
+    <script>
+        // چالاککردنی مینی ئەپ لە کاتی بارگاوی بووندا
+        window.onload = function() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand();
+            }
+            updateVisualBalance();
+        };
+
+        // خوێندنەوەی باڵانسی هاوبەش لە سەرجەم یارییەکاندا
+        let currentBalance = parseInt(localStorage.getItem('chubby_coins')) || 0;
+
+        function updateVisualBalance() {
+            const display = document.getElementById('balance-display');
+            if (display) {
+                display.innerText = currentBalance.toLocaleString();
+            }
+        }
+
+        // ١. کۆدی کارپێکردنی کلیکەری کوین
+        const coinBtn = document.getElementById('coin-trigger');
+        if (coinBtn) {
+            coinBtn.addEventListener('click', () => {
+                currentBalance += 1; // زیادبوونی ١ کوین بۆ هەر تاپێک
+                localStorage.setItem('chubby_coins', currentBalance);
+                updateVisualBalance();
+
+                // لەرینەوەی مۆبایل (Haptic Feedback) لە ناو تێلیگرام
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                    window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                }
+            });
+        }
+
+        // ٢. کۆدی یاری سندوقەکان
+        const chestRewards =;
+
+        function openLuckyChest(num) {
+            const statusTxt = document.getElementById('game-status');
+            if (statusTxt) {
+                statusTxt.innerText = "Opening lucky chest...";
+                statusTxt.style.color = "#15eff2";
+            }
+
+            // کاڵکردنەوەی کاتی سندوقەکان لە کاتی خولانەوەدا
+            document.querySelectorAll('.chest').forEach(c => {
+                c.style.pointerEvents = "none";
+                c.style.opacity = "0.4";
+            });
+
+            const rewardWon = chestRewards[Math.floor(Math.random() * chestRewards.length)];
+
+            setTimeout(() => {
+                currentBalance += rewardWon;
+                localStorage.setItem('chubby_coins', currentBalance);
+                updateVisualBalance();
+
+                if (statusTxt) {
+                    statusTxt.innerText = "Awesome! You found +" + rewardWon.toLocaleString() + " coins!";
+                    statusTxt.style.color = "#45f3ff";
+                }
+
+                // پیشاندانی ئاڵێرتی پارێزراوی مۆبایل
+                alert("Congratulations! You found " + rewardWon.toLocaleString() + " ChubbyX coins! 🎉");
+
+                document.querySelectorAll('.chest').forEach(c => {
+                    c.style.pointerEvents = "auto";
+                    c.style.opacity = "1";
+                });
+            }, 700);
+        }
+    </script>
+
+</body>
+</html>
