@@ -1,85 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChubbyX Lucky Spin</title>
-    <script src="https://telegram.org"></script>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #090514; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
-        .game-box { background: #150f2e; border: 1px solid #2e1f5e; border-radius: 20px; padding: 25px 15px; width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; position: relative; }
-        h2 { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
-        .info-text { font-size: 13px; color: #9ca3af; margin-bottom: 25px; text-align: center; }
-        .wheel-wrapper { position: relative; width: 260px; height: 260px; margin-bottom: 25px; }
-        .pointer { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #eab308; z-index: 100; }
-        .wheel { width: 100%; height: 100%; border-radius: 50%; border: 5px solid #7b2cbf; position: relative; overflow: hidden; transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1); background: conic-gradient(#5a189a 0deg 60deg, #7b2cbf 60deg 120deg, #9d4edd 120deg 180deg, #5a189a 180deg 240deg, #7b2cbf 240deg 300deg, #9d4edd 300deg 360deg); }
-        .center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: #090514; border: 2px solid #eab308; border-radius: 50%; z-index: 10; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .center-circle img { width: 100%; height: 100%; object-fit: cover; }
-        .segment-text { position: absolute; width: 100%; height: 100%; text-align: center; font-weight: bold; font-size: 14px; transform-origin: 50% 50%; padding-top: 15px; }
-        .action-btn { background: #7b2cbf; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; }
-        .action-btn:disabled { background: rgba(255, 255, 255, 0.05); color: #6b7280; cursor: not-allowed; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .back-btn { margin-top: 25px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 12px 35px; border-radius: 12px; font-size: 15px; cursor: pointer; font-weight: bold; width: 100%; max-width: 400px; text-align: center; }
-    </style>
-</head>
-<body>
-    <div class="game-box">
-        <h2>ChubbyX Lucky Spin</h2>
-        <div class="info-text" id="spinStatus">Spin the purple wheel to win mega rewards!</div>
-        <div class="wheel-wrapper">
-            <div class="pointer"></div>
-            <div class="center-circle"><img src="image.png.jpeg" alt="ChubbyX"></div>
-            <div class="wheel" id="wheel">
-                <div class="segment-text" style="transform: rotate(30deg);">5,000</div>
-                <div class="segment-text" style="transform: rotate(90deg);">500</div>
-                <div class="segment-text" style="transform: rotate(150deg);">1,000</div>
-                <div class="segment-text" style="transform: rotate(210deg);">2,000</div>
-                <div class="segment-text" style="transform: rotate(270deg);">500</div>
-                <div class="segment-text" style="transform: rotate(330deg);">1,000</div>
-            </div>
-        </div>
-        <button class="action-btn" id="spinBtn" onclick="startSpin()">Spin Now</button>
-    </div>
-    <button class="back-btn" onclick="location.href='game.html'">Back to Menu</button>
-    <script>
-        const spinPrizes = [{ text: "5,000", value: 5000, minAngle: 0, maxAngle: 60 }, { text: "1,000", value: 1000, minAngle: 60, maxAngle: 120 }, { text: "500", value: 500, minAngle: 120, maxAngle: 180 }, { text: "2,000", value: 2000, minAngle: 180, maxAngle: 240 }, { text: "500", value: 500, minAngle: 240, maxAngle: 300 }, { text: "1,000", value: 1000, minAngle: 300, maxAngle: 360 }];
-        let isSpinning = false; let currentRotation = 0;
-        
-        function checkSpinLimit() {
-            try {
-                const lastSpin = localStorage.getItem('chubby_last_spin');
-                const btn = document.getElementById('spinBtn');
-                const txt = document.getElementById('spinStatus');
-                if (lastSpin && (new Date().getTime() - parseInt(lastSpin) < 24*60*60*1000)) {
-                    btn.disabled = true;
-                    txt.innerText = "Daily spin completed! Come back tomorrow.";
-                    return false;
-                }
-            } catch(e) { console.log("Storage sandbox bypass activated"); }
-            document.getElementById('spinBtn').disabled = false;
-            document.getElementById('spinStatus').innerText = "Spin the purple wheel to win mega rewards!";
-            return true;
+// Array configurations for your prize segments
+const spinPrizes = [
+    { text: "5,000", value: 5000, minAngle: 0, maxAngle: 60 },
+    { text: "1,000", value: 1000, minAngle: 60, maxAngle: 120 },
+    { text: "500", value: 500, minAngle: 120, maxAngle: 180 },
+    { text: "2,000", value: 2000, minAngle: 180, maxAngle: 240 },
+    { text: "500", value: 500, minAngle: 240, maxAngle: 300 },
+    { text: "1,000", value: 1000, minAngle: 300, maxAngle: 360 }
+];
+
+let isSpinning = false;
+let currentRotation = 0;
+
+// 1. Function to check 24-hour limit (Once per day)
+function checkSpinLimit() {
+    const lastSpin = localStorage.getItem('chubby_last_spin_timestamp');
+    const btn = document.getElementById('spinbtn');
+    const txt = document.getElementById('spinstatus');
+    const twentyFourHours = 86400000; // 24 * 60 * 60 * 1000
+
+    if (lastSpin) {
+        const timePassed = new Date().getTime() - parseInt(lastSpin);
+
+        if (timePassed < twentyFourHours) {
+            btn.disabled = true; 
+            btn.style.opacity = "0.5"; 
+            
+            // Calculate remaining time
+            const timeLeft = twentyFourHours - timePassed;
+            const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+            const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+            // Display countdown message in English
+            txt.innerText = Already spun today! Try again in ${hoursLeft}h ${minutesLeft}m.;
+            return false;
         }
+    }
+
+    btn.disabled = false;
+    btn.style.opacity = "1";
+    return true;
+}
+
+// 2. Core function to rotate the wheel
+function startSpin() {
+    if (!checkSpinLimit() || isSpinning) return; 
+    
+    isSpinning = true;
+    const wheel = document.getElementById("wheel");
+    const statusText = document.getElementById("spinstatus");
+
+    const prizeIndex = Math.floor(Math.random() * spinPrizes.length);
+    const selectedPrize = spinPrizes[prizeIndex];
+    const randomSliceAngle = Math.floor(Math.random() * (selectedPrize.maxAngle - selectedPrize.minAngle)) + selectedPrize.minAngle;
+    
+    const extraSpins = 1800; 
+    currentRotation += extraSpins + (360 - randomSliceAngle);
+
+    wheel.style.transition = "transform 4s cubic-bezier(0.25, 0.1, 0.25, 1)";
+    wheel.style.transform = rotate(${currentRotation}deg);
+
+    setTimeout(() => {
+        isSpinning = false;
         
-        function startSpin() {
-            if (isSpinning) return; isSpinning = true;
-            const wheel = document.getElementById('wheel'); const prizeIndex = Math.floor(Math.random() * spinPrizes.length); const prize = spinPrizes[prizeIndex];
-            const targetAngle = 360 - ((prize.minAngle + prize.maxAngle) / 2); currentRotation += (360 * 5) + targetAngle - (currentRotation % 360);
-            wheel.style.transform = rotate(${currentRotation}deg); document.getElementById('spinBtn').disabled = true;
-            setTimeout(() => {
-                try {
-                    let coins = parseInt(localStorage.getItem('chubby_coins')) || 0;
-                    localStorage.setItem('chubby_coins', coins + prize.value);
-                    localStorage.setItem('chubby_last_spin', new Date().getTime());
-                } catch(e) { console.log("Bypassing localStorage error"); }
-                
-                // ناردنی پەیامی فەرمی بۆ لاپەڕەی سەرەکی بۆ نوێکردنەوەی باڵانس
-                window.parent.postMessage({type: 'addCoins', amount: prize.value}, '*');
-                alert(You won +${prize.text} ChubbyX Coins!);
-                isSpinning = false; checkSpinLimit();
-            }, 4000);
-        }
-        window.onload = checkSpinLimit;
-    </script>
-</body>
-</html>
+        // Display winning result in English
+        statusText.innerText = You won: ${selectedPrize.text}!;
+        
+        // Save current timestamp to local storage
+        localStorage.setItem('chubby_last_spin_timestamp', new Date().getTime());
+        
+        // Send the data to your Node.js backend
+        sendPrizeToBackend(selectedPrize.value);
+        
+        // Lock the spin button instantly
+        checkSpinLimit();
+    }, 4000); 
+}
+
+// 3. Send the reward data to server.js
+function sendPrizeToBackend(prizeValue) {
+    fetch('/api/save-prize', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+            prize: prizeValue,
+            timestamp: new Date().getTime()
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Prize successfully saved on server:', data);
+    })
+    .catch(error => {
+        console.error('Error sending prize to server:', error);
+    });
+}
+
+// 4. Automatically run checks when the page loads
+window.onload = function() {
+    checkSpinLimit();
+};
