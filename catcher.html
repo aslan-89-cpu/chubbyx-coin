@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Coin Catcher</title>
-    <!-- لێرەدا فایلی فەرمی تێلیگرام بۆ مۆڵەتی کارکردن زیادکرا -->
     <script src="https://telegram.org"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,11 +27,21 @@
     <button class="back-btn" onclick="location.href='game.html'">Back to Menu</button>
     <script>
         let canvas, ctx; let basket = { x: 140, y: 270, width: 70, height: 15 }; let fallingCoins = []; let catcherScore = 0; let gameTimer = 0; let catcherRunning = false;
+        
         function checkCatcherLimit() {
-            const lastCatcher = localStorage.getItem('chubby_last_catcher'); const btn = document.getElementById('catcherBtn'); const txt = document.getElementById('catcherStatus');
-            if (lastCatcher && (new Date().getTime() - parseInt(lastCatcher) < 24*60*60*1000)) { btn.disabled = true; txt.innerText = "Daily catching completed! Come back tomorrow."; return false; }
-            btn.disabled = false; txt.innerText = "Catch falling golden coins with your basket!"; return true;
+            try {
+                const lastCatcher = localStorage.getItem('chubby_last_catcher'); const btn = document.getElementById('catcherBtn'); const txt = document.getElementById('catcherStatus');
+                if (lastCatcher && (new Date().getTime() - parseInt(lastCatcher) < 24*60*60*1000)) {
+                    btn.disabled = true;
+                    txt.innerText = "Daily catching completed! Come back tomorrow.";
+                    return false;
+                }
+            } catch(e) { console.log("Storage sandbox bypass activated"); }
+            document.getElementById('catcherBtn').disabled = false;
+            document.getElementById('catcherStatus').innerText = "Catch falling golden coins with your basket!";
+            return true;
         }
+        
         function initCanvas() {
             canvas = document.getElementById('catcherCanvas'); ctx = canvas.getContext('2d'); drawCanvasStatic();
             canvas.addEventListener('touchmove', function(e) {
@@ -58,8 +67,15 @@
             ctx.fillStyle = "white"; ctx.font = "12px sans-serif"; ctx.fillText(Score: ${catcherScore}, 15, 25); ctx.fillText(Time: ${gameTimer}s, canvas.width - 75, 25); requestAnimationFrame(animateCatcher);
         }
         function endCatcherGame() {
-            catcherRunning = false; let coins = parseInt(localStorage.getItem('chubby_coins')) || 0; localStorage.setItem('chubby_coins', coins + catcherScore); localStorage.setItem('chubby_last_catcher', new Date().getTime());
-            alert(Game Over! You earned +${catcherScore} ChubbyX Coins!); checkCatcherLimit(); drawCanvasStatic();
+            catcherRunning = false; 
+            try {
+                let coins = parseInt(localStorage.getItem('chubby_coins')) || 0; localStorage.setItem('chubby_coins', coins + catcherScore); localStorage.setItem('chubby_last_catcher', new Date().getTime());
+            } catch(e) { console.log("Bypassing localStorage error"); }
+            
+            // ناردنی پەیامی فەرمی بۆ لاپەڕەی سەرەکی بۆ نوێکردنەوەی باڵانس
+            window.parent.postMessage({type: 'addCoins', amount: catcherScore}, '*');
+            alert(Game Over! You earned +${catcherScore} ChubbyX Coins!);
+            checkCatcherLimit(); drawCanvasStatic();
         }
         window.onload = function() { checkCatcherLimit(); initCanvas(); };
     </script>
