@@ -40,37 +40,28 @@
             justify-content: space-around;
             width: 100%;
             margin-bottom: 40px;
-            gap: 10px;
+            gap: 15px;
         }
         .chest {
             background: #241a49;
             border: 2px solid #7c2cbf;
             border-radius: 15px;
             width: 30%;
-            height: 100px;
+            height: 110px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 35px;
+            font-size: 40px;
             cursor: pointer;
             transition: transform 0.2s, background 0.2s;
             position: relative;
             z-index: 999 !important;
             pointer-events: auto !important;
+            -webkit-tap-highlight-color: transparent;
         }
         .chest:hover {
             transform: scale(1.05);
             background: #2e225d;
-        }
-        .chest.opened {
-            background: #eab308;
-            border-color: #ffffff;
-            animation: pop 0.3s ease-in-out;
-        }
-        @keyframes pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); }
         }
         
         .back-btn {
@@ -90,6 +81,7 @@
             position: relative;
             z-index: 999 !important;
             pointer-events: auto !important;
+            -webkit-tap-highlight-color: transparent;
         }
     </style>
 </head>
@@ -100,16 +92,15 @@
         <div class="info-text" id="gamestatus">Tap on any lucky chest to claim your daily reward!</div>
         
         <div class="chests-container">
-            <div class="chest" id="chest1" onclick="openChest(1)">🎁</div>
-            <div class="chest" id="chest2" onclick="openChest(2)">🎁</div>
-            <div class="chest" id="chest3" onclick="openChest(3)">🎁</div>
+            <div class="chest" onclick="openChest(1)">🎁</div>
+            <div class="chest" onclick="openChest(2)">🎁</div>
+            <div class="chest" onclick="openChest(3)">🎁</div>
         </div>
     </div>
 
     <button class="back-btn" onclick="goBack()">Back to Game</button>
 
     <script>
-        // خەڵاتەکان بۆ سەر سندوقەکان
         const rewards =;
         let canPlay = true;
 
@@ -124,38 +115,50 @@
                 const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
                 const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
                 
-                txt.innerText = You already opened a chest today! Come back in ${hoursLeft}h ${minutesLeft}m.;
-                // کاڵکردنەوەی سندوقەکان چونکە کاتی نەهاتووە
+                if(txt) txt.innerText = Already opened a chest today! Come back in ${hoursLeft}h ${minutesLeft}m.;
                 document.querySelectorAll('.chest').forEach(c => c.style.opacity = "0.4");
                 return false;
             }
+            
+            canPlay = true;
+            document.querySelectorAll('.chest').forEach(c => c.style.opacity = "1");
+            if(txt) txt.innerText = "Tap on any lucky chest to claim your daily reward!";
             return true;
         }
 
         function openChest(chestNumber) {
-            if (!canPlay || !checkDailyLimit()) return;
+            if (!canPlay) return;
             canPlay = false;
 
-            const selectedChest = document.getElementById(chest${chestNumber});
             const txt = document.getElementById('gamestatus');
-
-            // دیاریکردنی خەڵاتێکی هەڕەمەکی
             const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
 
-            // گۆڕینی شێوازی سندوقەکە بە ئەنیمەیشن
-            selectedChest.classList.add('opened');
-            selectedChest.innerText = "⭐";
+            if(txt) txt.innerText = "Opening chest...";
 
             setTimeout(() => {
-                // پاشەکەوتکردنی داتاکان لە مۆبایلەکەدا
                 let coins = parseInt(localStorage.getItem('chubby_coins')) || 0;
                 localStorage.setItem('chubby_coins', coins + randomReward);
                 localStorage.setItem('chubby_last_chest_timestamp', new Date().getTime());
 
+                // ناردنی بڕی خەڵاتەکە بۆ باکئێند ئەگەر فەرمانەکە بوونی هەبێت
+                if (typeof sendPrizeToBackend === "function") {
+                    sendPrizeToBackend(randomReward);
+                }
+
                 alert(Congratulations! You found +${randomReward.toLocaleString()} ChubbyX Coins!);
-                txt.innerText = You won ${randomReward.toLocaleString()} coins today!;
                 checkDailyLimit();
-            }, 300);
+            }, 500);
+        }
+
+        function sendPrizeToBackend(prizeValue) {
+            fetch('/api/save-prize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prize: prizeValue, timestamp: new Date().getTime() })
+            })
+            .then(res => res.json())
+            .then(data => console.log('Prize saved:', data))
+            .catch(err => console.error('Error:', err));
         }
 
         function goBack() {
