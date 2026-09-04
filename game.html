@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>chubbyX Lucky Chests</title>
-    <!-- چاککردنی ئەسکریپتی فەرمی تێلیگرام بۆ ئەوەی مینی ئەپەکە گیر نەخوات -->
     <script src="https://telegram.org"></script>
     <style>
         body {
@@ -108,30 +107,25 @@
 
     <div class="game-box">
         <h2>CHUBBYX LUCKY CHESTS</h2>
-        <!-- ناساندنی ئایدی gamestatus بۆ گۆڕینی دەقەکە -->
         <div class="info-text" id="gamestatus">Tap on any lucky chest to claim your daily reward!</div>
         
         <div class="chests-container">
-            <!-- بەستنەوەی فەنکشنەکان بە شێوازی ستاندارد -->
             <div class="chest" onclick="openchest(1)">🎁</div>
             <div class="chest" onclick="openchest(2)">🎁</div>
             <div class="chest" onclick="openchest(3)">🎁</div>
         </div>
     </div>
 
-    <!-- دوگمەی گەڕانەوەی ڕاستەوخۆ بە لینک بە بێ کێشەی JS -->
     <a href="index.html" class="back-btn">Back to Game</a>
 
     <script>
-        // چالاککردنی مینی ئەپی تێلیگرام لە کاتی کردنەوەدا
         window.onload = function() {
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
-                window.Telegram.WebApp.expand(); // تەواو شاشەکردنی ئەپەکە
+                window.Telegram.WebApp.expand();
             }
         };
 
-        // خەڵاتەکان لێرە دیاری کراون
         const rewards =;
 
         function openchest(chestNumber) {
@@ -141,7 +135,6 @@
                 txt.style.color = "#15eff2";
             }
 
-            // ناچالاککردنی کاتی کلیک لەسەر سندوقەکانی تر لە کاتی کردنەوەدا
             document.querySelectorAll('.chest').forEach(c => {
                 c.style.pointerEvents = "none";
                 c.style.opacity = "0.5";
@@ -160,29 +153,14 @@
                     txt.style.color = "#45f3ff";
                 }
 
-                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.showAlert) {
-                    window.Telegram.WebApp.showAlert("Congratulations! You found " + randomReward.toLocaleString() + " ChubbyX coins. 🎉");
-                }
+                alert("Congratulations! You won " + randomReward.toLocaleString() + " ChubbyX coins! 🎉");
 
                 document.querySelectorAll('.chest').forEach(c => {
                     c.style.pointerEvents = "auto";
                     c.style.opacity = "1";
                 });
+
             }, 800);
-        }
-
-                // پیشاندانی نامەی فەرمی و مۆدێرنی تێلیگرام
-                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.showAlert) {
-                    window.Telegram.WebApp.showAlert("Congratulations! You found " + randomReward.toLocaleString() + " ChubbyX coins. 🎉");
-                }
-
-                // هێنانەوەی سندوقەکان بۆ دۆخی ئاسایی
-                document.querySelectorAll('.chest').forEach(c => {
-                    c.style.pointerEvents = "auto";
-                    c.style.opacity = "1";
-                });
-
-            }, 800); // دوای 0.8 چرکە سندوقەکە بە تەواوی دەکرێتەوە
         }
     </script>
 
