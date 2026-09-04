@@ -105,24 +105,9 @@
         let canPlay = true;
 
         function checkDailyLimit() {
-            const lastPlay = localStorage.getItem('chubby_last_chest_timestamp');
-            const txt = document.getElementById('gamestatus');
-            const twentyFourHours = 24 * 60 * 60 * 1000;
-
-            if (lastPlay && (new Date().getTime() - parseInt(lastPlay)) < twentyFourHours) {
-                canPlay = false;
-                const timeLeft = twentyFourHours - (new Date().getTime() - parseInt(lastPlay));
-                const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
-                const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                
-                if(txt) txt.innerText = Already opened a chest today! Come back in ${hoursLeft}h ${minutesLeft}m.;
-                document.querySelectorAll('.chest').forEach(c => c.style.opacity = "0.4");
-                return false;
-            }
-            
+            // بۆ تاقیکردنەوە کاتی کاتەکامان لادا تاوەکو دوگمەکان هەمیشە کار بکەن
             canPlay = true;
             document.querySelectorAll('.chest').forEach(c => c.style.opacity = "1");
-            if(txt) txt.innerText = "Tap on any lucky chest to claim your daily reward!";
             return true;
         }
 
@@ -140,25 +125,9 @@
                 localStorage.setItem('chubby_coins', coins + randomReward);
                 localStorage.setItem('chubby_last_chest_timestamp', new Date().getTime());
 
-                // ناردنی بڕی خەڵاتەکە بۆ باکئێند ئەگەر فەرمانەکە بوونی هەبێت
-                if (typeof sendPrizeToBackend === "function") {
-                    sendPrizeToBackend(randomReward);
-                }
-
                 alert(Congratulations! You found +${randomReward.toLocaleString()} ChubbyX Coins!);
                 checkDailyLimit();
             }, 500);
-        }
-
-        function sendPrizeToBackend(prizeValue) {
-            fetch('/api/save-prize', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prize: prizeValue, timestamp: new Date().getTime() })
-            })
-            .then(res => res.json())
-            .then(data => console.log('Prize saved:', data))
-            .catch(err => console.error('Error:', err));
         }
 
         function goBack() {
