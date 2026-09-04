@@ -2,45 +2,60 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChubbyX Lucky Chests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chubbyX Lucky Chests</title>
+    <!-- چاککردنی ئەسکریپتی فەرمی تێلیگرام بۆ ئەوەی مینی ئەپەکە گیر نەخوات -->
     <script src="https://telegram.org"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background: #090514;
-            font-family: sans-serif;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            background-color: #0b0c10;
+            color: #ffffff;
+            margin: 0;
             padding: 20px;
-            overflow: hidden;
-        }
-        .game-box {
-            background: #150f2e;
-            border: 1px solid #2e1f5e;
-            border-radius: 20px;
-            padding: 30px 15px;
-            width: 100%;
-            max-width: 480px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
-            margin-top: 40px;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
-        h2 { font-size: 22px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; text-align: center; color: #eab308;}
-        .info-text { font-size: 14px; color: #9ca3af; margin-bottom: 35px; text-align: center; }
-        
+
+        .game-box {
+            background-color: #1f2833;
+            border: 2px solid #45f3ff;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 0 20px rgba(69, 243, 255, 0.2);
+            box-sizing: border-box;
+        }
+
+        h2 {
+            color: #45f3ff;
+            margin-bottom: 10px;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-text {
+            font-size: 16px;
+            color: #c5c6c7;
+            margin-bottom: 30px;
+            min-height: 40px;
+        }
+
         .chests-container {
             display: flex;
             justify-content: space-around;
-            width: 100%;
-            margin-bottom: 40px;
             gap: 15px;
+            margin-bottom: 40px;
         }
+
         .chest {
             background: #241a49;
             border: 2px solid #7c2cbf;
@@ -52,28 +67,40 @@
             align-items: center;
             font-size: 40px;
             cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
+
         .chest:hover {
             transform: scale(1.05);
             background: #2e225d;
+            box-shadow: 0 0 15px rgba(124, 44, 191, 0.5);
         }
-        
+
+        .chest:active {
+            transform: scale(0.95);
+        }
+
         .back-btn {
-            background: #150f2e;
-            border: 1px solid #2e1f5e;
-            color: white;
-            padding: 14px 35px;
-            border-radius: 12px;
-            font-size: 15px;
-            cursor: pointer;
+            display: inline-block;
+            background: #15eff2;
+            color: #0b0c10;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
             font-weight: bold;
-            width: 100%;
-            max-width: 480px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 10px rgba(21, 239, 242, 0.3);
+            margin-top: 20px;
+            width: 80%;
             text-align: center;
-            margin-top: 40px;
-            -webkit-tap-highlight-color: transparent;
+        }
+
+        .back-btn:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
@@ -81,61 +108,75 @@
 
     <div class="game-box">
         <h2>CHUBBYX LUCKY CHESTS</h2>
+        <!-- ناساندنی ئایدی gamestatus بۆ گۆڕینی دەقەکە -->
         <div class="info-text" id="gamestatus">Tap on any lucky chest to claim your daily reward!</div>
         
         <div class="chests-container">
-            <div class="chest" onclick="openChest(1)">🎁</div>
-            <div class="chest" onclick="openChest(2)">🎁</div>
-            <div class="chest" onclick="openChest(3)">🎁</div>
+            <!-- بەستنەوەی فەنکشنەکان بە شێوازی ستاندارد -->
+            <div class="chest" onclick="openchest(1)">🎁</div>
+            <div class="chest" onclick="openchest(2)">🎁</div>
+            <div class="chest" onclick="openchest(3)">🎁</div>
         </div>
     </div>
 
+    <!-- دوگمەی گەڕانەوەی ڕاستەوخۆ بە لینک بە بێ کێشەی JS -->
     <a href="index.html" class="back-btn">Back to Game</a>
 
     <script>
-        // لێرەدا خەڵاتەکان بە تەواوی جێگیر کران بۆ ئەوەی ڕێگری لە کێشەی سێنتەکس بکرێت
-        const rewards =;
-        let canPlay = true;
-
-        function checkDailyLimit() {
-            canPlay = true;
-            document.querySelectorAll('.chest').forEach(c => c.style.opacity = "1");
-            return true;
-        }
-
-        function openChest(chestNumber) {
-            // if (!canPlay) return;
-          //  canPlay = false;
-
-            const txt = document.getElementById('gamestatus');
-            const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
-
-            if(txt) txt.innerText = "Opening chest...";
-
-            setTimeout(() => {
-                let coins = parseInt(localStorage.getItem('chubby_coins')) || 0;
-                localStorage.setItem('chubby_coins', coins + randomReward);
-                localStorage.setItem('chubby_last_chest_timestamp', new Date().getTime());
-
-                alert(Congratulations! You found +${randomReward.toLocaleString()} ChubbyX Coins!);
-                
-                // نوێکردنەوەی دەقی شاشەکە بۆ زانیاری بردنەوە
-                if(txt) txt.innerText = You won +${randomReward.toLocaleString()} coins today!;
-                checkDailyLimit();
-            }, 500);
-        }
-
-        function goBack() {
-            // گەڕانەوە بۆ لاپەڕەی سەرەکی index.html
-            window.location.href = "index.html";
-        }
-
+        // چالاککردنی مینی ئەپی تێلیگرام لە کاتی کردنەوەدا
         window.onload = function() {
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand(); // تەواو شاشەکردنی ئەپەکە
             }
-            checkDailyLimit();
         };
+
+        // خەڵاتەکان لێرە دیاری کراون
+        const rewards =;
+
+        function openchest(chestNumber) {
+            const txt = document.getElementById('gamestatus');
+            if (txt) {
+                txt.innerText = "Opening chest...";
+                txt.style.color = "#15eff2";
+            }
+
+            // ناچالاککردنی کاتی کلیک لەسەر سندوقەکانی تر لە کاتی کردنەوەدا
+            document.querySelectorAll('.chest').forEach(c => {
+                c.style.pointerEvents = "none";
+                c.style.opacity = "0.5";
+            });
+
+            // هەڵبژاردنی خەڵاتێکی هەرەمەکی
+            const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
+
+            setTimeout(() => {
+                // پاشەکەوتکردنی کوین لەسەر مۆبایلی بەکارهێنەر (بۆ ئەوەی نەفەوتێت)
+                let coins = parseInt(localStorage.getItem('chubby_coins')) || 0;
+                coins += randomReward;
+                localStorage.setItem('chubby_coins', coins);
+                localStorage.setItem('chubby_last_chest_timestamp', new Date().getTime());
+
+                // گۆڕینی دەقی سەر شاشە بە سەرکەوتوویی لەجیاتی alertی کۆن
+                if (txt) {
+                    txt.innerText = "Congratulations! You won +" + randomReward.toLocaleString() + " ChubbyX coins!";
+                    txt.style.color = "#45f3ff";
+                }
+
+                // پیشاندانی نامەی فەرمی و مۆدێرنی تێلیگرام
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.showAlert) {
+                    window.Telegram.WebApp.showAlert("Congratulations! You found " + randomReward.toLocaleString() + " ChubbyX coins. 🎉");
+                }
+
+                // هێنانەوەی سندوقەکان بۆ دۆخی ئاسایی
+                document.querySelectorAll('.chest').forEach(c => {
+                    c.style.pointerEvents = "auto";
+                    c.style.opacity = "1";
+                });
+
+            }, 800); // دوای 0.8 چرکە سندوقەکە بە تەواوی دەکرێتەوە
+        }
     </script>
+
 </body>
 </html>
