@@ -9,8 +9,8 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             background: #090514;
-            color: white;
             font-family: sans-serif;
+            color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -24,44 +24,111 @@
             border-radius: 20px;
             padding: 25px 15px;
             width: 100%;
-            max-width: 400px;
+            max-width: 480px;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
             margin-top: 20px;
         }
-        h2 { font-size: 20px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; }
+        h2 { font-size: 20px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; text-align: center;}
         .info-text { font-size: 13px; color: #9ca3af; margin-bottom: 25px; text-align: center; }
-
-        /* ─── WHEEL DESIGN ─── */
-        .wheel-wrapper { position: relative; width: 260px; height: 260px; margin-bottom: 25px; }
+        
+        /* WHEEL DESIGN */
+        .wheel-wrapper {
+            position: relative;
+            width: 260px;
+            height: 260px;
+            margin-bottom: 25px;
+            z-index: 1;
+        }
         .pointer {
-            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #eab308; z-index: 100;
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid #eab308;
+            z-index: 5;
         }
         .wheel {
-            width: 100%; height: 100%; border-radius: 50%; border: 5px solid #7b2cbf; position: relative; overflow: hidden;
-            transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
-            background: conic-gradient(#5a189a 0deg 60deg, #7b2cbf 60deg 120deg, #9d4edd 120deg 180deg, #5a189a 180deg 240deg, #7b2cbf 240deg 300deg, #9d4edd 300deg 360deg);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid #7c2cbf;
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            background: conic-gradient(#5a189a 0deg 60deg, #7c2cbf 60deg 120deg, #9d4edd 120deg 180deg, #5a189a 180deg 240deg, #7c2cbf 240deg 300deg, #9d4edd 300deg 360deg);
         }
-        .center-circle { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 50px; height: 50px; background: #090514; border: 2px solid #eab308; border-radius: 50%; z-index: 10; 
-            display: flex; justify-content: center; align-items: center; overflow: hidden;
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 56px;
+            height: 56px;
+            background: #090514;
+            border: 2px solid #eab308;
+            border-radius: 50%;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
         .center-circle img { width: 100%; height: 100%; object-fit: cover; }
-        .segment-text { position: absolute; width: 100%; height: 100%; text-align: center; font-weight: bold; font-size: 14px; transform-origin: 50% 50%; padding-top: 15px; }
-
-        .action-btn {
-            background: #7b2cbf; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; -webkit-tap-highlight-color: transparent;
+        .segment-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            transform-origin: 50% 50%;
+            padding-top: 15px;
+            pointer-events: none;
         }
-        .action-btn:disabled { background: rgba(255, 255, 255, 0.05); color: #6b7280; cursor: not-allowed; border: 1px solid rgba(255, 255, 255, 0.1); }
-
-        .back-btn { 
-            margin-top: auto; margin-bottom: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
-            color: white; padding: 14px 35px; border-radius: 12px; font-size: 15px; cursor: pointer; font-weight: bold; 
-            width: 100%; max-width: 400px; text-align: center; -webkit-tap-highlight-color: transparent;
+        .action-btn {
+            background: #7c2cbf;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+            z-index: 20 !important;
+        }
+        .action-btn:disabled {
+            background: rgba(255,255,255,0.05);
+            color: #6b7280;
+            cursor: not-allowed;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .back-btn {
+            margin-top: auto;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 14px 35px;
+            border-radius: 12px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            z-index: 20 !important; /* هێزپێبەخشین بۆ ئەوەی لە تێلێگرام دەرکەوێت */
         }
     </style>
 </head>
@@ -69,10 +136,10 @@
 
     <div class="game-box">
         <h2>ChubbyX Lucky Spin</h2>
-        <div class="info-text" id="spinStatus">Spin the purple wheel to win mega rewards!</div>
+        <div class="info-text" id="spinstatus">Spin the purple wheel to win mega rewards!</div>
+        
         <div class="wheel-wrapper">
             <div class="pointer"></div>
-            <div class="center-circle"><img src="image.png.jpeg" alt="ChubbyX"></div>
             <div class="wheel" id="wheel">
                 <div class="segment-text" style="transform: rotate(30deg);">5,000</div>
                 <div class="segment-text" style="transform: rotate(90deg);">500</div>
@@ -81,11 +148,12 @@
                 <div class="segment-text" style="transform: rotate(270deg);">500</div>
                 <div class="segment-text" style="transform: rotate(330deg);">1,000</div>
             </div>
+            <div class="center-circle"><img src="image.png" alt="Chubbyx"></div>
         </div>
-        <button class="action-btn" id="spinBtn" onclick="startSpin()">Spin Now</button>
+
+        <button class="action-btn" id="spinbtn" onclick="startSpin()">Spin Now</button>
     </div>
 
-    <!-- دوگمەی ڕەسەنی گەڕانەوە بە کۆدی فەرمی دڵنیایی -->
     <button class="back-btn" onclick="goBack()">Back to Game</button>
 
     <script>
@@ -97,55 +165,75 @@
             { text: "500", value: 500, minAngle: 240, maxAngle: 300 },
             { text: "1,000", value: 1000, minAngle: 300, maxAngle: 360 }
         ];
+
         let isSpinning = false;
         let currentRotation = 0;
 
         function checkSpinLimit() {
             const lastSpin = localStorage.getItem('chubby_last_spin_timestamp');
-            const btn = document.getElementById('spinBtn');
-            const txt = document.getElementById('spinStatus');
-            if (lastSpin && (new Date().getTime() - parseInt(lastSpin) < 24*60*60*1000)) {
+            const btn = document.getElementById('spinbtn');
+            const txt = document.getElementById('spinstatus');
+            
+            // چاککردنی نیشانەی لێکدانەکان بە دروستی
+            const twentyFourHours = 24 * 60 * 60 * 1000; 
+
+            if (lastSpin && (new Date().getTime() - parseInt(lastSpin)) < twentyFourHours) {
                 btn.disabled = true;
-                txt.innerText = "Daily spin completed! Come back tomorrow.";
+                
+                // هەژمارکردنی کاتی ماوە بۆ پیشاندان بە ئینگلیزی
+                const timeLeft = twentyFourHours - (new Date().getTime() - parseInt(lastSpin));
+                const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+                const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                
+                txt.innerText = Already spun today! Try again in ${hoursLeft}h ${minutesLeft}m.;
                 return false;
             }
-            btn.disabled = false;
-            txt.innerText = "Spin the purple wheel to win mega rewards!";
+            
+            if(btn) btn.disabled = false;
+            if(txt) txt.innerText = "Spin the purple wheel to win mega rewards!";
             return true;
         }
 
         function startSpin() {
             if (isSpinning || !checkSpinLimit()) return;
             isSpinning = true;
-            
+
             const wheel = document.getElementById('wheel');
+            const btn = document.getElementById('spinbtn');
+            if(btn) btn.disabled = true;
+
             const prizeIndex = Math.floor(Math.random() * spinPrizes.length);
             const prize = spinPrizes[prizeIndex];
-            
+
             const targetAngle = 360 - ((prize.minAngle + prize.maxAngle) / 2);
             currentRotation += (360 * 5) + targetAngle - (currentRotation % 360);
-            
+
             wheel.style.transform = rotate(${currentRotation}deg);
-            document.getElementById('spinBtn').disabled = true;
 
             setTimeout(() => {
+                // زیادکردنی کۆینەکان لە ناو پاشەکەوت
                 let coins = parseInt(localStorage.getItem('chubby_coins')) || 0;
                 localStorage.setItem('chubby_coins', coins + prize.value);
                 localStorage.setItem('chubby_last_spin_timestamp', new Date().getTime());
-                
+
                 alert(You won +${prize.text} ChubbyX Coins!);
+                
                 isSpinning = false;
                 checkSpinLimit();
             }, 4000);
         }
 
-        // فەنکشنی فەرمی بۆ گەڕانەوە دواوە
-        function goBack() { 
-            window.parent.postMessage('closePage', '*'); 
+        function goBack() {
+            // بەکارهێنانی فەرمانی فەرمی داخستنی لاپەڕە لە ناو تێلێگرام ئەپ
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.close();
+            } else {
+                window.location.href = "index.html"; // گەڕانەوە ئەگەر لە دەرەوەی تێلێگرام بوو
+            }
         }
-        
-        window.onload = function() { 
-            checkSpinLimit(); 
+
+        window.onload = function() {
+            checkSpinLimit();
         };
     </script>
 </body>
