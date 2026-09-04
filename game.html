@@ -48,7 +48,6 @@
             min-height: 40px;
         }
 
-        /* 💜 دیزاینی چەرخەکە بە ٦ کەرت و نوسینی ژمارەکان 💜 */
         .wheel-container {
             position: relative;
             width: 280px;
@@ -56,47 +55,16 @@
             margin: 0 auto 30px auto;
         }
 
-        .wheel {
-            width: 100%;
-            height: 100%;
+        /* ئەنیمەیشنی خولانەوەی چەرخەکە */
+        #lucky-canvas {
             border-radius: 50%;
-            border: 8px solid #7c2cbf;
-            /* دروستکردنی ٦ کەرتی جیاواز بە ڕەنگەکانی پڕۆژەکەت */
-            background: conic-gradient(
-                #241a49 0deg 60deg,
-                #3c165a 60deg 120deg,
-                #1f2833 120deg 180deg,
-                #241a49 180deg 240deg,
-                #3c165a 240deg 300deg,
-                #1f2833 300deg 360deg
-            );
             box-shadow: 0 0 25px rgba(124, 44, 191, 0.6);
             transition: transform 5s cubic-bezier(0.1, 0.8, 0.2, 1);
-            position: relative;
-            overflow: hidden;
         }
-
-        /* نوسینی ژمارەی خەڵاتەکان لە ناو خودی کەرتەکانی چەرخەکەدا */
-        .segment-text {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            font-weight: bold;
-            font-size: 14px;
-            color: #45f3ff;
-            transform-origin: 50% 50%;
-        }
-        .s1 { transform: rotate(30deg) translateY(20px); }
-        .s2 { transform: rotate(90deg) translateY(20px); color: #ffffff; }
-        .s3 { transform: rotate(15deg) translateY(20px); color: #15eff2; }
-        .s4 { transform: rotate(210deg) translateY(20px); }
-        .s5 { transform: rotate(270deg) translateY(20px); color: #ffffff; }
-        .s6 { transform: rotate(330deg) translateY(20px); color: #15eff2; }
 
         .pointer {
             position: absolute;
-            top: -15px;
+            top: -12px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
@@ -131,14 +99,10 @@
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
+            transition: background 0.2s, opacity 0.2s;
             box-shadow: 0 4px 15px rgba(124, 44, 191, 0.4);
             width: 80%;
             margin-bottom: 15px;
-        }
-
-        .spin-btn:active {
-            transform: scale(0.96);
         }
 
         .back-btn {
@@ -167,15 +131,8 @@
         <div class="wheel-container">
             <div class="pointer"></div>
             <div class="center-circle"></div>
-            <div class="wheel" id="lucky-wheel">
-                <!-- دابەشکردنی دەقی خەڵاتەکان لەسەر ڕووی چەرخەکە -->
-                <div class="segment-text s1">500</div>
-                <div class="segment-text s2">1000</div>
-                <div class="segment-text s3">3000</div>
-                <div class="segment-text s4">5000</div>
-                <div class="segment-text s5">1000</div>
-                <div class="segment-text s6">500</div>
-            </div>
+            <!-- بەکارهێنانی Canvas بۆ ڕێکخستنی ژمارەکان بە بێ تێکچوون -->
+            <canvas id="lucky-canvas" width="280" height="280"></canvas>
         </div>
 
         <button class="spin-btn" id="spin-trigger" onclick="startSpinning()">SPIN NOW</button>
@@ -184,22 +141,53 @@
     </div>
 
     <script>
+        // داتای فەرمی خەڵاتەکان و ڕەنگەکانیان ڕێک بەپێی ویستی خۆت
+        const segments = ["500", "1000", "3000", "5000", "1000", "500"];
+        const colors = ["#241a49", "#3c165a", "#1f2833", "#241a49", "#3c165a", "#1f2833"];
+
+        const canvas = document.getElementById("lucky-canvas");
+        const ctx = canvas.getContext("2d");
+        const radius = canvas.width / 2;
+
+        // کێشانی چەرخەکە و کەرتی ژمارەکان لەسەر شاشە
+        function drawWheel() {
+            const arc = (2 * Math.PI) / segments.length;
+            for (let i = 0; i < segments.length; i++) {
+                const angle = i * arc;
+                ctx.fillStyle = colors[i];
+                ctx.beginPath();
+                ctx.arc(radius, radius, radius, angle, angle + arc);
+                ctx.lineTo(radius, radius);
+                ctx.fill();
+
+                // ڕێکخستنی نوسینی ژمارەکان لە ناو جەرگەی کەرتەکاندا
+                ctx.save();
+                ctx.translate(radius, radius);
+                ctx.rotate(angle + arc / 2);
+                ctx.fillStyle = "#45f3ff";
+                if (i === 1 || i === 4) ctx.fillStyle = "#ffffff";
+                if (i === 2 || i === 5) ctx.fillStyle = "#15eff2";
+                ctx.font = "bold 16px Arial";
+                ctx.textAlign = "right";
+                ctx.fillText(segments[i], radius - 25, 6);
+                ctx.restore();
+            }
+        }
+
         window.onload = function() {
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
                 window.Telegram.WebApp.expand();
             }
+            drawWheel();
         };
 
         let isSpinning = false;
-        
-        // ٦ بەشی فەرمی خەڵاتەکان ڕێک بەپێی داواکارییەکەت
-        const rewards = ;
 
         function startSpinning() {
             if (isSpinning) return;
 
-            const wheel = document.getElementById('lucky-wheel');
+            const wheel = document.getElementById('lucky-canvas');
             const btn = document.getElementById('spin-trigger');
             const txt = document.getElementById('gamestatus');
 
@@ -210,17 +198,16 @@
                 txt.style.color = "#15eff2";
             }
 
-            // دیاریکردنی پلەی خولانەوە بە شێوەیەک هەمیشە چەند خولێکی تەواو بخولێتەوە
+            // خولانەوەی هەرەمەکی بێ کێشە
             const randomDegree = Math.floor(Math.random() * 3600) + 2880; 
             if (wheel) {
                 wheel.style.transform = rotate(${randomDegree}deg);
             }
 
-            // دوای ٥ چرکە ئەنیمەیشنەکە دەوەستێت و خەڵاتەکە دیاری دەکات
             setTimeout(() => {
-                const finalReward = rewards[Math.floor(Math.random() * rewards.length)];
+                // دیاریکردنی خەڵاتە فەرمییەکە بەپێی کەرتی وەستاو
+                const finalReward = parseInt(segments[Math.floor(Math.random() * segments.length)]);
                 
-                // پاشەکەوتکردنی کوینەکان بە سەلامەتی
                 let coins = parseInt(localStorage.getItem('chubby_coins')) || 0;
                 coins += finalReward;
                 localStorage.setItem('chubby_coins', coins);
@@ -235,7 +222,7 @@
                 isSpinning = false;
                 if (btn) btn.style.opacity = "1";
 
-            }, 5000); // ٥ چرکە ئەنیمەیشنی خولانەوەی نەرم
+            }, 5000);
         }
     </script>
 
