@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Lucky Spin</title>
-    <!-- سکریپتی فەرمی تێلێگرام بۆ کارکردنی دوگمەی باک -->
     <script src="https://telegram.org"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -65,8 +64,6 @@
             transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
             background: conic-gradient(#5a189a 0deg 60deg, #7c2cbf 60deg 120deg, #9d4edd 120deg 180deg, #5a189a 180deg 240deg, #7c2cbf 240deg 300deg, #9d4edd 300deg 360deg);
         }
-        
-        /* بازنەی ناوەڕاست بە CSS دروستکراوە بۆ ئەوەی پێویستی بە فایل نەبێت و تێکنەچێت */
         .center-circle {
             position: absolute;
             top: 50%;
@@ -75,19 +72,15 @@
             width: 56px;
             height: 56px;
             background: #090514;
-            border: 3px solid #eab308;
+            border: 2px solid #eab308;
             border-radius: 50%;
             z-index: 10;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
-        .center-text {
-            color: #eab308;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        
+        .center-circle img { width: 100%; height: 100%; object-fit: cover; }
         .segment-text {
             position: absolute;
             width: 100%;
@@ -111,7 +104,7 @@
             width: 100%;
             max-width: 480px;
             position: relative;
-            z-index: 20 !important;
+            z-index: 999 !important; /* پێشگرتن لە بەربەستی کلیق */
             pointer-events: auto !important;
         }
         .action-btn:disabled {
@@ -121,8 +114,7 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
         .back-btn {
-            margin-top: auto;
-            margin-bottom: 20px;
+            margin-top: 30px;
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
             color: white;
@@ -136,7 +128,7 @@
             text-align: center;
             -webkit-tap-highlight-color: transparent;
             position: relative;
-            z-index: 20 !important;
+            z-index: 999 !important; /* پێشگرتن لە بەربەستی کلیق */
             pointer-events: auto !important;
         }
     </style>
@@ -157,10 +149,7 @@
                 <div class="segment-text" style="transform: rotate(270deg);">500</div>
                 <div class="segment-text" style="transform: rotate(330deg);">1,000</div>
             </div>
-            <!-- جێگرتنەوەی لۆگۆکە بە دەقی CX بۆ دوورکەوتنەوە لە کێشەی وێنە -->
-            <div class="center-circle">
-                <div class="center-text">CX</div>
-            </div>
+            <div class="center-circle"><img src="image.png.jpeg" alt="Chubbyx"></div>
         </div>
 
         <button class="action-btn" id="spinbtn" onclick="startSpin()">Spin Now</button>
@@ -170,12 +159,12 @@
 
     <script>
         const spinPrizes = [
-            { text: "5,000", value: 5000, minAngle: 0, maxAngle: 60 },
-            { text: "1,000", value: 1000, minAngle: 60, maxAngle: 120 },
-            { text: "500", value: 500, minAngle: 120, maxAngle: 180 },
-            { text: "2,000", value: 2000, minAngle: 180, maxAngle: 240 },
-            { text: "500", value: 500, minAngle: 240, maxAngle: 300 },
-            { text: "1,000", value: 1000, minAngle: 300, maxAngle: 360 }
+            { text: "5,000", value: 5000 },
+            { text: "1,000", value: 1000 },
+            { text: "500", value: 500 },
+            { text: "2,000", value: 2000 },
+            { text: "500", value: 500 },
+            { text: "1,000", value: 1000 }
         ];
 
         let isSpinning = false;
@@ -204,24 +193,28 @@
         }
 
         function startSpin() {
-            if (isSpinning || !checkSpinLimit()) return;
+            if (isSpinning) return;
+            if (!checkSpinLimit()) return;
+            
             isSpinning = true;
 
             const wheel = document.getElementById('wheel');
             const btn = document.getElementById('spinbtn');
             if(btn) btn.disabled = true;
 
+            // هەڵبژاردنی خەڵات بە شێوازی هەڕەمەکی پاک
             const prizeIndex = Math.floor(Math.random() * spinPrizes.length);
             const prize = spinPrizes[prizeIndex];
 
-            // بیرکاری دروستی خولانەوە بۆ سەر ڕوونمای بازنەیی
-            const degreesPerSegment = 360 / spinPrizes.length;
-            const targetAngle = (prizeIndex * degreesPerSegment) + (degreesPerSegment / 2);
+            // بیرکاری خولانەوەی ڕێک بۆ سەر نیشاندەرەکە
+            const segmentDegrees = 360 / spinPrizes.length;
+            const targetAngle = (prizeIndex * segmentDegrees) + (segmentDegrees / 2);
             currentRotation += (360 * 5) + (360 - targetAngle) - (currentRotation % 360);
 
             wheel.style.transform = rotate(${currentRotation}deg);
 
             setTimeout(() => {
+                // پاشەکەوتکردنی کۆینەکان لە ناو لۆکاڵ ستۆریج بە بێ هەڵە
                 let coins = parseInt(localStorage.getItem('chubby_coins')) || 0;
                 localStorage.setItem('chubby_coins', coins + prize.value);
                 localStorage.setItem('chubby_last_spin_timestamp', new Date().getTime());
@@ -244,7 +237,7 @@
         window.onload = function() {
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
-                window.Telegram.WebApp.expand(); // لاپەڕەکە بە تەواوی گەورە دەکات لە مۆبایلدا
+                window.Telegram.WebApp.expand();
             }
             checkSpinLimit();
         };
