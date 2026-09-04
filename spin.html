@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Lucky Spin</title>
+    <!-- لێرەدا فایلی فەرمی تێلیگرام بۆ مۆڵەتی کارکردن زیادکرا -->
+    <script src="https://telegram.org"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #090514; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
@@ -49,7 +51,7 @@
             btn.disabled = false; txt.innerText = "Spin the purple wheel to win mega rewards!"; return true;
         }
         function startSpin() {
-            if (isSpinning || !checkSpinLimit()) return; isSpinning = true;
+            if (isSpinning) return; isSpinning = true;
             const wheel = document.getElementById('wheel'); const prizeIndex = Math.floor(Math.random() * spinPrizes.length); const prize = spinPrizes[prizeIndex];
             const targetAngle = 360 - ((prize.minAngle + prize.maxAngle) / 2); currentRotation += (360 * 5) + targetAngle - (currentRotation % 360);
             wheel.style.transform = rotate(${currentRotation}deg); document.getElementById('spinBtn').disabled = true;
