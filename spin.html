@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Lucky Spin</title>
-    <!-- لێرەدا فایلی فەرمی تێلیگرام بۆ مۆڵەتی کارکردن زیادکرا -->
     <script src="https://telegram.org"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,19 +44,39 @@
     <script>
         const spinPrizes = [{ text: "5,000", value: 5000, minAngle: 0, maxAngle: 60 }, { text: "1,000", value: 1000, minAngle: 60, maxAngle: 120 }, { text: "500", value: 500, minAngle: 120, maxAngle: 180 }, { text: "2,000", value: 2000, minAngle: 180, maxAngle: 240 }, { text: "500", value: 500, minAngle: 240, maxAngle: 300 }, { text: "1,000", value: 1000, minAngle: 300, maxAngle: 360 }];
         let isSpinning = false; let currentRotation = 0;
+        
         function checkSpinLimit() {
-            const lastSpin = localStorage.getItem('chubby_last_spin'); const btn = document.getElementById('spinBtn'); const txt = document.getElementById('spinStatus');
-            if (lastSpin && (new Date().getTime() - parseInt(lastSpin) < 24*60*60*1000)) { btn.disabled = true; txt.innerText = "Daily spin completed! Come back tomorrow."; return false; }
-            btn.disabled = false; txt.innerText = "Spin the purple wheel to win mega rewards!"; return true;
+            try {
+                const lastSpin = localStorage.getItem('chubby_last_spin');
+                const btn = document.getElementById('spinBtn');
+                const txt = document.getElementById('spinStatus');
+                if (lastSpin && (new Date().getTime() - parseInt(lastSpin) < 24*60*60*1000)) {
+                    btn.disabled = true;
+                    txt.innerText = "Daily spin completed! Come back tomorrow.";
+                    return false;
+                }
+            } catch(e) { console.log("Storage sandbox bypass activated"); }
+            document.getElementById('spinBtn').disabled = false;
+            document.getElementById('spinStatus').innerText = "Spin the purple wheel to win mega rewards!";
+            return true;
         }
+        
         function startSpin() {
             if (isSpinning) return; isSpinning = true;
             const wheel = document.getElementById('wheel'); const prizeIndex = Math.floor(Math.random() * spinPrizes.length); const prize = spinPrizes[prizeIndex];
             const targetAngle = 360 - ((prize.minAngle + prize.maxAngle) / 2); currentRotation += (360 * 5) + targetAngle - (currentRotation % 360);
             wheel.style.transform = rotate(${currentRotation}deg); document.getElementById('spinBtn').disabled = true;
             setTimeout(() => {
-                let coins = parseInt(localStorage.getItem('chubby_coins')) || 0; localStorage.setItem('chubby_coins', coins + prize.value); localStorage.setItem('chubby_last_spin', new Date().getTime());
-                alert(You won +${prize.text} ChubbyX Coins!); isSpinning = false; checkSpinLimit();
+                try {
+                    let coins = parseInt(localStorage.getItem('chubby_coins')) || 0;
+                    localStorage.setItem('chubby_coins', coins + prize.value);
+                    localStorage.setItem('chubby_last_spin', new Date().getTime());
+                } catch(e) { console.log("Bypassing localStorage error"); }
+                
+                // ناردنی پەیامی فەرمی بۆ لاپەڕەی سەرەکی بۆ نوێکردنەوەی باڵانس
+                window.parent.postMessage({type: 'addCoins', amount: prize.value}, '*');
+                alert(You won +${prize.text} ChubbyX Coins!);
+                isSpinning = false; checkSpinLimit();
             }, 4000);
         }
         window.onload = checkSpinLimit;
