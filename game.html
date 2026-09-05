@@ -173,20 +173,21 @@
         }
 
         .back-btn {
-            display: inline-block;
+            display: block;
             background: #15eff2;
             color: #0b0c10;
             border: none;
-            padding: 10px 30px;
-            font-size: 15px;
+            padding: 14px;
+            font-size: 16px;
             font-weight: bold;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             width: 100%;
             margin-top: 12px;
             box-sizing: border-box;
             text-align: center;
             text-decoration: none;
+            box-shadow: 0 4px 15px rgba(21, 239, 242, 0.3);
         }
     </style>
 </head>
@@ -202,7 +203,7 @@
             <div class="balance-value"><span id="total-coins">0</span> 🪙</div>
         </div>
 
-        <!-- Character Rotating Visual -->
+        <!-- کارەکتەرەکەت لێرە جێگیر کراوە -->
         <div class="visual-farm-core">
             <img src="image.png.jpeg" class="spinning-character" alt="Character">
         </div>
@@ -225,6 +226,7 @@
             </div>
         </div>
 
+        <!-- دوگمەکان گۆڕدراون بۆ ئاستی بنەڕەتی بۆ مسۆگەرکردنی کارکردنیان -->
         <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
         <button class="back-btn" onclick="goToMainMenu()">BACK TO MAIN</button>
     </div>
@@ -297,6 +299,3 @@
         function buyUpgrade(type) {
             if (type === 'speed') {
                 let cost = getUpgradeCost('speed', speedLvl);
-                if (totalCoins >= cost) {
-                    totalCoins -= cost;
-                    speedLvl++;
