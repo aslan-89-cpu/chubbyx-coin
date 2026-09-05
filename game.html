@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChubbyX - Game Section</title>
-    <!-- لۆدکردنی کتێبخانەی تێلێگرام مینی ئەپ -->
+    <title>ChubbyX - Farm Game</title>
     <script src="https://telegram.org"></script>
     <style>
         body {
@@ -21,7 +20,7 @@
             box-sizing: border-box;
         }
 
-        .game-container {
+        .farm-container {
             background-color: #1f2833;
             border: 2px solid #45f3ff;
             border-radius: 20px;
@@ -35,8 +34,57 @@
 
         h1 {
             color: #45f3ff;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
             text-transform: uppercase;
+            font-size: 26px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #c5c6c7;
+            margin-bottom: 25px;
+        }
+
+        .stat-box {
+            background-color: #0b0c10;
+            border: 1px solid #7c2cbf;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #c5c6c7;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #15eff2;
+            margin-top: 5px;
+        }
+
+        .claim-btn {
+            display: block;
+            width: 100%;
+            background: #7c2cbf;
+            color: #ffffff;
+            border: 2px solid #45f3ff;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(124, 44, 191, 0.4);
+            transition: background 0.2s;
+        }
+
+        .claim-btn:hover {
+            background: #5a189a;
         }
 
         .back-btn {
@@ -45,14 +93,16 @@
             color: #0b0c10;
             border: none;
             padding: 12px 30px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
             text-decoration: none;
             transition: background 0.2s;
-            width: 80%;
-            margin-top: 20px;
+            width: 100%;
+            margin-top: 15px;
+            box-sizing: border-box;
+            text-align: center;
         }
 
         .back-btn:hover {
@@ -62,24 +112,71 @@
 </head>
 <body>
 
-    <div class="game-container">
-        <h1>ChubbyX Farm Game</h1>
-        <p style="color: #c5c6c7;">لێرەدا دەتوانیت کۆدی یارییە نوێیەکەت یان سیستەمی فارمەکە دابنێیت.</p>
-        
-        <!-- ئەم دوگمەیە یاریزانەکە ڕاستەوخۆ دەباتەوە بۆ لاپەڕەی سەرەکی کارەکتەرەکە -->
-        <button class="back-btn" onclick="goToMainMenu()">Back to Main</button>
+    <div class="farm-container">
+        <h1>CHUBBYX FARM</h1>
+        <div class="subtitle">Harvest your tokens in real-time</div>
+
+        <!-- Total Saved Balance -->
+        <div class="stat-box">
+            <div class="stat-label">Total Balance</div>
+            <div class="stat-value"><span id="total-coins">0</span> 🪙</div>
+        </div>
+
+        <!-- Live Farming Production -->
+        <div class="stat-box" style="border-color: #15eff2;">
+            <div class="stat-label">Farming Pool</div>
+            <div class="stat-value" style="color: #45f3ff;"><span id="farm-pool">0.000</span> 🪙</div>
+        </div>
+
+        <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
+        <button class="back-btn" onclick="goToMainMenu()">BACK TO MAIN</button>
     </div>
 
     <script>
-        // لۆدبوونی تێلێگرام مینی ئەپ
+        let totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
+        let farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
+        
+        // Farming speed: 1 coin per second (0.01 coins every 10ms for smooth animation)
+        const farmSpeed = 0.01; 
+
         window.onload = function() {
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
                 window.Telegram.WebApp.expand();
             }
+
+            document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
+            
+            // Start the real-time farming loop
+            setInterval(runFarming, 10);
         };
 
-        // فەنکشنی گەڕانەوە بۆ لاپەڕەی سەرەکی کارەکتەرەکە
+        function runFarming() {
+            farmPool += farmSpeed;
+            document.getElementById('farm-pool').innerText = farmPool.toFixed(3);
+            // Save current pending pool to avoid losing it on refresh
+            localStorage.setItem('farm_pool', farmPool);
+        }
+
+        function claimFarmedCoins() {
+            if (farmPool < 1) {
+                alert("Minimum 1 coin required to claim!");
+                return;
+            }
+
+            let gained = Math.floor(farmPool);
+            totalCoins += gained;
+            farmPool -= gained; // Keep the decimal remainder
+
+            localStorage.setItem('chubby_coins', totalCoins);
+            localStorage.setItem('farm_pool', farmPool);
+
+            document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
+            document.getElementById('farm-pool').innerText = farmPool.toFixed(3);
+
+            alert("Successfully claimed " + gained.toLocaleString() + " coins!");
+        }
+
         function goToMainMenu() {
             window.location.href = "index.html"; 
         }
