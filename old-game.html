@@ -2,27 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChubbyX - Cyber Farm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>chubbyX - Cyber Farm</title>
     <script src="https://telegram.org"></script>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
-            font-family: 'Arial', sans-serif;
-            background: url('background.png.jpeg') no-repeat center center fixed;
+            background: #1c1437 url('background.png.jpeg') no-repeat center top fixed;
             background-size: cover;
             color: #ffffff;
-            margin: 0;
-            padding: 20px;
+            font-family: 'Arial', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            box-sizing: border-box;
+            padding: 20px;
         }
-
         .farm-container {
-            background-color: rgba(31, 40, 51, 0.85); 
+            background-color: rgba(31, 20, 51, 0.85);
             backdrop-filter: blur(8px);
             border: 2px solid #45f3ff;
             border-radius: 25px;
@@ -31,9 +33,7 @@
             max-width: 400px;
             width: 100%;
             box-shadow: 0 0 30px rgba(69, 243, 255, 0.3);
-            box-sizing: border-box;
         }
-
         h1 {
             color: #45f3ff;
             margin: 0 0 5px 0;
@@ -42,13 +42,11 @@
             letter-spacing: 1px;
             text-shadow: 0 0 10px rgba(69, 243, 255, 0.5);
         }
-
         .subtitle {
             font-size: 13px;
             color: #c5c6c7;
             margin-bottom: 20px;
         }
-
         .balance-box {
             background: rgba(11, 12, 16, 0.8);
             border: 2px solid #7c2cbf;
@@ -56,21 +54,18 @@
             padding: 12px;
             margin-bottom: 20px;
         }
-
         .balance-label {
             font-size: 12px;
             color: #c5c6c7;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
         .balance-value {
             font-size: 28px;
             font-weight: bold;
             color: #ffffff;
             margin-top: 5px;
         }
-
         .character-box {
             width: 120px;
             height: 120px;
@@ -79,7 +74,6 @@
             align-items: center;
             justify-content: center;
         }
-
         .spinning-character {
             width: 100px;
             height: 100px;
@@ -87,12 +81,10 @@
             border-radius: 50%;
             animation: spinToken 4s linear infinite;
         }
-
         @keyframes spinToken {
             0% { transform: rotateY(0deg); }
             100% { transform: rotateY(360deg); }
         }
-
         .pool-text {
             font-size: 22px;
             font-weight: bold;
@@ -100,62 +92,57 @@
             margin-top: 5px;
             margin-bottom: 15px;
         }
-
         .upgrade-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-top: 15px;
         }
-
         .upgrade-card {
             background-color: rgba(11, 12, 16, 0.8);
-            border: 1px solid #c5c6c7;
+            border: 1px solid #7c2cbf;
             border-radius: 12px;
-            padding: 10px;
+            padding: 12px;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
-
         .upgrade-card.available {
             border-color: #45f3ff;
         }
-
         .up-title {
             font-size: 11px;
             font-weight: bold;
             color: #45f3ff;
             text-transform: uppercase;
         }
-
         .up-desc {
             font-size: 13px;
             margin: 4px 0;
             color: #ffffff;
         }
-
         .up-cost {
             font-size: 11px;
             color: #e5b323;
             font-weight: bold;
         }
-
         .claim-btn {
             display: block;
             width: 100%;
-            background: #7c2cbf;
-            color: #ffffff;
-            border: 2px solid #45f3ff;
+            background-color: #7c2cbf;
+            color: white;
+            border: none;
             padding: 14px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
             margin-top: 20px;
+            box-shadow: 0 0 15px rgba(124, 44, 191, 0.4);
         }
-
         .back-btn {
             display: block;
-            background: #15eff2;
+            width: 100%;
+            background-color: #15eff2;
             color: #0b0c10;
             border: none;
             padding: 14px;
@@ -163,42 +150,39 @@
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
-            width: 100%;
             margin-top: 12px;
-            box-sizing: border-box;
             text-align: center;
             text-decoration: none;
         }
     </style>
 </head>
 <body>
-
     <div class="farm-container">
         <h1>CHUBBYX CYBER FARM</h1>
         <div class="subtitle">Upgrade your grid & harvest assets</div>
-
+        
         <div class="balance-box">
             <div class="balance-label">Total Balance</div>
-            <div class="balance-value"><span id="total-coins">0</span> 🪙</div>
+            <div class="balance-value"><span id="total-coins">0</span> X</div>
         </div>
 
         <div class="character-box">
-            <img src="image.png.jpeg" class="spinning-character" alt="Character">
+            <img src="background.png.jpeg" class="spinning-character" alt="Character">
         </div>
 
-        <div style="font-size: 13px; color: #c5c6c7; text-transform: uppercase;">Farming Pool</div>
-        <div class="pool-text"><span id="farm-pool">0.00</span> / <span id="max-capacity">100</span></div>
+        <div style="font-size: 13px; color: #c5c6c7;">Farming Pool</div>
+        <div class="pool-text"><span id="farm-pool">0.00</span> / <span id="max-capacity">100</span> X</div>
 
         <div class="upgrade-grid">
             <div class="upgrade-card" id="up-speed-card" onclick="buyUpgrade('speed')">
                 <div class="up-title">⚡ Speed Rate</div>
                 <div class="up-desc">Lvl <span id="speed-lvl">1</span> (+<span id="speed-val">1</span>/s)</div>
-                <div class="up-cost"><span id="speed-cost">200</span> 🪙</div>
+                <div class="up-cost">Cost: <span id="speed-cost">200</span> X</div>
             </div>
             <div class="upgrade-card" id="up-cap-card" onclick="buyUpgrade('capacity')">
                 <div class="up-title">🔋 Tank Cap</div>
-                <div class="up-desc">Lvl <span id="cap-lvl">1</span> (<span id="cap-val">100</span> Max)</div>
-                <div class="up-cost"><span id="cap-cost">300</span> 🪙</div>
+                <div class="up-desc">Lvl <span id="cap-lvl">1</span></div>
+                <div class="up-cost">Cost: <span id="cap-cost">300</span> X</div>
             </div>
         </div>
 
@@ -207,15 +191,14 @@
     </div>
 
     <script>
-        // بەکارهێنانی کلیلە بنەڕەتییەکەی پڕۆژەکەت (chubby_coins) بۆ ئەوەی داتا تێکنەچێت
-        let totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        let farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
+        var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
+        var farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
         
-        let speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
-        let capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
+        var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
+        var capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
 
-        function getSpeedProd() { return speedLvl * 1; } 
-        function getMaxCap() { return capLvl * 100; } 
+        function getSpeedProd() { return speedLvl * 1; }
+        function getMaxCap() { return capLvl * 100; }
         function getUpgradeCost(type, lvl) {
             return type === 'speed' ? lvl * 200 : lvl * 300;
         }
@@ -226,13 +209,13 @@
                 window.Telegram.WebApp.expand();
             }
             updateUI();
-            setInterval(executeFarmingGrid, 100); 
+            setInterval(executeFarmingGrid, 100);
         };
 
         function executeFarmingGrid() {
-            let max = getMaxCap();
+            var max = getMaxCap();
             if (farmPool < max) {
-                let productionPerTick = (getSpeedProd() / 10); 
+                var productionPerTick = (getSpeedProd() / 10);
                 farmPool = Math.min(max, farmPool + productionPerTick);
                 document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
                 localStorage.setItem('farm_pool', farmPool);
@@ -244,30 +227,24 @@
             document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
             document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
             document.getElementById('max-capacity').innerText = getMaxCap();
-
+            
             document.getElementById('speed-lvl').innerText = speedLvl;
             document.getElementById('speed-val').innerText = getSpeedProd();
-            document.getElementById('speed-cost').innerText = getUpgradeCost('speed', speedLvl).toLocaleString();
-
-            document.getElementById('cap-lvl').innerText = capLvl;
-            document.getElementById('cap-val').innerText = getMaxCap();
-            document.getElementById('cap-cost').innerText = getUpgradeCost('capacity', capLvl).toLocaleString();
+            document.getElementById('speed-cost').innerText = getUpgradeCost('speed', speedLvl);
             
-            refreshUpgradeCardStatus();
+            document.getElementById('cap-lvl').innerText = capLvl;
+            document.getElementById('cap-cost').innerText = getUpgradeCost('capacity', capLvl);
         }
 
         function refreshUpgradeCardStatus() {
-            let speedCost = getUpgradeCost('speed', speedLvl);
-            let capCost = getUpgradeCost('capacity', capLvl);
-
-            toggleCardClass('up-speed-card', totalCoins >= speedCost);
-            toggleCardClass('up-cap-card', totalCoins >= capCost);
+            toggleCardClass('up-speed-card', totalCoins >= getUpgradeCost('speed', speedLvl));
+            toggleCardClass('up-cap-card', totalCoins >= getUpgradeCost('capacity', capLvl));
         }
 
         function toggleCardClass(id, isAvailable) {
             const el = document.getElementById(id);
-            if(el) {
-                if(isAvailable) el.classList.add('available');
+            if (el) {
+                if (isAvailable) el.classList.add('available');
                 else el.classList.remove('available');
             }
         }
@@ -280,7 +257,7 @@
                     speedLvl++;
                     localStorage.setItem('farm_speed_lvl', speedLvl);
                 } else { alert("Not enough coins!"); return; }
-            } else if (type === 'capacity') {
+            } else {
                 let cost = getUpgradeCost('capacity', capLvl);
                 if (totalCoins >= cost) {
                     totalCoins -= cost;
@@ -293,7 +270,18 @@
         }
 
         function claimFarmedCoins() {
-            if (farmPool < 1) {
-                alert("Minimum 1 coin required to claim!");
-                return;
+            if (farmPool > 0) {
+                totalCoins += Math.floor(farmPool);
+                farmPool = 0;
+                localStorage.setItem('chubby_coins', totalCoins);
+                localStorage.setItem('farm_pool', farmPool);
+                updateUI();
             }
+        }
+
+        function goToMainMenu() {
+            window.parent.postMessage('closePage', '*');
+        }
+    </script>
+</body>
+</html>
