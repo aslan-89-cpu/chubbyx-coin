@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChubbyX - Cyber Farm</title>
-    
     <script src="https://telegram.org"></script>
     <style>
         body {
@@ -70,22 +69,15 @@
             font-weight: bold;
             color: #ffffff;
             margin-top: 5px;
-            text-shadow: 0 0 10px rgba(124, 44, 191, 0.6);
         }
 
-        .visual-farm-core {
-            position: relative;
+        .character-box {
             width: 120px;
             height: 120px;
-            margin: 0 auto 20px auto;
-            background: radial-gradient(circle, rgba(124, 44, 191, 0.6) 0%, rgba(31, 40, 51, 0) 70%);
-            border-radius: 50%;
+            margin: 0 auto 15px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 3px double #15eff2;
-            box-shadow: 0 0 20px rgba(21, 239, 242, 0.5);
-            overflow: hidden;
         }
 
         .spinning-character {
@@ -106,6 +98,7 @@
             font-weight: bold;
             color: #15eff2;
             margin-top: 5px;
+            margin-bottom: 15px;
         }
 
         .upgrade-grid {
@@ -121,16 +114,10 @@
             border-radius: 12px;
             padding: 10px;
             cursor: pointer;
-            transition: transform 0.1s, border-color 0.2s;
-        }
-
-        .upgrade-card:active {
-            transform: scale(0.95);
         }
 
         .upgrade-card.available {
             border-color: #45f3ff;
-            box-shadow: 0 0 8px rgba(69, 243, 255, 0.3);
         }
 
         .up-title {
@@ -164,12 +151,6 @@
             border-radius: 12px;
             cursor: pointer;
             margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(124, 44, 191, 0.4);
-            transition: background 0.2s;
-        }
-
-        .claim-btn:hover {
-            background: #5a189a;
         }
 
         .back-btn {
@@ -187,7 +168,6 @@
             box-sizing: border-box;
             text-align: center;
             text-decoration: none;
-            box-shadow: 0 4px 15px rgba(21, 239, 242, 0.3);
         }
     </style>
 </head>
@@ -197,22 +177,18 @@
         <h1>CHUBBYX CYBER FARM</h1>
         <div class="subtitle">Upgrade your grid & harvest assets</div>
 
-        <!-- Wallet Balance -->
         <div class="balance-box">
             <div class="balance-label">Total Balance</div>
             <div class="balance-value"><span id="total-coins">0</span> 🪙</div>
         </div>
 
-        <!-- کارەکتەرەکەت لێرە جێگیر کراوە -->
-        <div class="visual-farm-core">
+        <div class="character-box">
             <img src="image.png.jpeg" class="spinning-character" alt="Character">
         </div>
 
-        <!-- Live Pool Info -->
         <div style="font-size: 13px; color: #c5c6c7; text-transform: uppercase;">Farming Pool</div>
         <div class="pool-text"><span id="farm-pool">0.00</span> / <span id="max-capacity">100</span></div>
 
-        <!-- Upgrades Market Layout -->
         <div class="upgrade-grid">
             <div class="upgrade-card" id="up-speed-card" onclick="buyUpgrade('speed')">
                 <div class="up-title">⚡ Speed Rate</div>
@@ -226,12 +202,12 @@
             </div>
         </div>
 
-        <!-- دوگمەکان گۆڕدراون بۆ ئاستی بنەڕەتی بۆ مسۆگەرکردنی کارکردنیان -->
         <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
         <button class="back-btn" onclick="goToMainMenu()">BACK TO MAIN</button>
     </div>
 
     <script>
+        // بەکارهێنانی کلیلە بنەڕەتییەکەی پڕۆژەکەت (chubby_coins) بۆ ئەوەی داتا تێکنەچێت
         let totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
         let farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
         
@@ -299,3 +275,25 @@
         function buyUpgrade(type) {
             if (type === 'speed') {
                 let cost = getUpgradeCost('speed', speedLvl);
+                if (totalCoins >= cost) {
+                    totalCoins -= cost;
+                    speedLvl++;
+                    localStorage.setItem('farm_speed_lvl', speedLvl);
+                } else { alert("Not enough coins!"); return; }
+            } else if (type === 'capacity') {
+                let cost = getUpgradeCost('capacity', capLvl);
+                if (totalCoins >= cost) {
+                    totalCoins -= cost;
+                    capLvl++;
+                    localStorage.setItem('farm_cap_lvl', capLvl);
+                } else { alert("Not enough coins!"); return; }
+            }
+            localStorage.setItem('chubby_coins', totalCoins);
+            updateUI();
+        }
+
+        function claimFarmedCoins() {
+            if (farmPool < 1) {
+                alert("Minimum 1 coin required to claim!");
+                return;
+            }
