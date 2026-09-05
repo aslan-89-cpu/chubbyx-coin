@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChubbyX - Farm Game</title>
+    <title>ChubbyX - Cyber Farm</title>
     
-    <!-- کۆدی کاتی بۆ ناچارکردنی تێلێگرام بۆ کردنەوەی لاپەڕەی سەرەکی وەنەوشەیی -->
     <script>
-        // ئەگەر یاریزانەکە ڕاستەوخۆ لۆد بوو بێ ئەوەی لە ناو لاپەڕە وەنەوشەییەکەوە کلیكی کردبێت
         if (!document.referrer || document.referrer.indexOf('index.html') === -1) {
             window.location.replace("./index.html");
         }
@@ -17,7 +15,9 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #0b0c10;
+            /* لێرەدا وێنەی باکگراوندەکەت بە شێوەیەکی تەواو جێگیر دەکرێت */
+            background: url('background.png.jpeg') no-repeat center center fixed;
+            background-size: cover;
             color: #ffffff;
             margin: 0;
             padding: 20px;
@@ -29,51 +29,131 @@
             box-sizing: border-box;
         }
 
+        /* بەکارهێنانی ڕوونی (Glassmorphism) بۆ دیاربوونی باکگراوند */
         .farm-container {
-            background-color: #1f2833;
+            background-color: rgba(31, 40, 51, 0.85); 
+            backdrop-filter: blur(8px);
             border: 2px solid #45f3ff;
-            border-radius: 20px;
-            padding: 30px;
+            border-radius: 25px;
+            padding: 25px;
             text-align: center;
             max-width: 400px;
             width: 100%;
-            box-shadow: 0 0 20px rgba(69, 243, 255, 0.2);
+            box-shadow: 0 0 30px rgba(69, 243, 255, 0.3);
             box-sizing: border-box;
         }
 
         h1 {
             color: #45f3ff;
-            margin-bottom: 5px;
+            margin: 0 0 5px 0;
             text-transform: uppercase;
             font-size: 26px;
             letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(69, 243, 255, 0.5);
         }
 
         .subtitle {
-            font-size: 14px;
+            font-size: 13px;
             color: #c5c6c7;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
-        .stat-box {
-            background-color: #0b0c10;
-            border: 1px solid #7c2cbf;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
+        .balance-box {
+            background: rgba(11, 12, 16, 0.8);
+            border: 2px solid #7c2cbf;
+            border-radius: 15px;
+            padding: 12px;
+            margin-bottom: 20px;
         }
 
-        .stat-label {
-            font-size: 14px;
+        .balance-label {
+            font-size: 12px;
             color: #c5c6c7;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .stat-value {
-            font-size: 24px;
+        .balance-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-top: 5px;
+            text-shadow: 0 0 10px rgba(124, 44, 191, 0.6);
+        }
+
+        .visual-farm-core {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px auto;
+            background: radial-gradient(circle, rgba(124, 44, 191, 0.6) 0%, rgba(31, 40, 51, 0) 70%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px double #15eff2;
+            box-shadow: 0 0 20px rgba(21, 239, 242, 0.5);
+        }
+
+        .spinning-token {
+            font-size: 55px;
+            animation: spinToken 4s linear infinite;
+        }
+
+        @keyframes spinToken {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+
+        .pool-text {
+            font-size: 22px;
             font-weight: bold;
             color: #15eff2;
             margin-top: 5px;
+        }
+
+        .upgrade-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .upgrade-card {
+            background-color: rgba(11, 12, 16, 0.8);
+            border: 1px solid #c5c6c7;
+            border-radius: 12px;
+            padding: 10px;
+            cursor: pointer;
+            transition: transform 0.1s, border-color 0.2s;
+        }
+
+        .upgrade-card:active {
+            transform: scale(0.95);
+        }
+
+        .upgrade-card.available {
+            border-color: #45f3ff;
+            box-shadow: 0 0 8px rgba(69, 243, 255, 0.3);
+        }
+
+        .up-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: #45f3ff;
+            text-transform: uppercase;
+        }
+
+        .up-desc {
+            font-size: 13px;
+            margin: 4px 0;
+            color: #ffffff;
+        }
+
+        .up-cost {
+            font-size: 11px;
+            color: #e5b323;
+            font-weight: bold;
         }
 
         .claim-btn {
@@ -82,7 +162,7 @@
             background: #7c2cbf;
             color: #ffffff;
             border: 2px solid #45f3ff;
-            padding: 15px;
+            padding: 14px;
             font-size: 18px;
             font-weight: bold;
             border-radius: 12px;
@@ -101,40 +181,52 @@
             background: #15eff2;
             color: #0b0c10;
             border: none;
-            padding: 12px 30px;
+            padding: 10px 30px;
             font-size: 15px;
             font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
-            text-decoration: none;
-            transition: background 0.2s;
             width: 100%;
-            margin-top: 15px;
+            margin-top: 12px;
             box-sizing: border-box;
             text-align: center;
-        }
-
-        .back-btn:hover {
-            background: #0bc3c6;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
 
     <div class="farm-container">
-        <h1>CHUBBYX FARM</h1>
-        <div class="subtitle">Harvest your tokens in real-time</div>
+        <h1>CHUBBYX CYBER FARM</h1>
+        <div class="subtitle">Upgrade your grid & harvest assets</div>
 
-        <!-- Total Saved Balance -->
-        <div class="stat-box">
-            <div class="stat-label">Total Balance</div>
-            <div class="stat-value"><span id="total-coins">0</span> 🪙</div>
+        <!-- Wallet Balance -->
+        <div class="balance-box">
+            <div class="balance-label">Total Balance</div>
+            <div class="balance-value"><span id="total-coins">0</span> 🪙</div>
         </div>
 
-        <!-- Live Farming Production -->
-        <div class="stat-box" style="border-color: #15eff2;">
-            <div class="stat-label">Farming Pool</div>
-            <div class="stat-value" style="color: #45f3ff;"><span id="farm-pool">0.000</span> 🪙</div>
+        <!-- Live Visual Rotating Token Center -->
+        <div class="visual-farm-core">
+            <div class="spinning-token">🪙</div>
+        </div>
+
+        <!-- Live Pool Info -->
+        <div style="font-size: 13px; color: #c5c6c7; text-transform: uppercase;">Farming Pool</div>
+        <div class="pool-text"><span id="farm-pool">0.00</span> / <span id="max-capacity">100</span></div>
+
+        <!-- Upgrades Market Layout -->
+        <div class="upgrade-grid">
+            <div class="upgrade-card" id="up-speed-card" onclick="buyUpgrade('speed')">
+                <div class="up-title">⚡ Speed Rate</div>
+                <div class="up-desc">Lvl <span id="speed-lvl">1</span> (+<span id="speed-val">1</span>/s)</div>
+                <div class="up-cost"><span id="speed-cost">200</span> 🪙</div>
+            </div>
+            <div class="upgrade-card" id="up-cap-card" onclick="buyUpgrade('capacity')">
+                <div class="up-title">🔋 Tank Cap</div>
+                <div class="up-desc">Lvl <span id="cap-lvl">1</span> (<span id="cap-val">100</span> Max)</div>
+                <div class="up-cost"><span id="cap-cost">300</span> 🪙</div>
+            </div>
         </div>
 
         <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
@@ -144,46 +236,66 @@
     <script>
         let totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
         let farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
-        const farmSpeed = 0.01; 
+        
+        let speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
+        let capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
+
+        function getSpeedProd() { return speedLvl * 1; } 
+        function getMaxCap() { return capLvl * 100; } 
+        function getUpgradeCost(type, lvl) {
+            return type === 'speed' ? lvl * 200 : lvl * 300;
+        }
 
         window.onload = function() {
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
                 window.Telegram.WebApp.expand();
             }
-
-            document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
-            setInterval(runFarming, 10);
+            updateUI();
+            setInterval(executeFarmingGrid, 100); 
         };
 
-        function runFarming() {
-            farmPool += farmSpeed;
-            document.getElementById('farm-pool').innerText = farmPool.toFixed(3);
-            localStorage.setItem('farm_pool', farmPool);
-        }
-
-        function claimFarmedCoins() {
-            if (farmPool < 1) {
-                alert("Minimum 1 coin required to claim!");
-                return;
+        function executeFarmingGrid() {
+            let max = getMaxCap();
+            if (farmPool < max) {
+                let productionPerTick = (getSpeedProd() / 10); 
+                farmPool = Math.min(max, farmPool + productionPerTick);
+                document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
+                localStorage.setItem('farm_pool', farmPool);
             }
+            refreshUpgradeCardStatus();
+        }
 
-            let gained = Math.floor(farmPool);
-            totalCoins += gained;
-            farmPool -= gained; 
-
-            localStorage.setItem('chubby_coins', totalCoins);
-            localStorage.setItem('farm_pool', farmPool);
-
+        function updateUI() {
             document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
-            document.getElementById('farm-pool').innerText = farmPool.toFixed(3);
+            document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
+            document.getElementById('max-capacity').innerText = getMaxCap();
 
-            alert("Successfully claimed " + gained.toLocaleString() + " coins!");
+            document.getElementById('speed-lvl').innerText = speedLvl;
+            document.getElementById('speed-val').innerText = getSpeedProd();
+            document.getElementById('speed-cost').innerText = getUpgradeCost('speed', speedLvl).toLocaleString();
+
+            document.getElementById('cap-lvl').innerText = capLvl;
+            document.getElementById('cap-val').innerText = getMaxCap();
+            document.getElementById('cap-cost').innerText = getUpgradeCost('capacity', capLvl).toLocaleString();
+            
+            refreshUpgradeCardStatus();
         }
 
-        function goToMainMenu() {
-            window.location.href = "./index.html";
+        function refreshUpgradeCardStatus() {
+            let speedCost = getUpgradeCost('speed', speedLvl);
+            let capCost = getUpgradeCost('capacity', capLvl);
+
+            toggleCardClass('up-speed-card', totalCoins >= speedCost);
+            toggleCardClass('up-cap-card', totalCoins >= capCost);
         }
-    </script>
-</body>
-</html>
+
+        function toggleCardClass(id, isAvailable) {
+            const el = document.getElementById(id);
+            if(isAvailable) el.classList.add('available');
+            else el.classList.remove('available');
+        }
+
+        function buyUpgrade(type) {
+            if (type === 'speed') {
+                let cost = getUpgradeCost('speed', speedLvl);
