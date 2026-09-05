@@ -12,7 +12,7 @@
             padding: 0;
         }
         body {
-            background: #1c1437 url('background.png') no-repeat center top fixed;
+            background: #1c1437 url('background.png.jpeg') no-repeat center top fixed;
             background-size: cover;
             color: white;
             font-family: sans-serif;
@@ -127,8 +127,8 @@
     <div class="nav-bar">
         <div class="nav-item" onclick="loadExternalPage('tasks.html')">Tasks</div>
         <div class="nav-item" onclick="loadExternalPage('invite.html')">Invite</div>
-        <div class="nav-item" onclick="loadExternalPage('old-game.html')">Mini Games</div>
         <div class="nav-item" onclick="location.reload()">Games</div>
+        <div class="nav-item" onclick="loadExternalPage('old-game.html')">Mini Games</div>
         <div class="nav-item" onclick="loadExternalPage('wallet.html')">Wallet</div>
     </div>
 
@@ -165,7 +165,7 @@
 
                     tapElement.classList.add('tap-zone-active');
 
-                    var touch = e.touches[0];
+                    var touch = e.touches;
                     var rect = coinContainer.getBoundingClientRect();
                     var x = touch.clientX - rect.left;
                     var y = touch.clientY - rect.top;
