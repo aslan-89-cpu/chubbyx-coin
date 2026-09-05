@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChubbyX - Farm Game</title>
+    
+    <!-- کۆدی کاتی بۆ ناچارکردنی تێلێگرام بۆ کردنەوەی لاپەڕەی سەرەکی وەنەوشەیی -->
+    <script>
+        // ئەگەر یاریزانەکە ڕاستەوخۆ لۆد بوو بێ ئەوەی لە ناو لاپەڕە وەنەوشەییەکەوە کلیكی کردبێت
+        if (!document.referrer || document.referrer.indexOf('index.html') === -1) {
+            window.location.replace("./index.html");
+        }
+    </script>
+
     <script src="https://telegram.org"></script>
     <style>
         body {
@@ -135,8 +144,6 @@
     <script>
         let totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
         let farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
-        
-        // Farming speed: 1 coin per second (0.01 coins every 10ms for smooth animation)
         const farmSpeed = 0.01; 
 
         window.onload = function() {
@@ -146,15 +153,12 @@
             }
 
             document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
-            
-            // Start the real-time farming loop
             setInterval(runFarming, 10);
         };
 
         function runFarming() {
             farmPool += farmSpeed;
             document.getElementById('farm-pool').innerText = farmPool.toFixed(3);
-            // Save current pending pool to avoid losing it on refresh
             localStorage.setItem('farm_pool', farmPool);
         }
 
@@ -166,7 +170,7 @@
 
             let gained = Math.floor(farmPool);
             totalCoins += gained;
-            farmPool -= gained; // Keep the decimal remainder
+            farmPool -= gained; 
 
             localStorage.setItem('chubby_coins', totalCoins);
             localStorage.setItem('farm_pool', farmPool);
@@ -178,7 +182,7 @@
         }
 
         function goToMainMenu() {
-            window.location.href = "index.html"; 
+            window.location.href = "./index.html";
         }
     </script>
 </body>
