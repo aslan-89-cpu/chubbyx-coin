@@ -131,12 +131,13 @@
         <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyFill"></div></div>
     </div>
 
-    <!-- مێنووی خاوێنکراو بۆ ڕێگریکردن لە خەتای 404 -->
+    <!-- ─── 🗂️ مێنوو ڕەسەنەکە بە پێنج دوگمەکە لەگەڵ Mini Games و Games 🗂️ ─── -->
     <div class="nav-bar">
         <div class="nav-item" onclick="loadExternalPage('tasks.html')">Tasks</div>
         <div class="nav-item" onclick="loadExternalPage('invite.html')">Invite</div>
+        <div class="nav-item" onclick="loadExternalPage('mini-game.html')">Mini Games</div>
+        <div class="nav-item" onclick="loadExternalPage('old-game.html')">Games</div>
         <div class="nav-item" onclick="loadExternalPage('wallet.html')">Wallet</div>
-        <div class="nav-item" onclick="loadExternalPage('withdraw.html')">Withdraw</div>
     </div>
 
     <iframe id="appFrame" class="app-iframe"></iframe>
@@ -224,7 +225,9 @@
             frame.src = url;
             frame.style.display = 'block';
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            if(event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
         }
 
         window.addEventListener('message', function(event) {
