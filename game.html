@@ -5,17 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChubbyX - Cyber Farm</title>
     
-    <script>
-        if (!document.referrer || document.referrer.indexOf('index.html') === -1) {
-            window.location.replace("./index.html");
-        }
-    </script>
-
     <script src="https://telegram.org"></script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            /* لێرەدا وێنەی باکگراوندەکەت بە شێوەیەکی تەواو جێگیر دەکرێت */
             background: url('background.png.jpeg') no-repeat center center fixed;
             background-size: cover;
             color: #ffffff;
@@ -29,7 +22,6 @@
             box-sizing: border-box;
         }
 
-        /* بەکارهێنانی ڕوونی (Glassmorphism) بۆ دیاربوونی باکگراوند */
         .farm-container {
             background-color: rgba(31, 40, 51, 0.85); 
             backdrop-filter: blur(8px);
@@ -93,10 +85,14 @@
             justify-content: center;
             border: 3px double #15eff2;
             box-shadow: 0 0 20px rgba(21, 239, 242, 0.5);
+            overflow: hidden;
         }
 
-        .spinning-token {
-            font-size: 55px;
+        .spinning-character {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 50%;
             animation: spinToken 4s linear infinite;
         }
 
@@ -206,9 +202,9 @@
             <div class="balance-value"><span id="total-coins">0</span> 🪙</div>
         </div>
 
-        <!-- Live Visual Rotating Token Center -->
+        <!-- Character Rotating Visual -->
         <div class="visual-farm-core">
-            <div class="spinning-token">🪙</div>
+            <img src="image.png.jpeg" class="spinning-character" alt="Character">
         </div>
 
         <!-- Live Pool Info -->
@@ -292,10 +288,15 @@
 
         function toggleCardClass(id, isAvailable) {
             const el = document.getElementById(id);
-            if(isAvailable) el.classList.add('available');
-            else el.classList.remove('available');
+            if(el) {
+                if(isAvailable) el.classList.add('available');
+                else el.classList.remove('available');
+            }
         }
 
         function buyUpgrade(type) {
             if (type === 'speed') {
                 let cost = getUpgradeCost('speed', speedLvl);
+                if (totalCoins >= cost) {
+                    totalCoins -= cost;
+                    speedLvl++;
