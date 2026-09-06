@@ -66,8 +66,6 @@
             color: #ffffff;
             margin-top: 5px;
         }
-        
-        /* بازنەی خڕی کارەکتەر */
         .character-box {
             width: 110px;
             height: 110px;
@@ -86,8 +84,6 @@
             height: 100%;
             object-fit: cover;
         }
-
-        /* 🎡 عەجەلەی خەڵاتەکان 🎡 */
         .wheel-wrapper {
             position: relative;
             width: 240px;
@@ -115,7 +111,6 @@
             transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1);
             background: #0b0c10;
         }
-
         .pool-text {
             font-size: 22px;
             font-weight: bold;
@@ -217,15 +212,12 @@
             </div>
         </div>
 
-        <!-- بەشی عەجەلە -->
         <div class="balance-box" style="margin-top: 20px; padding: 15px 10px;">
             <div class="balance-label">Daily Lucky Spin</div>
-            
             <div class="wheel-wrapper">
                 <div class="wheel-pointer"></div>
                 <canvas id="wheelCanvas" class="wheel-canvas" width="300" height="300"></canvas>
             </div>
-
             <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 5px;" onclick="startDailySpin()">LOADING...</button>
             <div id="spin-timer" style="font-size: 11px; color: #ef4444; margin-top: 8px; display: none;">You already used your free spin today!</div>
         </div>
@@ -237,12 +229,11 @@
     <script>
         var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
-        
         var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
         var capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
 
-        // مەرجەکانی ئەژمێر بۆ لۆژیکی تۆ
-        var userType = localStorage.getItem('user_type') || "VIP"; // دەتوانی لێرە بیگۆڕی بۆ VIP یان Normal
+        // مەرجەکان: VIP هەمیشەیی و Normal ڕۆژانە یەک جار
+        var userType = localStorage.getItem('user_type') || "VIP"; 
         var vipSpinsCount = parseInt(localStorage.getItem('vip_spins_count')) || 0;
         var lastNormalSpinDate = localStorage.getItem('last_normal_spin_date') || "";
 
@@ -253,9 +244,7 @@
 
         function getSpeedProd() { return speedLvl * 1; }
         function getMaxCap() { return capLvl * 100; }
-        function getUpgradeCost(type, lvl) {
-            return type === 'speed' ? lvl * 200 : lvl * 300;
-        }
+        function getUpgradeCost(type, lvl) { return type === 'speed' ? lvl * 200 : lvl * 300; }
 
         window.onload = function() {
             if (window.Telegram && window.Telegram.WebApp) {
@@ -285,3 +274,8 @@
                 ctx.fillStyle = colors[i % colors.length];
                 ctx.fill();
                 ctx.lineWidth = 3;
+                ctx.strokeStyle = "#45f3ff";
+                ctx.stroke();
+
+                ctx.save();
+                ctx.translate(radius, radius);
