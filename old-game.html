@@ -270,8 +270,14 @@
         var vipSpinsCount = parseInt(localStorage.getItem('vip_spins_count')) || 0;
         var lastNormalSpinDate = localStorage.getItem('last_normal_spin_date') || "";
 
-        // چاککردنی کۆدەکە: لێرەدا نرخەکان بە دروستی دانران بۆ ڕێگری لە بلۆکبوون
-        var prizes =;
+        // 🔥 چاککردنی زۆر گرنگ: دروستکردنی مصفوفة بە شێوازێکی جیاواز بۆ ئەوەی چیتر لاپەڕەکە تێکنەچێت و نەوەستێت 🔥
+        var prizes = [];
+        prizes.push(300);
+        prizes.push(500);
+        prizes.push(1000);
+        prizes.push(2000);
+        prizes.push(3000);
+
         var isGameLocked = false;
 
         function getSpeedProd() { return speedLvl * 1; }
@@ -283,7 +289,3 @@
                 window.Telegram.WebApp.ready();
                 window.Telegram.WebApp.expand();
             }
-            updateUI();
-            checkChestStatus();
-            setInterval(executeFarmingGrid, 100);
-        };
