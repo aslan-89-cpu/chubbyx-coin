@@ -160,7 +160,7 @@
             
             if (userId) {
                 try {
-                    const response = await fetch(${serverUrl}/api/user-stats?userId=${userId});
+                    const response = await fetch(serverUrl + "/api/user-stats?userId=" + userId);
                     const data = await response.json();
                     if (data.success) {
                         totalCoins = data.balance;
@@ -183,13 +183,16 @@
             const wheel = document.getElementById('wheel');
             wheel.style.transform = "rotate(" + randomDegree + "deg)";
 
-            // لێرەدا خەڵاتەکانم بە ڕێگایەکی تر نووسیوە تا کۆدەکە بە تەواوی ئۆنلاین بمێنێت و نەشکێت
             let finalReward = 0;
-            if (type === 'normal') {
-                let normalRewards =;
+            
+            // لێرەدا خەڵاتەکان بە کۆمای سادە بێ بەکارهێنانی نیشانە نووسراون تا کۆدەکە نەشکێت
+            if (type === "normal") {
+                const n1 = 300, n2 = 500, n3 = 800, n4 = 1000, n5 = 1500, n6 = 2000;
+                const normalRewards = Array(n1, n2, n3, n4, n5, n6);
                 finalReward = normalRewards[Math.floor(Math.random() * normalRewards.length)];
             } else {
-                let vipRewards =;
+                const v1 = 5000, v2 = 10000, v3 = 25000, v4 = 50000;
+                const vipRewards = Array(v1, v2, v3, v4);
                 finalReward = vipRewards[Math.floor(Math.random() * vipRewards.length)];
             }
 
@@ -198,7 +201,7 @@
                 document.getElementById('normal-button').disabled = false;
                 document.getElementById('vip-button').disabled = false;
                 
-                if (type === 'vip') {
+                if (type === "vip") {
                     document.getElementById('reward-text').innerText = "🔥 JACKPOT VIP: +" + finalReward.toLocaleString() + " X!";
                 } else {
                     document.getElementById('reward-text').innerText = "🎉 You Won: +" + finalReward.toLocaleString() + " X!";
