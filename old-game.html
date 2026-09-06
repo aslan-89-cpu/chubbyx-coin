@@ -12,6 +12,7 @@
         .game-container {
             width: 100vw;
             height: 100vh;
+            background-color: #121216;
             background-image: url('Background.png.jpeg');
             background-size: cover;
             background-position: center;
@@ -21,27 +22,53 @@
             justify-content: center;
             position: relative;
         }
-        .game-image {
-            width: 140px;
-            height: 140px;
-            object-fit: contain;
-            margin-bottom: 20px;
-            touch-action: manipulation;
+
+        .image-wrapper {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #ffcc00;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #222;
         }
+
+        .game-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.1s ease;
+        }
+
+        @keyframes spinAnimation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinning {
+            animation: spinAnimation 0.8s linear infinite;
+        }
+
         .btn {
             background-color: #ffcc00;
             color: #000;
             font-weight: bold;
-            padding: 12px 25px;
-            margin: 8px;
+            padding: 14px 25px;
+            margin: 10px;
             border: none;
             border-radius: 25px;
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
             touch-action: manipulation;
             pointer-events: auto;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            width: 220px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            width: 260px;
+            text-align: center;
+            text-transform: uppercase;
         }
         .btn:active { transform: scale(0.95); }
         .vip-btn { background-color: #9c27b0; color: #fff; }
@@ -49,26 +76,31 @@
         
         #status {
             color: #fff;
-            margin-top: 15px;
-            font-size: 14px;
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
             text-align: center;
-            background: rgba(0,0,0,0.6);
-            padding: 8px 15px;
-            border-radius: 10px;
-            max-width: 90%;
+            background: rgba(0,0,0,0.7);
+            padding: 12px 20px;
+            border-radius: 12px;
+            max-width: 85%;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-transform: uppercase;
         }
     </style>
 </head>
 <body>
 
     <div class="game-container">
-        <img src="image.png.jpeg" alt="Game Image" class="game-image">
+        <div class="image-wrapper">
+            <img src="image.png.jpeg" alt="Game Image" class="game-image" id="wheelImage">
+        </div>
 
-        <button class="btn" onclick="spinNormal()">Normal Spin (500 - 4000)</button>
-        <button class="btn vip-btn" onclick="spinVip()">VIP Spin (6000 - 50000)</button>
-        <button class="btn back-btn" onclick="goBackMenu()">Back Menu</button>
+        <button class="btn" onclick="spinNormal()">NORMAL SPIN (500 - 4000)</button>
+        <button class="btn vip-btn" onclick="spinVip()">VIP SPIN (6000 - 50000)</button>
+        <button class="btn back-btn" onclick="goBackMenu()">BACK MENU</button>
 
-        <div id="status">Ready to spin!</div>
+        <div id="status">READY TO SPIN!</div>
     </div>
 
     <script>
@@ -84,54 +116,65 @@
             window.location.href = 'index.html'; 
         }
 
-        // نۆرمال: ڕۆژی یەک جار، بڕ لە نێوان 500 بۆ 4000
+        function triggerSpinEffect(callback) {
+            const img = document.getElementById('wheelImage');
+            img.classList.add('spinning');
+            
+            setTimeout(() => {
+                img.classList.remove('spinning');
+                if (callback) callback();
+            }, 1500);
+        }
+
         function spinNormal() {
             let lastSpin = localStorage.getItem('last_normal_spin');
             let today = new Date().toDateString();
 
             if (lastSpin === today) {
-                document.getElementById('status').innerText = "تۆ ئەمڕۆ سپینی نۆرمالت بەکارهێناوە! سبەی تاقی بکەرەوە.";
+                document.getElementById('status').innerText = "YOU ALREADY USED NORMAL SPIN TODAY! TRY AGAIN TOMORROW.";
                 return;
             }
 
-            // دروستکردنی بڕێکی هەڕەمەکی لە نێوان 500 بۆ 4000 بە شێوازێکی تەواو
-            let reward = Math.floor(Math.random() * (4000 - 500 + 1)) + 500;
-
-            localStorage.setItem('last_normal_spin', today);
-            document.getElementById('status').innerText = سپینی نۆرمال سەرکەوتوو بوو! بڕی ${reward} بەدەستهێنرا.;
-            // لێرەدا کۆدی داتابەیسی خۆت دابنە بۆ زیادکردنی reward بۆ یاریزانەکە
+            document.getElementById('status').innerText = "SPINNING...";
+            
+            triggerSpinEffect(() => {
+                let reward = Math.floor(Math.random() * (4000 - 500 + 1)) + 500;
+                localStorage.setItem('last_normal_spin', today);
+                document.getElementById('status').innerText = SUCCESS! YOU WON ${reward} COINS.;
+            });
         }
 
-        // ڤی ئای پی: سیستەمی یەکەم (0.5، 0.75، 1) گۆڕدرا بۆ: یەکەم جار 6000، دووەم جار 28000، سێیەم جار 50000 و پاشان دووبارە دەستپێدەکاتەوە
         function spinVip() {
             let vipStep = parseInt(localStorage.getItem('vip_step')) || 1;
             let lastVipDate = localStorage.getItem('last_vip_date');
             let today = new Date().toDateString();
 
             if (lastVipDate === today) {
-                document.getElementById('status').innerText = "تۆ ئەمڕۆ سپینی VIP ت بەکارهێناوە!";
+                document.getElementById('status').innerText = "YOU ALREADY USED VIP SPIN TODAY!";
                 return;
             }
 
             let reward = 0;
             if (vipStep === 1) {
-                reward = 6000;   // جاری یەکەم
+                reward = 6000;
             } else if (vipStep === 2) {
-                reward = 28000;  // جاری دووەم (ڕێژەی ناوەڕاست)
+                reward = 28000;
             } else if (vipStep === 3) {
-                reward = 50000;  // جاری سێیەم
+                reward = 50000;
             }
 
-            document.getElementById('status').innerText = سپینی VIP سەرکەوتوو بوو! بڕی ${reward} وەرگیرا.;
+            document.getElementById('status').innerText = "SPINNING VIP...";
 
-            let nextStep = vipStep + 1;
-            if (nextStep > 3) {
-                nextStep = 1; // دەگەڕێتەوە سەر 6000
-            }
+            triggerSpinEffect(() => {
+                let nextStep = vipStep + 1;
+                if (nextStep > 3) {
+                    nextStep = 1;
+                }
 
-            localStorage.setItem('vip_step', nextStep);
-            localStorage.setItem('last_vip_date', today);
-            // لێرەدا کۆدی داتابەیسی خۆت دابنە بۆ ناردنی بڕی reward بۆ یاریزانەکە
+                localStorage.setItem('vip_step', nextStep);
+                localStorage.setItem('last_vip_date', today);
+                document.getElementById('status').innerText = VIP SUCCESS! YOU WON ${reward} COINS.;
+            });
         }
     </script>
 </body>
