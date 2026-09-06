@@ -67,7 +67,7 @@
             margin-top: 5px;
         }
         
-        /* چاککردنی بازنەی خڕی کارەکتەر بۆ ئەوەی هێلکەیی نەبێت */
+        /* بازنەی خڕی کارەکتەر بۆ ئەوەی هێلکەیی نەبێت */
         .character-box {
             width: 110px;
             height: 110px;
@@ -87,7 +87,7 @@
             object-fit: cover;
         }
 
-        /* 🎡 ڕێکخستنی نوێی عەجەلەکە بۆ مۆبایل بە بێ تێکچوونی ژمارەکان 🎡 */
+        /* 🎡 ڕێکخستنی عەجەلەی خولاوە 🎡 */
         .wheel-wrapper {
             position: relative;
             width: 240px;
@@ -217,7 +217,7 @@
             </div>
         </div>
 
-        <!-- بەشی ڕاستەقینەی عەجەلەکە کە بە دروستی نوێکراوەتەوە -->
+        <!-- بەشی نوێ و جێگیری عەجەلە -->
         <div class="balance-box" style="margin-top: 20px; padding: 15px 10px;">
             <div class="balance-label">Daily Lucky Spin</div>
             
@@ -232,7 +232,7 @@
 
         <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
         <button class="back-btn" onclick="goToMainMenu()">BACK TO MAIN</button>
-    </div> <!-- لێرەدا تاگە گشتییەکە بە تەواوی داخرا بۆ کارکردنی دوگمەکان -->
+    </div>
 
     <script>
         var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
@@ -245,9 +245,9 @@
         var dailySpinsUsed = parseInt(localStorage.getItem('daily_spins_used')) || 0;
         var lastSpinDate = localStorage.getItem('last_spin_date') || "";
 
-        // پێنج خەڵاتە سەرەکییەکە بە ڕێکی
+        // پێنج خەڵاتە سەرەکییەکە بە ڕێکی بەپێی وێنەکە
         const prizes =; 
-        const colors = ["#7c2cbf", "#110b29", "#15eff2", "#0b0c10", "#e5b323"];
+        const colors = ["#e5b323", "#7c2cbf", "#110b29", "#15eff2", "#0b0c10"];
         let isSpinning = false;
         let currentRotation = 0;
 
@@ -268,7 +268,7 @@
             setInterval(executeFarmingGrid, 100);
         };
 
-        // ڕێکخستنی نوێی دەق و نوسین لەسەر عەجەلەی Canvas بۆ ئەوەی تێکنەچێت
+        // ئەم بەشە ژمارەکان بە دروستی و بە بێ تێکەڵبوون دەنووسێت لەناو عەجەلەکەدا
         function drawWheel() {
             const canvas = document.getElementById("wheelCanvas");
             const ctx = canvas.getContext("2d");
@@ -281,3 +281,4 @@
             for (let i = 0; i < numSegments; i++) {
                 ctx.beginPath();
                 ctx.moveTo(radius, radius);
+                ctx.arc(radius, radius, radius - 5, i * anglePerSegment, (i + 1) * anglePerSegment);
