@@ -124,7 +124,7 @@
             font-weight: bold;
         }
 
-        /* 📦 دیزاینی سندوقەکانی بەخت 📦 */
+        /* 📦 ڕێکخستنی شیکی سندوقەکان 📦 */
         .chests-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -234,7 +234,7 @@
             </div>
         </div>
 
-        <!-- 📦 بەشی یاری نوێی سندوقەکانی بەخت 📦 -->
+        <!-- 📦 بەشی سندوقەکانی بەخت 📦 -->
         <div class="balance-box" style="margin-top: 20px; padding: 15px 10px;">
             <div class="balance-label" id="chest-status-title">LUCKY CHEST OPENER</div>
             
@@ -270,6 +270,7 @@
         var vipSpinsCount = parseInt(localStorage.getItem('vip_spins_count')) || 0;
         var lastNormalSpinDate = localStorage.getItem('last_normal_spin_date') || "";
 
+        // چاککردنی کۆدەکە: لێرەدا نرخەکان بە دروستی دانران بۆ ڕێگری لە بلۆکبوون
         var prizes =;
         var isGameLocked = false;
 
@@ -286,6 +287,3 @@
             checkChestStatus();
             setInterval(executeFarmingGrid, 100);
         };
-
-        function executeFarmingGrid() {
-            var max = getMaxCap();
