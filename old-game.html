@@ -218,7 +218,7 @@
                 <div class="wheel-pointer"></div>
                 <canvas id="wheelCanvas" class="wheel-canvas" width="300" height="300"></canvas>
             </div>
-            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 5px;" onclick="startDailySpin()">LOADING...</button>
+            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 5px;" onclick="startDailySpin()">SPIN NOW</button>
             <div id="spin-timer" style="font-size: 11px; color: #ef4444; margin-top: 8px; display: none;">You already used your free spin today!</div>
         </div>
 
@@ -227,20 +227,20 @@
     </div>
 
     <script>
+        // بەکارهێنانی جاڤاسکریپتی کلاسیکی کۆن (ES5) بۆ ڕێگری لە بلۆکبوون و وەستانی دوگمەکان
         var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
         var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
         var capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
 
-        // مەرجەکان: VIP هەمیشەیی و Normal ڕۆژانە یەک جار
         var userType = localStorage.getItem('user_type') || "VIP"; 
         var vipSpinsCount = parseInt(localStorage.getItem('vip_spins_count')) || 0;
         var lastNormalSpinDate = localStorage.getItem('last_normal_spin_date') || "";
 
-        const prizes =; 
-        const colors = ["#e5b323", "#7c2cbf", "#110b29", "#15eff2", "#0b0c10"];
-        let isSpinning = false;
-        let currentRotation = 0;
+        var prizes =; 
+        var colors = ["#e5b323", "#7c2cbf", "#110b29", "#15eff2", "#0b0c10"];
+        var isSpinning = false;
+        var currentRotation = 0;
 
         function getSpeedProd() { return speedLvl * 1; }
         function getMaxCap() { return capLvl * 100; }
@@ -258,16 +258,16 @@
         };
 
         function drawWheel() {
-            const canvas = document.getElementById("wheelCanvas");
+            var canvas = document.getElementById("wheelCanvas");
             if (!canvas) return;
-            const ctx = canvas.getContext("2d");
-            const numSegments = prizes.length;
-            const anglePerSegment = (2 * Math.PI) / numSegments;
-            const radius = canvas.width / 2;
+            var ctx = canvas.getContext("2d");
+            var numSegments = prizes.length;
+            var anglePerSegment = (2 * Math.PI) / numSegments;
+            var radius = canvas.width / 2;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            for (let i = 0; i < numSegments; i++) {
+            for (var i = 0; i < numSegments; i++) {
                 ctx.beginPath();
                 ctx.moveTo(radius, radius);
                 ctx.arc(radius, radius, radius - 5, i * anglePerSegment, (i + 1) * anglePerSegment);
