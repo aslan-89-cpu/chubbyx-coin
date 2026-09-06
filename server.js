@@ -1,11 +1,18 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path'); // ئەمە پێویستە بۆ خوێندنەوەی ڕێڕەوی فایلەکان
 const admin = require('firebase-admin');
 const checkJoinRouter = require('./check-join');
 const app = express();
+
 app.use(cors());
 app.use(express.json());
+
+// 1. ڕێگەپێدان بە سێرڤەرەکە بۆ خوێندنەوەی هەموو فایلە HTML و وێنەکانت
+app.use(express.static(path.join(__dirname)));
+
 app.use('/api', checkJoinRouter);
+
 // Initialize Firebase
 if (admin.apps.length === 0) {
     admin.initializeApp({
@@ -14,9 +21,9 @@ if (admin.apps.length === 0) {
 }
 const db = admin.firestore();
 
-// Main home test route
+// 2. کاتێک بەکارهێنەر دێتە سەر سایتی سەرەکی، فایلی index.html لۆد دەبێت
 app.get('/', (req, res) => {
-    res.send("ChubbyX Web Server is officially running safely with Firebase! 🚀");
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Helper function to get or create user doc
@@ -122,6 +129,11 @@ app.post('/api/tasks', async (req, res) => {
 
 app.post('/api/start-bot', (req, res) => { res.json({ success: true, message: "Registered." }); });
 app.post('/api/verify-channel', (req, res) => { res.json({ success: true, message: "Verified!" }); });
+
+// 3. ئەگەر بەکارهێنەر ڕاستەوخۆ ویستی بچێتە سەر هەر لاپەڕەیەکی تر (وەک tasks.html)، لێرەوە ڕێگەی پێدەدرێت بەبێ 404
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
