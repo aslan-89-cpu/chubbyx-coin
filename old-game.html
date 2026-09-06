@@ -6,11 +6,7 @@
     <title>ChubbyX - Lucky Spin</title>
     <script src="https://telegram.org"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             background: #1c1437 url('background.png.jpeg') no-repeat center top fixed;
             background-size: cover;
@@ -42,11 +38,7 @@
             letter-spacing: 1px;
             text-shadow: 0 0 10px rgba(69, 243, 255, 0.5);
         }
-        .subtitle {
-            font-size: 13px;
-            color: #c5c6c7;
-            margin-bottom: 20px;
-        }
+        .subtitle { font-size: 13px; color: #c5c6c7; margin-bottom: 20px; }
         .balance-box {
             background: rgba(11, 12, 16, 0.8);
             border: 2px solid #7c2cbf;
@@ -54,17 +46,8 @@
             padding: 12px;
             margin-bottom: 25px;
         }
-        .balance-label {
-            font-size: 12px;
-            color: #c5c6c7;
-            text-transform: uppercase;
-        }
-        .balance-value {
-            font-size: 26px;
-            font-weight: bold;
-            color: #ffffff;
-            margin-top: 5px;
-        }
+        .balance-label { font-size: 12px; color: #c5c6c7; text-transform: uppercase; }
+        .balance-value { font-size: 26px; font-weight: bold; color: #ffffff; margin-top: 5px; }
         .wheel-wrapper {
             position: relative;
             width: 200px;
@@ -94,12 +77,7 @@
             background-color: #1c1437;
             transition: transform 4s cubic-bezier(0.1, 0.8, 0.3, 1);
         }
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 10px;
-        }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
         .spin-btn {
             width: 100%;
             color: white;
@@ -112,20 +90,9 @@
             text-transform: uppercase;
             transition: all 0.2s;
         }
-        .normal-btn {
-            background-color: #7c2cbf;
-            box-shadow: 0 0 15px rgba(124, 44, 191, 0.4);
-        }
-        .vip-btn {
-            background: linear-gradient(45deg, #e5b323, #ff007f);
-            box-shadow: 0 0 15px rgba(229, 179, 35, 0.4);
-        }
-        .spin-btn:disabled {
-            background: #4a3b63 !important;
-            box-shadow: none !important;
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
+        .normal-btn { background-color: #7c2cbf; box-shadow: 0 0 15px rgba(124, 44, 191, 0.4); }
+        .vip-btn { background: linear-gradient(45deg, #e5b323, #ff007f); box-shadow: 0 0 15px rgba(229, 179, 35, 0.4); }
+        .spin-btn:disabled { background: #4a3b63 !important; box-shadow: none !important; cursor: not-allowed; opacity: 0.5; }
         .back-btn {
             display: block;
             width: 100%;
@@ -214,17 +181,17 @@
 
             const randomDegree = Math.floor(Math.random() * 360) + 2160; 
             const wheel = document.getElementById('wheel');
-            wheel.style.transform = rotate(${randomDegree}deg);
+            wheel.style.transform = "rotate(" + randomDegree + "deg)";
 
-            // لێرەدا بڕی خەڵاتەکانم بە تەواوی بۆ چاککردوویت
-            let rewards = [];
+            // لێرەدا خەڵاتەکانم بە ڕێگایەکی تر نووسیوە تا کۆدەکە بە تەواوی ئۆنلاین بمێنێت و نەشکێت
+            let finalReward = 0;
             if (type === 'normal') {
-                rewards =;
-            } else if (type === 'vip') {
-                rewards =;
+                let normalRewards =;
+                finalReward = normalRewards[Math.floor(Math.random() * normalRewards.length)];
+            } else {
+                let vipRewards =;
+                finalReward = vipRewards[Math.floor(Math.random() * vipRewards.length)];
             }
-            
-            const finalReward = rewards[Math.floor(Math.random() * rewards.length)];
 
             setTimeout(() => {
                 isSpinning = false;
@@ -232,9 +199,9 @@
                 document.getElementById('vip-button').disabled = false;
                 
                 if (type === 'vip') {
-                    document.getElementById('reward-text').innerText = 🔥 JACKPOT VIP: +${finalReward.toLocaleString()} X!;
+                    document.getElementById('reward-text').innerText = "🔥 JACKPOT VIP: +" + finalReward.toLocaleString() + " X!";
                 } else {
-                    document.getElementById('reward-text').innerText = 🎉 You Won: +${finalReward.toLocaleString()} X!;
+                    document.getElementById('reward-text').innerText = "🎉 You Won: +" + finalReward.toLocaleString() + " X!";
                 }
                 
                 syncBalanceWithServer(finalReward);
@@ -249,7 +216,7 @@
                 return;
             }
             try {
-                const response = await fetch(${serverUrl}/api/save-score, {
+                const response = await fetch(serverUrl + "/api/save-score", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: userId, score: scoreToAdd })
