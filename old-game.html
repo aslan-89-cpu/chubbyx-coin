@@ -186,7 +186,12 @@
             </div>
         </div>
 
-        <!-- لێرەدا سەرجەم کۆدە تێکچووەکانی مینی گەیمەکە بە تەواوی سڕدراونەتەوە بۆ ڕێگری لە بلۆکبوون -->
+        <!-- DAILY LUCKY SPIN BOX -->
+        <div class="balance-box" style="margin-top: 20px;">
+            <div class="balance-label">Daily Lucky Spin</div>
+            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 10px;" onclick="startDailySpin()">SPIN NOW</button>
+            <div id="spin-timer" style="font-size: 11px; color: #ef4444; margin-top: 6px; display: none;">You already used your free spin today!</div>
+        </div>
 
         <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
         <button class="back-btn" onclick="goToMainMenu()">BACK TO MAIN</button>
@@ -198,6 +203,14 @@
         
         var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
         var capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
+
+        // لیستی خەڵاتەکانی سەر سپینەکە کە داوات کردبوون
+        var prizes =;
+
+        // لۆژیکی بەکارهێنەران: Normal تەنها ڕۆژی ١ جار، VIP بەردەوامە
+        var userType = localStorage.getItem('user_type') || "VIP"; // دەتوانی لێرە بیگۆڕی بۆ Normal یان VIP
+        var vipSpinsCount = parseInt(localStorage.getItem('vip_spins_count')) || 0;
+        var lastNormalSpinDate = localStorage.getItem('last_normal_spin_date') || "";
 
         function getSpeedProd() { return speedLvl * 1; }
         function getMaxCap() { return capLvl * 100; }
@@ -211,6 +224,7 @@
                 window.Telegram.WebApp.expand();
             }
             updateUI();
+            checkSpinStatus();
             setInterval(executeFarmingGrid, 100);
         };
 
@@ -257,24 +271,3 @@
                 if (totalCoins >= costSpeed) {
                     totalCoins -= costSpeed;
                     speedLvl++;
-                    localStorage.setItem('farm_speed_lvl', speedLvl);
-                } else { alert("Not enough coins!"); return; }
-            } else {
-                var costCap = getUpgradeCost('capacity', capLvl);
-                if (totalCoins >= costCap) {
-                    totalCoins -= costCap;
-                    capLvl++;
-                    localStorage.setItem('farm_cap_lvl', capLvl);
-                } else { alert("Not enough coins!"); return; }
-            }
-            localStorage.setItem('chubby_coins', totalCoins);
-            updateUI();
-        }
-
-        function claimFarmedCoins() {
-            if (farmPool > 0) {
-                totalCoins += Math.floor(farmPool);
-                farmPool = 0;
-                localStorage.setItem('chubby_coins', totalCoins);
-                localStorage.setItem('farm_pool', farmPool);
-                updateUI();
