@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>chubbyX - Cyber Farm & Lucky Spin</title>
+    <title>chubbyX - Cyber Farm</title>
     <script src="https://telegram.org"></script>
     <style>
         * {
@@ -67,22 +67,23 @@
             margin-top: 5px;
         }
         .character-box {
-            width: 110px;
-            height: 110px;
+            width: 120px;
+            height: 120px;
             margin: 0 auto 15px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 3px solid #15eff2;
-            border-radius: 50%;
-            overflow: hidden;
-            background: rgba(11, 12, 16, 0.6);
-            box-shadow: 0 0 15px rgba(21, 239, 242, 0.4);
         }
         .spinning-character {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 50%;
+            animation: spinToken 4s linear infinite;
+        }
+        @keyframes spinToken {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
         }
         .pool-text {
             font-size: 22px;
@@ -125,8 +126,8 @@
             font-weight: bold;
         }
 
-        /* 🎡 دیزاینی عەجەلەی گرافیکی نوێی بێ کێشە 🎡 */
-        .wheel-outer-container {
+        /* 🎡 ڕێکخستنی شیک و جوانی عەجەلەی گرافیکی 🎡 */
+        .wheel-container {
             position: relative;
             width: 240px;
             height: 240px;
@@ -134,7 +135,7 @@
         }
         .wheel-pointer {
             position: absolute;
-            top: -10px;
+            top: -12px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
@@ -144,18 +145,18 @@
             border-top: 25px solid #ff0055;
             z-index: 99;
         }
-        .wheel-wrapper {
+        .wheel-inner {
             width: 100%;
             height: 100%;
             border-radius: 50%;
             border: 5px solid #45f3ff;
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
             box-shadow: 0 0 20px rgba(69, 243, 255, 0.5);
             transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
             background: #0b0c10;
         }
-        .wheel-segment {
+        .wheel-slice {
             position: absolute;
             width: 50%;
             height: 50%;
@@ -166,14 +167,14 @@
             align-items: center;
             justify-content: center;
         }
-        /* دابەشکردنی ڕەنگەکان و پارچەکان بە شێوەی گرافیکی بازنەیی */
-        .seg-1 { background: #e5b323; transform: rotate(0deg) skewY(-18deg); }
-        .seg-2 { background: #7c2cbf; transform: rotate(72deg) skewY(-18deg); }
-        .seg-3 { background: #110b29; transform: rotate(144deg) skewY(-18deg); }
-        .seg-4 { background: #15eff2; transform: rotate(216deg) skewY(-18deg); }
-        .seg-5 { background: #0b0c10; transform: rotate(288deg) skewY(-18deg); }
+        /* گۆشەی ڕاست و جیاکردنەوەی ژمارەکان */
+        .slice-1 { background: #e5b323; transform: rotate(0deg) skewY(-18deg); }
+        .slice-2 { background: #7c2cbf; transform: rotate(72deg) skewY(-18deg); }
+        .slice-3 { background: #110b29; transform: rotate(144deg) skewY(-18deg); }
+        .slice-4 { background: #15eff2; transform: rotate(216deg) skewY(-18deg); }
+        .slice-5 { background: #0b0c10; transform: rotate(288deg) skewY(-18deg); }
 
-        .seg-text {
+        .slice-text {
             position: absolute;
             left: -20px;
             bottom: 35px;
@@ -226,7 +227,7 @@
         </div>
 
         <div class="character-box">
-            <img src="image.png.jpeg" class="spinning-character" alt="Character" onerror="this.src='background.png.jpeg'">
+            <img src="background.png.jpeg" class="spinning-character" alt="Character">
         </div>
 
         <div style="font-size: 13px; color: #c5c6c7;">Farming Pool</div>
@@ -245,22 +246,22 @@
             </div>
         </div>
 
-        <!-- بەشی نوێی عەجەلەی خەڵاتەکان بە وێنەی گرافیکی بازنەیی -->
+        <!-- بەشی ڕێکخراوی عەجەلەکە بە دیزاینی جێگیر -->
         <div class="balance-box" style="margin-top: 20px; padding: 15px 10px;">
             <div class="balance-label">Daily Lucky Spin</div>
             
-            <div class="wheel-outer-container">
+            <div class="wheel-container">
                 <div class="wheel-pointer"></div>
-                <div id="luckyWheel" class="wheel-wrapper">
-                    <div class="wheel-segment seg-1"><span class="seg-text">300</span></div>
-                    <div class="wheel-segment seg-2"><span class="seg-text">500</span></div>
-                    <div class="wheel-segment seg-3"><span class="seg-text">1000</span></div>
-                    <div class="wheel-segment seg-4"><span class="seg-text">2000</span></div>
-                    <div class="wheel-segment seg-5"><span class="seg-text">3000</span></div>
+                <div id="wheelMenu" class="wheel-inner">
+                    <div class="wheel-slice slice-1"><span class="slice-text">300</span></div>
+                    <div class="wheel-slice slice-2"><span class="slice-text">500</span></div>
+                    <div class="wheel-slice slice-3"><span class="slice-text">1000</span></div>
+                    <div class="wheel-slice slice-4"><span class="slice-text">2000</span></div>
+                    <div class="wheel-slice slice-5"><span class="slice-text">3000</span></div>
                 </div>
             </div>
 
-            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 5px;" onclick="startDailySpin()">SPIN NOW (FREE)</button>
+            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 5px;" onclick="startDailySpin()">SPIN NOW</button>
             <div id="spin-timer" style="font-size: 11px; color: #ef4444; margin-top: 8px; display: none;">You already used your free spin today!</div>
         </div>
 
@@ -271,8 +272,10 @@
     <script>
         var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
+        
         var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
         var capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
 
+        // مەرجەکان: VIP بەردەوام و Normal ٢٤ کاتژمێر جارێک
         var userType = localStorage.getItem('user_type') || "VIP"; 
         var vipSpinsCount = parseInt(localStorage.getItem('vip_spins_count')) || 0;
