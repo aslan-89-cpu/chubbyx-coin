@@ -189,7 +189,7 @@
         <!-- DAILY LUCKY SPIN BOX -->
         <div class="balance-box" style="margin-top: 20px;">
             <div class="balance-label">Daily Lucky Spin</div>
-            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 10px;" onclick="startDailySpin()">SPIN NOW</button>
+            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 10px;" onclick="startDailySpin()">LOADING SPIN...</button>
             <div id="spin-timer" style="font-size: 11px; color: #ef4444; margin-top: 6px; display: none;">You already used your spin! Come back tomorrow.</div>
         </div>
 
@@ -198,11 +198,19 @@
     </div>
 
     <script>
+        // API Base URL (Change this to your actual server domain URL)
+        const API_URL = window.location.origin;
+
         var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
         
         var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
         var capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
+
+        // User profile configuration
+        var tgUser = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe?.user) ? window.Telegram.WebApp.initDataUnsafe.user : null;
+        var userId = tgUser ? tgUser.id : "12345678"; // Fallback test ID if running out of Telegram
+        var userType = localStorage.getItem('user_type') || "VIP"; // Can be set to "VIP" or "Normal"
 
         function getSpeedProd() { return speedLvl * 1; }
         function getMaxCap() { return capLvl * 100; }
@@ -262,14 +270,3 @@
                 let cost = getUpgradeCost('speed', speedLvl);
                 if (totalCoins >= cost) {
                     totalCoins -= cost;
-                    speedLvl++;
-                    localStorage.setItem('farm_speed_lvl', speedLvl);
-                } else { alert("Not enough coins!"); return; }
-            } else {
-                let cost = getUpgradeCost('capacity', capLvl);
-                if (totalCoins >= cost) {
-                    totalCoins -= cost;
-                    capLvl++;
-                    localStorage.setItem('farm_cap_lvl', capLvl);
-                } else { alert("Not enough coins!"); return; }
-            }
