@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>chubbyX - Cyber Farm</title>
+    <title>chubbyX - Cyber Farm & Lucky Spin</title>
     <script src="https://telegram.org"></script>
     <style>
         * {
@@ -84,33 +84,6 @@
             height: 100%;
             object-fit: cover;
         }
-        .wheel-wrapper {
-            position: relative;
-            width: 240px;
-            height: 240px;
-            margin: 20px auto;
-        }
-        .wheel-pointer {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 30px;
-            background: #ff0055;
-            clip-path: polygon(50% 100%, 0 0, 100% 0);
-            z-index: 10;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
-        .wheel-canvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 5px solid #45f3ff;
-            box-shadow: 0 0 20px rgba(69, 243, 255, 0.5);
-            transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1);
-            background: #0b0c10;
-        }
         .pool-text {
             font-size: 22px;
             font-weight: bold;
@@ -151,6 +124,66 @@
             color: #e5b323;
             font-weight: bold;
         }
+
+        /* 🎡 دیزاینی عەجەلەی گرافیکی نوێی بێ کێشە 🎡 */
+        .wheel-outer-container {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            margin: 20px auto;
+        }
+        .wheel-pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid #ff0055;
+            z-index: 99;
+        }
+        .wheel-wrapper {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid #45f3ff;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 20px rgba(69, 243, 255, 0.5);
+            transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            background: #0b0c10;
+        }
+        .wheel-segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            top: 0;
+            right: 0;
+            transform-origin: 0% 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* دابەشکردنی ڕەنگەکان و پارچەکان بە شێوەی گرافیکی بازنەیی */
+        .seg-1 { background: #e5b323; transform: rotate(0deg) skewY(-18deg); }
+        .seg-2 { background: #7c2cbf; transform: rotate(72deg) skewY(-18deg); }
+        .seg-3 { background: #110b29; transform: rotate(144deg) skewY(-18deg); }
+        .seg-4 { background: #15eff2; transform: rotate(216deg) skewY(-18deg); }
+        .seg-5 { background: #0b0c10; transform: rotate(288deg) skewY(-18deg); }
+
+        .seg-text {
+            position: absolute;
+            left: -20px;
+            bottom: 35px;
+            transform: skewY(18deg) rotate(36deg);
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 15px;
+            text-shadow: 1px 1px 3px #000;
+        }
+
         .claim-btn {
             display: block;
             width: 100%;
@@ -212,13 +245,22 @@
             </div>
         </div>
 
+        <!-- بەشی نوێی عەجەلەی خەڵاتەکان بە وێنەی گرافیکی بازنەیی -->
         <div class="balance-box" style="margin-top: 20px; padding: 15px 10px;">
             <div class="balance-label">Daily Lucky Spin</div>
-            <div class="wheel-wrapper">
+            
+            <div class="wheel-outer-container">
                 <div class="wheel-pointer"></div>
-                <canvas id="wheelCanvas" class="wheel-canvas" width="300" height="300"></canvas>
+                <div id="luckyWheel" class="wheel-wrapper">
+                    <div class="wheel-segment seg-1"><span class="seg-text">300</span></div>
+                    <div class="wheel-segment seg-2"><span class="seg-text">500</span></div>
+                    <div class="wheel-segment seg-3"><span class="seg-text">1000</span></div>
+                    <div class="wheel-segment seg-4"><span class="seg-text">2000</span></div>
+                    <div class="wheel-segment seg-5"><span class="seg-text">3000</span></div>
+                </div>
             </div>
-            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 5px;" onclick="startDailySpin()">SPIN NOW</button>
+
+            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 5px;" onclick="startDailySpin()">SPIN NOW (FREE)</button>
             <div id="spin-timer" style="font-size: 11px; color: #ef4444; margin-top: 8px; display: none;">You already used your free spin today!</div>
         </div>
 
@@ -227,7 +269,6 @@
     </div>
 
     <script>
-        // بەکارهێنانی جاڤاسکریپتی کلاسیکی کۆن (ES5) بۆ ڕێگری لە بلۆکبوون و وەستانی دوگمەکان
         var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
         var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
@@ -235,47 +276,3 @@
 
         var userType = localStorage.getItem('user_type') || "VIP"; 
         var vipSpinsCount = parseInt(localStorage.getItem('vip_spins_count')) || 0;
-        var lastNormalSpinDate = localStorage.getItem('last_normal_spin_date') || "";
-
-        var prizes =; 
-        var colors = ["#e5b323", "#7c2cbf", "#110b29", "#15eff2", "#0b0c10"];
-        var isSpinning = false;
-        var currentRotation = 0;
-
-        function getSpeedProd() { return speedLvl * 1; }
-        function getMaxCap() { return capLvl * 100; }
-        function getUpgradeCost(type, lvl) { return type === 'speed' ? lvl * 200 : lvl * 300; }
-
-        window.onload = function() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.ready();
-                window.Telegram.WebApp.expand();
-            }
-            drawWheel();
-            updateUI();
-            checkSpinStatus();
-            setInterval(executeFarmingGrid, 100);
-        };
-
-        function drawWheel() {
-            var canvas = document.getElementById("wheelCanvas");
-            if (!canvas) return;
-            var ctx = canvas.getContext("2d");
-            var numSegments = prizes.length;
-            var anglePerSegment = (2 * Math.PI) / numSegments;
-            var radius = canvas.width / 2;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            for (var i = 0; i < numSegments; i++) {
-                ctx.beginPath();
-                ctx.moveTo(radius, radius);
-                ctx.arc(radius, radius, radius - 5, i * anglePerSegment, (i + 1) * anglePerSegment);
-                ctx.fillStyle = colors[i % colors.length];
-                ctx.fill();
-                ctx.lineWidth = 3;
-                ctx.strokeStyle = "#45f3ff";
-                ctx.stroke();
-
-                ctx.save();
-                ctx.translate(radius, radius);
