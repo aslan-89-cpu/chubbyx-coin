@@ -3,289 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>chubbyX - Cyber Farm & Lucky Chests</title>
-    <script src="https://telegram.org"></script>
+    <title>Telegram Mini Game - Spin</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background: #1c1437 url('background.png.jpeg') no-repeat center top fixed;
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body, html { width: 100%; height: 100%; overflow: hidden; font-family: sans-serif; }
+        
+        .game-container {
+            width: 100vw;
+            height: 100vh;
+            background-image: url('Background.png.jpeg');
             background-size: cover;
-            color: #ffffff;
-            font-family: 'Arial', sans-serif;
+            background-position: center;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
+            position: relative;
         }
-        .farm-container {
-            background-color: rgba(31, 20, 51, 0.85);
-            backdrop-filter: blur(8px);
-            border: 2px solid #45f3ff;
+        .game-image {
+            width: 140px;
+            height: 140px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            touch-action: manipulation;
+        }
+        .btn {
+            background-color: #ffcc00;
+            color: #000;
+            font-weight: bold;
+            padding: 12px 25px;
+            margin: 8px;
+            border: none;
             border-radius: 25px;
-            padding: 25px;
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 0 30px rgba(69, 243, 255, 0.3);
+            font-size: 15px;
+            cursor: pointer;
+            touch-action: manipulation;
+            pointer-events: auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            width: 220px;
         }
-        h1 {
-            color: #45f3ff;
-            margin: 0 0 5px 0;
-            text-transform: uppercase;
-            font-size: 26px;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(69, 243, 255, 0.5);
-        }
-        .subtitle {
-            font-size: 13px;
-            color: #c5c6c7;
-            margin-bottom: 20px;
-        }
-        .balance-box {
-            background: rgba(11, 12, 16, 0.8);
-            border: 2px solid #7c2cbf;
-            border-radius: 15px;
-            padding: 12px;
-            margin-bottom: 20px;
-        }
-        .balance-label {
-            font-size: 12px;
-            color: #c5c6c7;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .balance-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: #ffffff;
-            margin-top: 5px;
-        }
-        .character-box {
-            width: 110px;
-            height: 110px;
-            margin: 0 auto 15px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid #15eff2;
-            border-radius: 50%;
-            overflow: hidden;
-            background: rgba(11, 12, 16, 0.6);
-        }
-        .spinning-character {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .pool-text {
-            font-size: 22px;
-            font-weight: bold;
-            color: #15eff2;
-            margin-top: 5px;
-            margin-bottom: 15px;
-        }
-        .upgrade-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+        .btn:active { transform: scale(0.95); }
+        .vip-btn { background-color: #9c27b0; color: #fff; }
+        .back-btn { background-color: #f44336; color: #fff; }
+        
+        #status {
+            color: #fff;
             margin-top: 15px;
-        }
-        .upgrade-card {
-            background-color: rgba(11, 12, 16, 0.8);
-            border: 1px solid #7c2cbf;
-            border-radius: 12px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .upgrade-card.available {
-            border-color: #45f3ff;
-        }
-        .up-title {
-            font-size: 11px;
-            font-weight: bold;
-            color: #45f3ff;
-            text-transform: uppercase;
-        }
-        .up-desc {
-            font-size: 13px;
-            margin: 4px 0;
-            color: #ffffff;
-        }
-        .up-cost {
-            font-size: 11px;
-            color: #e5b323;
-            font-weight: bold;
-        }
-
-        /* 📦 ڕێکخستنی شیکی سندوقەکان 📦 */
-        .chests-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin: 20px 0 10px 0;
-        }
-        .lucky-chest {
-            background: rgba(11, 12, 16, 0.9);
-            border: 2px solid #7c2cbf;
-            border-radius: 15px;
-            height: 100px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.2s, border-color 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-        }
-        .lucky-chest:hover {
-            transform: scale(1.05);
-            border-color: #45f3ff;
-        }
-        .chest-icon {
-            font-size: 32px;
-            margin-bottom: 5px;
-            transition: transform 0.3s;
-        }
-        .chest-label {
-            font-size: 11px;
-            color: #c5c6c7;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .lucky-chest.opened {
-            background: #110b29;
-            border-color: #e5b323;
-            cursor: default;
-            transform: none;
-        }
-        .lucky-chest.opened .chest-icon {
-            transform: scale(1.1);
-        }
-        .lucky-chest.opened .chest-label {
-            color: #ffffff;
-            font-size: 13px;
-        }
-
-        .claim-btn {
-            display: block;
-            width: 100%;
-            background-color: #7c2cbf;
-            color: white;
-            border: none;
-            padding: 14px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            margin-top: 20px;
-            box-shadow: 0 0 15px rgba(124, 44, 191, 0.4);
-        }
-        .back-btn {
-            display: block;
-            width: 100%;
-            background-color: #15eff2;
-            color: #0b0c10;
-            border: none;
-            padding: 14px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            margin-top: 12px;
+            font-size: 14px;
             text-align: center;
-            text-decoration: none;
+            background: rgba(0,0,0,0.6);
+            padding: 8px 15px;
+            border-radius: 10px;
+            max-width: 90%;
         }
     </style>
 </head>
 <body>
-    <div class="farm-container">
-        <h1>CHUBBYX CYBER FARM</h1>
-        <div class="subtitle">Upgrade your grid & harvest assets</div>
-        
-        <div class="balance-box">
-            <div class="balance-label">Total Balance</div>
-            <div class="balance-value"><span id="total-coins">0</span> X</div>
-        </div>
 
-        <div class="character-box">
-            <img src="image.png.jpeg" class="spinning-character" alt="Character" onerror="this.src='background.png.jpeg'">
-        </div>
+    <div class="game-container">
+        <img src="image.png.jpeg" alt="Game Image" class="game-image">
 
-        <div style="font-size: 13px; color: #c5c6c7;">Farming Pool</div>
-        <div class="pool-text"><span id="farm-pool">0.00</span> / <span id="max-capacity">100</span> X</div>
+        <button class="btn" onclick="spinNormal()">Normal Spin (500 - 4000)</button>
+        <button class="btn vip-btn" onclick="spinVip()">VIP Spin (6000 - 50000)</button>
+        <button class="btn back-btn" onclick="goBackMenu()">Back Menu</button>
 
-        <div class="upgrade-grid">
-            <div class="upgrade-card" id="up-speed-card" onclick="buyUpgrade('speed')">
-                <div class="up-title">⚡ Speed Rate</div>
-                <div class="up-desc">Lvl <span id="speed-lvl">1</span> (+<span id="speed-val">1</span>/s)</div>
-                <div class="up-cost">Cost: <span id="speed-cost">200</span> X</div>
-            </div>
-            <div class="upgrade-card" id="up-cap-card" onclick="buyUpgrade('capacity')">
-                <div class="up-title">🔋 Tank Cap</div>
-                <div class="up-desc">Lvl <span id="cap-lvl">1</span></div>
-                <div class="up-cost">Cost: <span id="cap-cost">300</span> X</div>
-            </div>
-        </div>
-
-        <!-- 📦 بەشی سندوقەکانی بەخت 📦 -->
-        <div class="balance-box" style="margin-top: 20px; padding: 15px 10px;">
-            <div class="balance-label" id="chest-status-title">LUCKY CHEST OPENER</div>
-            
-            <div class="chests-grid">
-                <div class="lucky-chest" id="chest0" onclick="openChest(0)">
-                    <div class="chest-icon" id="icon0">📦</div>
-                    <div class="chest-label" id="label0">Chest 1</div>
-                </div>
-                <div class="lucky-chest" id="chest1" onclick="openChest(1)">
-                    <div class="chest-icon" id="icon1">📦</div>
-                    <div class="chest-label" id="label1">Chest 2</div>
-                </div>
-                <div class="lucky-chest" id="chest2" onclick="openChest(2)">
-                    <div class="chest-icon" id="icon2">📦</div>
-                    <div class="chest-label" id="label2">Chest 3</div>
-                </div>
-            </div>
-
-            <div id="chest-cost-msg" style="font-size: 12px; color: #e5b323; font-weight: bold; margin-top: 5px;">Loading settings...</div>
-        </div>
-
-        <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
-        <button class="back-btn" onclick="goToMainMenu()">BACK TO MAIN</button>
+        <div id="status">Ready to spin!</div>
     </div>
 
     <script>
-        var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        var farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
-        var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
-        var capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-        var userType = localStorage.getItem('user_type') || "VIP"; 
-        var vipSpinsCount = parseInt(localStorage.getItem('vip_spins_count')) || 0;
-        var lastNormalSpinDate = localStorage.getItem('last_normal_spin_date') || "";
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            goBackMenu();
+        });
 
-        // 🔥 چاککردنی زۆر گرنگ: دروستکردنی مصفوفة بە شێوازێکی جیاواز بۆ ئەوەی چیتر لاپەڕەکە تێکنەچێت و نەوەستێت 🔥
-        var prizes = [];
-        prizes.push(300);
-        prizes.push(500);
-        prizes.push(1000);
-        prizes.push(2000);
-        prizes.push(3000);
+        function goBackMenu() {
+            window.location.href = 'index.html'; 
+        }
 
-        var isGameLocked = false;
+        // نۆرمال: ڕۆژی یەک جار، بڕ لە نێوان 500 بۆ 4000
+        function spinNormal() {
+            let lastSpin = localStorage.getItem('last_normal_spin');
+            let today = new Date().toDateString();
 
-        function getSpeedProd() { return speedLvl * 1; }
-        function getMaxCap() { return capLvl * 100; }
-        function getUpgradeCost(type, lvl) { return type === 'speed' ? lvl * 200 : lvl * 300; }
-
-        window.onload = function() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.ready();
-                window.Telegram.WebApp.expand();
+            if (lastSpin === today) {
+                document.getElementById('status').innerText = "تۆ ئەمڕۆ سپینی نۆرمالت بەکارهێناوە! سبەی تاقی بکەرەوە.";
+                return;
             }
+
+            // دروستکردنی بڕێکی هەڕەمەکی لە نێوان 500 بۆ 4000 بە شێوازێکی تەواو
+            let reward = Math.floor(Math.random() * (4000 - 500 + 1)) + 500;
+
+            localStorage.setItem('last_normal_spin', today);
+            document.getElementById('status').innerText = سپینی نۆرمال سەرکەوتوو بوو! بڕی ${reward} بەدەستهێنرا.;
+            // لێرەدا کۆدی داتابەیسی خۆت دابنە بۆ زیادکردنی reward بۆ یاریزانەکە
+        }
+
+        // ڤی ئای پی: سیستەمی یەکەم (0.5، 0.75، 1) گۆڕدرا بۆ: یەکەم جار 6000، دووەم جار 28000، سێیەم جار 50000 و پاشان دووبارە دەستپێدەکاتەوە
+        function spinVip() {
+            let vipStep = parseInt(localStorage.getItem('vip_step')) || 1;
+            let lastVipDate = localStorage.getItem('last_vip_date');
+            let today = new Date().toDateString();
+
+            if (lastVipDate === today) {
+                document.getElementById('status').innerText = "تۆ ئەمڕۆ سپینی VIP ت بەکارهێناوە!";
+                return;
+            }
+
+            let reward = 0;
+            if (vipStep === 1) {
+                reward = 6000;   // جاری یەکەم
+            } else if (vipStep === 2) {
+                reward = 28000;  // جاری دووەم (ڕێژەی ناوەڕاست)
+            } else if (vipStep === 3) {
+                reward = 50000;  // جاری سێیەم
+            }
+
+            document.getElementById('status').innerText = سپینی VIP سەرکەوتوو بوو! بڕی ${reward} وەرگیرا.;
+
+            let nextStep = vipStep + 1;
+            if (nextStep > 3) {
+                nextStep = 1; // دەگەڕێتەوە سەر 6000
+            }
+
+            localStorage.setItem('vip_step', nextStep);
+            localStorage.setItem('last_vip_date', today);
+            // لێرەدا کۆدی داتابەیسی خۆت دابنە بۆ ناردنی بڕی reward بۆ یاریزانەکە
+        }
+    </script>
+</body>
+</html>
