@@ -67,7 +67,7 @@
             margin-top: 5px;
         }
         
-        /* بازنەی خڕی کارەکتەر بۆ ئەوەی هێلکەیی نەبێت */
+        /* بازنەی خڕی کارەکتەر */
         .character-box {
             width: 110px;
             height: 110px;
@@ -87,7 +87,7 @@
             object-fit: cover;
         }
 
-        /* 🎡 ڕێکخستنی عەجەلەی خولاوە 🎡 */
+        /* 🎡 عەجەلەی خەڵاتەکان 🎡 */
         .wheel-wrapper {
             position: relative;
             width: 240px;
@@ -217,7 +217,7 @@
             </div>
         </div>
 
-        <!-- بەشی نوێ و جێگیری عەجەلە -->
+        <!-- بەشی عەجەلە -->
         <div class="balance-box" style="margin-top: 20px; padding: 15px 10px;">
             <div class="balance-label">Daily Lucky Spin</div>
             
@@ -226,8 +226,8 @@
                 <canvas id="wheelCanvas" class="wheel-canvas" width="300" height="300"></canvas>
             </div>
 
-            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 5px;" onclick="startDailySpin()">SPIN NOW (FREE)</button>
-            <div id="spin-timer" style="font-size: 11px; color: #ef4444; margin-top: 8px; display: none;">You already used your spin! Come back tomorrow.</div>
+            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 5px;" onclick="startDailySpin()">LOADING...</button>
+            <div id="spin-timer" style="font-size: 11px; color: #ef4444; margin-top: 8px; display: none;">You already used your free spin today!</div>
         </div>
 
         <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
@@ -241,11 +241,11 @@
         var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
         var capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
 
-        var userType = localStorage.getItem('user_type') || "VIP"; 
-        var dailySpinsUsed = parseInt(localStorage.getItem('daily_spins_used')) || 0;
-        var lastSpinDate = localStorage.getItem('last_spin_date') || "";
+        // مەرجەکانی ئەژمێر بۆ لۆژیکی تۆ
+        var userType = localStorage.getItem('user_type') || "VIP"; // دەتوانی لێرە بیگۆڕی بۆ VIP یان Normal
+        var vipSpinsCount = parseInt(localStorage.getItem('vip_spins_count')) || 0;
+        var lastNormalSpinDate = localStorage.getItem('last_normal_spin_date') || "";
 
-        // پێنج خەڵاتە سەرەکییەکە بە ڕێکی بەپێی وێنەکە
         const prizes =; 
         const colors = ["#e5b323", "#7c2cbf", "#110b29", "#15eff2", "#0b0c10"];
         let isSpinning = false;
@@ -268,9 +268,9 @@
             setInterval(executeFarmingGrid, 100);
         };
 
-        // ئەم بەشە ژمارەکان بە دروستی و بە بێ تێکەڵبوون دەنووسێت لەناو عەجەلەکەدا
         function drawWheel() {
             const canvas = document.getElementById("wheelCanvas");
+            if (!canvas) return;
             const ctx = canvas.getContext("2d");
             const numSegments = prizes.length;
             const anglePerSegment = (2 * Math.PI) / numSegments;
@@ -282,3 +282,6 @@
                 ctx.beginPath();
                 ctx.moveTo(radius, radius);
                 ctx.arc(radius, radius, radius - 5, i * anglePerSegment, (i + 1) * anglePerSegment);
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fill();
+                ctx.lineWidth = 3;
