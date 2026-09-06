@@ -66,6 +66,8 @@
             color: #ffffff;
             margin-top: 5px;
         }
+        
+        /* چاککردنی بازنەی وێنەی ناوەڕاست بۆ ئەوەی خڕ بێت و تێکنەچێت */
         .character-box {
             width: 120px;
             height: 120px;
@@ -73,18 +75,46 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 3px solid #15eff2;
+            border-radius: 50%;
+            overflow: hidden;
+            background: rgba(11, 12, 16, 0.6);
+            box-shadow: 0 0 15px rgba(21, 239, 242, 0.4);
         }
         .spinning-character {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ستایلی فیزیکی و گرافیکی عەجەلەکە */
+        .wheel-wrapper {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            margin: 15px auto;
+        }
+        .wheel-pointer {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 26px;
+            height: 26px;
+            background: #ff0055;
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            z-index: 10;
+        }
+        .wheel-canvas {
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
-            animation: spinToken 4s linear infinite;
+            border: 4px solid #45f3ff;
+            box-shadow: 0 0 20px rgba(69, 243, 255, 0.5);
+            transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1);
+            background: #0b0c10;
         }
-        @keyframes spinToken {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
-        }
+
         .pool-text {
             font-size: 22px;
             font-weight: bold;
@@ -167,7 +197,7 @@
         </div>
 
         <div class="character-box">
-            <img src="background.png.jpeg" class="spinning-character" alt="Character">
+            <img src="image_okkB6u.png.jpeg" class="spinning-character" alt="Character">
         </div>
 
         <div style="font-size: 13px; color: #c5c6c7;">Farming Pool</div>
@@ -186,11 +216,17 @@
             </div>
         </div>
 
-        <!-- DAILY LUCKY SPIN BOX -->
-        <div class="balance-box" style="margin-top: 20px;">
+        <!-- عەجەلەی خەڵاتەکان لەناو خودی فایلی سەرەکیدا -->
+        <div class="balance-box" style="margin-top: 20px; padding: 15px 10px;">
             <div class="balance-label">Daily Lucky Spin</div>
-            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 10px;" onclick="startDailySpin()">LOADING SPIN...</button>
-            <div id="spin-timer" style="font-size: 11px; color: #ef4444; margin-top: 6px; display: none;">You already used your spin! Come back tomorrow.</div>
+            
+            <div class="wheel-wrapper">
+                <div class="wheel-pointer"></div>
+                <canvas id="wheelCanvas" class="wheel-canvas" width="300" height="300"></canvas>
+            </div>
+
+            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 5px;" onclick="startDailySpin()">SPIN NOW (FREE)</button>
+            <div id="spin-timer" style="font-size: 11px; color: #ef4444; margin-top: 8px; display: none;">You already used your spin! Come back tomorrow.</div>
         </div>
 
         <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
@@ -198,19 +234,22 @@
     </div>
 
     <script>
-        // API Base URL (Change this to your actual server domain URL)
-        const API_URL = window.location.origin;
-
         var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
         
         var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
         var capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
 
-        // User profile configuration
-        var tgUser = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe?.user) ? window.Telegram.WebApp.initDataUnsafe.user : null;
-        var userId = tgUser ? tgUser.id : "12345678"; // Fallback test ID if running out of Telegram
-        var userType = localStorage.getItem('user_type') || "VIP"; // Can be set to "VIP" or "Normal"
+        // مەرجەکانی تایبەت بە سپینی ڕۆژانە
+        var userType = localStorage.getItem('user_type') || "VIP"; // دەتوانیت بیگوڕیت بۆ Normal یان VIP
+        var dailySpinsUsed = parseInt(localStorage.getItem('daily_spins_used')) || 0;
+        var lastSpinDate = localStorage.getItem('last_spin_date') || "";
+
+        // خەڵاتەکان و ڕەنگەکانی عەجەلەکە کە داوات کردبوو
+        const prizes =; 
+        const colors = ["#7c2cbf", "#110b29", "#15eff2", "#0b0c10", "#e5b323"];
+        let isSpinning = false;
+        let currentRotation = 0;
 
         function getSpeedProd() { return speedLvl * 1; }
         function getMaxCap() { return capLvl * 100; }
@@ -223,50 +262,24 @@
                 window.Telegram.WebApp.ready();
                 window.Telegram.WebApp.expand();
             }
+            drawWheel();
             updateUI();
             checkSpinStatus();
             setInterval(executeFarmingGrid, 100);
         };
 
-        function executeFarmingGrid() {
-            var max = getMaxCap();
-            if (farmPool < max) {
-                var productionPerTick = (getSpeedProd() / 10);
-                farmPool = Math.min(max, farmPool + productionPerTick);
-                document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
-                localStorage.setItem('farm_pool', farmPool);
-            }
-            refreshUpgradeCardStatus();
-        }
+        // لۆژیکی کێشانی عەجەلەکە لەسەر شاشە
+        function drawWheel() {
+            const canvas = document.getElementById("wheelCanvas");
+            const ctx = canvas.getContext("2d");
+            const numSegments = prizes.length;
+            const anglePerSegment = (2 * Math.PI) / numSegments;
+            const radius = canvas.width / 2;
 
-        function updateUI() {
-            document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
-            document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
-            document.getElementById('max-capacity').innerText = getMaxCap();
-            
-            document.getElementById('speed-lvl').innerText = speedLvl;
-            document.getElementById('speed-val').innerText = getSpeedProd();
-            document.getElementById('speed-cost').innerText = getUpgradeCost('speed', speedLvl);
-            
-            document.getElementById('cap-lvl').innerText = capLvl;
-            document.getElementById('cap-cost').innerText = getUpgradeCost('capacity', capLvl);
-        }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        function refreshUpgradeCardStatus() {
-            toggleCardClass('up-speed-card', totalCoins >= getUpgradeCost('speed', speedLvl));
-            toggleCardClass('up-cap-card', totalCoins >= getUpgradeCost('capacity', capLvl));
-        }
-
-        function toggleCardClass(id, isAvailable) {
-            const el = document.getElementById(id);
-            if (el) {
-                if (isAvailable) el.classList.add('available');
-                else el.classList.remove('available');
-            }
-        }
-
-        function buyUpgrade(type) {
-            if (type === 'speed') {
-                let cost = getUpgradeCost('speed', speedLvl);
-                if (totalCoins >= cost) {
-                    totalCoins -= cost;
+            for (let i = 0; i < numSegments; i++) {
+                ctx.beginPath();
+                ctx.moveTo(radius, radius);
+                ctx.arc(radius, radius, radius - 5, i * anglePerSegment, (i + 1) * anglePerSegment);
+                ctx.fillStyle = colors[i % colors.length];
