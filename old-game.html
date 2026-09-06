@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>chubbyX - Cyber Farm</title>
+    <title>chubbyX - Cyber Farm & Lucky Chests</title>
     <script src="https://telegram.org"></script>
     <style>
         * {
@@ -67,23 +67,21 @@
             margin-top: 5px;
         }
         .character-box {
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
             margin: 0 auto 15px auto;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 3px solid #15eff2;
+            border-radius: 50%;
+            overflow: hidden;
+            background: rgba(11, 12, 16, 0.6);
         }
         .spinning-character {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            border-radius: 50%;
-            animation: spinToken 4s linear infinite;
-        }
-        @keyframes spinToken {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .pool-text {
             font-size: 22px;
@@ -125,6 +123,56 @@
             color: #e5b323;
             font-weight: bold;
         }
+
+        /* 📦 دیزاینی سندوقەکانی بەخت 📦 */
+        .chests-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0 10px 0;
+        }
+        .lucky-chest {
+            background: rgba(11, 12, 16, 0.9);
+            border: 2px solid #7c2cbf;
+            border-radius: 15px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+        .lucky-chest:hover {
+            transform: scale(1.05);
+            border-color: #45f3ff;
+        }
+        .chest-icon {
+            font-size: 32px;
+            margin-bottom: 5px;
+            transition: transform 0.3s;
+        }
+        .chest-label {
+            font-size: 11px;
+            color: #c5c6c7;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .lucky-chest.opened {
+            background: #110b29;
+            border-color: #e5b323;
+            cursor: default;
+            transform: none;
+        }
+        .lucky-chest.opened .chest-icon {
+            transform: scale(1.1);
+        }
+        .lucky-chest.opened .chest-label {
+            color: #ffffff;
+            font-size: 13px;
+        }
+
         .claim-btn {
             display: block;
             width: 100%;
@@ -167,7 +215,7 @@
         </div>
 
         <div class="character-box">
-            <img src="background.png.jpeg" class="spinning-character" alt="Character">
+            <img src="image.png.jpeg" class="spinning-character" alt="Character" onerror="this.src='background.png.jpeg'">
         </div>
 
         <div style="font-size: 13px; color: #c5c6c7;">Farming Pool</div>
@@ -186,11 +234,26 @@
             </div>
         </div>
 
-        <!-- DAILY LUCKY SPIN BOX -->
-        <div class="balance-box" style="margin-top: 20px;">
-            <div class="balance-label">Daily Lucky Spin</div>
-            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 10px;" onclick="startDailySpin()">SPIN NOW</button>
-            <div id="spin-timer" style="font-size: 11px; color: #ef4444; margin-top: 6px; display: none;">You already used your free spin today!</div>
+        <!-- 📦 بەشی یاری نوێی سندوقەکانی بەخت 📦 -->
+        <div class="balance-box" style="margin-top: 20px; padding: 15px 10px;">
+            <div class="balance-label" id="chest-status-title">LUCKY CHEST OPENER</div>
+            
+            <div class="chests-grid">
+                <div class="lucky-chest" id="chest0" onclick="openChest(0)">
+                    <div class="chest-icon" id="icon0">📦</div>
+                    <div class="chest-label" id="label0">Chest 1</div>
+                </div>
+                <div class="lucky-chest" id="chest1" onclick="openChest(1)">
+                    <div class="chest-icon" id="icon1">📦</div>
+                    <div class="chest-label" id="label1">Chest 2</div>
+                </div>
+                <div class="lucky-chest" id="chest2" onclick="openChest(2)">
+                    <div class="chest-icon" id="icon2">📦</div>
+                    <div class="chest-label" id="label2">Chest 3</div>
+                </div>
+            </div>
+
+            <div id="chest-cost-msg" style="font-size: 12px; color: #e5b323; font-weight: bold; margin-top: 5px;">Loading settings...</div>
         </div>
 
         <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
@@ -200,23 +263,19 @@
     <script>
         var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
-        
         var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
         var capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
 
-        // لیستی خەڵاتەکانی سەر سپینەکە کە داوات کردبوون
-        var prizes =;
-
-        // لۆژیکی بەکارهێنەران: Normal تەنها ڕۆژی ١ جار، VIP بەردەوامە
-        var userType = localStorage.getItem('user_type') || "VIP"; // دەتوانی لێرە بیگۆڕی بۆ Normal یان VIP
+        var userType = localStorage.getItem('user_type') || "VIP"; 
         var vipSpinsCount = parseInt(localStorage.getItem('vip_spins_count')) || 0;
         var lastNormalSpinDate = localStorage.getItem('last_normal_spin_date') || "";
 
+        var prizes =;
+        var isGameLocked = false;
+
         function getSpeedProd() { return speedLvl * 1; }
         function getMaxCap() { return capLvl * 100; }
-        function getUpgradeCost(type, lvl) {
-            return type === 'speed' ? lvl * 200 : lvl * 300;
-        }
+        function getUpgradeCost(type, lvl) { return type === 'speed' ? lvl * 200 : lvl * 300; }
 
         window.onload = function() {
             if (window.Telegram && window.Telegram.WebApp) {
@@ -224,50 +283,9 @@
                 window.Telegram.WebApp.expand();
             }
             updateUI();
-            checkSpinStatus();
+            checkChestStatus();
             setInterval(executeFarmingGrid, 100);
         };
 
         function executeFarmingGrid() {
             var max = getMaxCap();
-            if (farmPool < max) {
-                var productionPerTick = (getSpeedProd() / 10);
-                farmPool = Math.min(max, farmPool + productionPerTick);
-                document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
-                localStorage.setItem('farm_pool', farmPool);
-            }
-            refreshUpgradeCardStatus();
-        }
-
-        function updateUI() {
-            document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
-            document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
-            document.getElementById('max-capacity').innerText = getMaxCap();
-            
-            document.getElementById('speed-lvl').innerText = speedLvl;
-            document.getElementById('speed-val').innerText = getSpeedProd();
-            document.getElementById('speed-cost').innerText = getUpgradeCost('speed', speedLvl);
-            
-            document.getElementById('cap-lvl').innerText = capLvl;
-            document.getElementById('cap-cost').innerText = getUpgradeCost('capacity', capLvl);
-        }
-
-        function refreshUpgradeCardStatus() {
-            toggleCardClass('up-speed-card', totalCoins >= getUpgradeCost('speed', speedLvl));
-            toggleCardClass('up-cap-card', totalCoins >= getUpgradeCost('capacity', capLvl));
-        }
-
-        function toggleCardClass(id, isAvailable) {
-            var el = document.getElementById(id);
-            if (el) {
-                if (isAvailable) el.classList.add('available');
-                else el.classList.remove('available');
-            }
-        }
-
-        function buyUpgrade(type) {
-            if (type === 'speed') {
-                var costSpeed = getUpgradeCost('speed', speedLvl);
-                if (totalCoins >= costSpeed) {
-                    totalCoins -= costSpeed;
-                    speedLvl++;
