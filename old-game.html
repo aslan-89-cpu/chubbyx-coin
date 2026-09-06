@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>chubbyX - Cyber Rocket Crash</title>
+    <title>chubbyX - Cyber Farm</title>
     <script src="https://telegram.org"></script>
     <style>
         * {
@@ -67,21 +67,23 @@
             margin-top: 5px;
         }
         .character-box {
-            width: 110px;
-            height: 110px;
+            width: 120px;
+            height: 120px;
             margin: 0 auto 15px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 3px solid #15eff2;
-            border-radius: 50%;
-            overflow: hidden;
-            background: rgba(11, 12, 16, 0.6);
         }
         .spinning-character {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 50%;
+            animation: spinToken 4s linear infinite;
+        }
+        @keyframes spinToken {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
         }
         .pool-text {
             font-size: 22px;
@@ -123,46 +125,6 @@
             color: #e5b323;
             font-weight: bold;
         }
-
-        /* 🚀 دیزاینی شیکی گرافیگی یاری ڕۆکێت کراش 🚀 */
-        .crash-game-box {
-            background: #0b0c10;
-            border: 2px solid #7c2cbf;
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-            position: relative;
-            overflow: hidden;
-            min-height: 180px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .crash-multiplier {
-            font-size: 42px;
-            font-weight: bold;
-            color: #45f3ff;
-            text-shadow: 0 0 15px rgba(69, 243, 255, 0.6);
-            margin-bottom: 10px;
-            z-index: 5;
-        }
-        .rocket-animation {
-            font-size: 35px;
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            transition: transform 0.1s linear;
-            z-index: 4;
-            display: none;
-        }
-        .crash-status-text {
-            font-size: 14px;
-            color: #e5b323;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-
         .claim-btn {
             display: block;
             width: 100%;
@@ -205,7 +167,7 @@
         </div>
 
         <div class="character-box">
-            <img src="image.png.jpeg" class="spinning-character" alt="Character" onerror="this.src='background.png.jpeg'">
+            <img src="background.png.jpeg" class="spinning-character" alt="Character">
         </div>
 
         <div style="font-size: 13px; color: #c5c6c7;">Farming Pool</div>
@@ -224,15 +186,7 @@
             </div>
         </div>
 
-        <!-- 🚀 بەشی یاری نوێی کراش ڕۆکێت 🚀 -->
-        <div class="crash-game-box">
-            <div id="rocketIcon" class="rocket-animation">🚀</div>
-            <div id="multiplierDisplay" class="crash-multiplier">100 X</div>
-            <div id="crashStatus" class="crash-status-text">Ready to launch!</div>
-            
-            <button id="action-game-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 15px; width: 90%;" onclick="handleGameAction()">LAUNCH ROCKET</button>
-            <div id="game-timer-msg" style="font-size: 11px; color: #ef4444; margin-top: 8px; display: none;">You already played your free turn today!</div>
-        </div>
+        <!-- لێرەدا سەرجەم کۆدە تێکچووەکانی مینی گەیمەکە بە تەواوی سڕدراونەتەوە بۆ ڕێگری لە بلۆکبوون -->
 
         <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
         <button class="back-btn" onclick="goToMainMenu()">BACK TO MAIN</button>
@@ -241,23 +195,15 @@
     <script>
         var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
+        
         var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
         var capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
 
-        var userType = localStorage.getItem('user_type') || "VIP"; // گۆڕینی بۆ VIP یان Normal
-        var vipSpinsCount = parseInt(localStorage.getItem('vip_spins_count')) || 0;
-        var lastNormalSpinDate = localStorage.getItem('last_normal_spin_date') || "";
-
-        // قۆناغەکانی سەرکەوتنی ڕۆکێتەکە ڕێک بەپێی نرخەکانی تۆ
-        var prizeMilestones =;
-        var currentMilestoneIndex = 0;
-        var gameRunning = false;
-        var gameInterval = null;
-        var crashPointIndex = 0;
-
         function getSpeedProd() { return speedLvl * 1; }
         function getMaxCap() { return capLvl * 100; }
-        function getUpgradeCost(type, lvl) { return type === 'speed' ? lvl * 200 : lvl * 300; }
+        function getUpgradeCost(type, lvl) {
+            return type === 'speed' ? lvl * 200 : lvl * 300;
+        }
 
         window.onload = function() {
             if (window.Telegram && window.Telegram.WebApp) {
@@ -265,7 +211,6 @@
                 window.Telegram.WebApp.expand();
             }
             updateUI();
-            checkGameStatus();
             setInterval(executeFarmingGrid, 100);
         };
 
@@ -283,3 +228,53 @@
         function updateUI() {
             document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
             document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
+            document.getElementById('max-capacity').innerText = getMaxCap();
+            
+            document.getElementById('speed-lvl').innerText = speedLvl;
+            document.getElementById('speed-val').innerText = getSpeedProd();
+            document.getElementById('speed-cost').innerText = getUpgradeCost('speed', speedLvl);
+            
+            document.getElementById('cap-lvl').innerText = capLvl;
+            document.getElementById('cap-cost').innerText = getUpgradeCost('capacity', capLvl);
+        }
+
+        function refreshUpgradeCardStatus() {
+            toggleCardClass('up-speed-card', totalCoins >= getUpgradeCost('speed', speedLvl));
+            toggleCardClass('up-cap-card', totalCoins >= getUpgradeCost('capacity', capLvl));
+        }
+
+        function toggleCardClass(id, isAvailable) {
+            var el = document.getElementById(id);
+            if (el) {
+                if (isAvailable) el.classList.add('available');
+                else el.classList.remove('available');
+            }
+        }
+
+        function buyUpgrade(type) {
+            if (type === 'speed') {
+                var costSpeed = getUpgradeCost('speed', speedLvl);
+                if (totalCoins >= costSpeed) {
+                    totalCoins -= costSpeed;
+                    speedLvl++;
+                    localStorage.setItem('farm_speed_lvl', speedLvl);
+                } else { alert("Not enough coins!"); return; }
+            } else {
+                var costCap = getUpgradeCost('capacity', capLvl);
+                if (totalCoins >= costCap) {
+                    totalCoins -= costCap;
+                    capLvl++;
+                    localStorage.setItem('farm_cap_lvl', capLvl);
+                } else { alert("Not enough coins!"); return; }
+            }
+            localStorage.setItem('chubby_coins', totalCoins);
+            updateUI();
+        }
+
+        function claimFarmedCoins() {
+            if (farmPool > 0) {
+                totalCoins += Math.floor(farmPool);
+                farmPool = 0;
+                localStorage.setItem('chubby_coins', totalCoins);
+                localStorage.setItem('farm_pool', farmPool);
+                updateUI();
