@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>chubbyX - Cyber Farm</title>
+    <title>ChubbyX - Lucky Spin</title>
     <script src="https://telegram.org"></script>
     <style>
         * {
@@ -23,8 +23,8 @@
             min-height: 100vh;
             padding: 20px;
         }
-        .farm-container {
-            background-color: rgba(31, 20, 51, 0.85);
+        .spin-container {
+            background-color: rgba(31, 20, 51, 0.9);
             backdrop-filter: blur(8px);
             border: 2px solid #45f3ff;
             border-radius: 25px;
@@ -38,7 +38,7 @@
             color: #45f3ff;
             margin: 0 0 5px 0;
             text-transform: uppercase;
-            font-size: 26px;
+            font-size: 24px;
             letter-spacing: 1px;
             text-shadow: 0 0 10px rgba(69, 243, 255, 0.5);
         }
@@ -52,86 +52,52 @@
             border: 2px solid #7c2cbf;
             border-radius: 15px;
             padding: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         .balance-label {
             font-size: 12px;
             color: #c5c6c7;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
         .balance-value {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: bold;
             color: #ffffff;
             margin-top: 5px;
         }
-        .character-box {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 15px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .wheel-wrapper {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 25px auto;
         }
-        .spinning-character {
-            width: 100px;
-            height: 100px;
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25px;
+            height: 25px;
+            background-color: #ff007f;
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            z-index: 10;
+        }
+        .wheel-img {
+            width: 100%;
+            height: 100%;
             object-fit: contain;
             border-radius: 50%;
-            animation: spinToken 4s linear infinite;
+            border: 5px solid #7c2cbf;
+            transition: transform 4s cubic-bezier(0.1, 0.8, 0.3, 1);
         }
-        @keyframes spinToken {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
-        }
-        .pool-text {
-            font-size: 22px;
-            font-weight: bold;
-            color: #15eff2;
-            margin-top: 5px;
-            margin-bottom: 15px;
-        }
-        .upgrade-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .btn-group {
+            display: flex;
+            flex-direction: column;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 10px;
         }
-        .upgrade-card {
-            background-color: rgba(11, 12, 16, 0.8);
-            border: 1px solid #7c2cbf;
-            border-radius: 12px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            opacity: 0.6;
-        }
-        .upgrade-card.available {
-            opacity: 1;
-            border-color: #45f3ff;
-            box-shadow: 0 0 10px rgba(69, 243, 255, 0.2);
-        }
-        .up-title {
-            font-size: 13px;
-            font-weight: bold;
-            color: #45f3ff;
-            text-transform: uppercase;
-        }
-        .up-desc {
-            font-size: 13px;
-            margin: 4px 0;
-            color: #ffffff;
-        }
-        .up-cost {
-            font-size: 11px;
-            color: #e5b323;
-            font-weight: bold;
-        }
-        .claim-btn {
-            display: block;
+        .spin-btn {
             width: 100%;
-            background-color: #7c2cbf;
             color: white;
             border: none;
             padding: 14px;
@@ -139,8 +105,23 @@
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
-            margin-top: 20px;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .normal-btn {
+            background-color: #7c2cbf;
             box-shadow: 0 0 15px rgba(124, 44, 191, 0.4);
+        }
+        .vip-btn {
+            background: linear-gradient(45deg, #e5b323, #ff007f);
+            box-shadow: 0 0 15px rgba(229, 179, 35, 0.4);
+            border: 1px solid #ffffff;
+        }
+        .spin-btn:disabled {
+            background: #4a3b63 !important;
+            box-shadow: none !important;
+            cursor: not-allowed;
+            opacity: 0.5;
         }
         .back-btn {
             display: block;
@@ -157,39 +138,38 @@
             text-align: center;
             text-decoration: none;
         }
+        .reward-popup {
+            color: #e5b323;
+            font-weight: bold;
+            font-size: 17px;
+            margin-top: 10px;
+            min-height: 24px;
+            text-shadow: 0 0 5px rgba(229, 179, 35, 0.3);
+        }
     </style>
 </head>
 <body>
-    <div class="farm-container">
-        <h1>CHUBBYX CYBER FARM</h1>
-        <div class="subtitle">Upgrade your grid & harvest assets</div>
+    <div class="spin-container">
+        <h1>LUCKY SPIN</h1>
+        <div class="subtitle">Choose your wheel and win rewards</div>
         
         <div class="balance-box">
             <div class="balance-label">Total Balance</div>
             <div class="balance-value"><span id="total-coins">0</span> X</div>
         </div>
 
-        <div class="character-box">
-            <img src="image.png.jpeg" class="spinning-character" alt="Character">
+        <div class="wheel-wrapper">
+            <div class="wheel-pointer"></div>
+            <img src="image.png.jpeg" id="wheel" class="wheel-img" alt="Wheel">
         </div>
 
-        <div style="font-size: 13px; color: #c5c6c7;">Farming Pool</div>
-        <div class="pool-text"><span id="farm-pool">0.00</span> / <span id="max-capacity">100</span> X</div>
+        <div class="reward-popup" id="reward-text"></div>
 
-        <div class="upgrade-grid">
-            <div class="upgrade-card" id="up-speed-card" onclick="buyUpgrade('speed')">
-                <div class="up-title">⚡ Speed Rate</div>
-                <div class="up-desc">Lvl <span id="speed-lvl">1</span> (<span id="speed-val">1</span>/s)</div>
-                <div class="up-cost"><span id="speed-cost">200</span> X</div>
-            </div>
-            <div class="upgrade-card" id="up-cap-card" onclick="buyUpgrade('capacity')">
-                <div class="up-title">🔋 Tank Cap</div>
-                <div class="up-desc">Lvl <span id="cap-lvl">1</span></div>
-                <div class="up-cost"><span id="cap-cost">300</span> X</div>
-            </div>
+        <div class="btn-group">
+            <button class="spin-btn normal-btn" id="normal-button" onclick="startSpinning('normal')">⚡ Normal Spin (300-2K)</button>
+            <button class="spin-btn vip-btn" id="vip-button" onclick="startSpinning('vip')">👑 VIP Spin (5K-50K)</button>
         </div>
-
-        <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
+        
         <button class="back-btn" onclick="goToMainMenu()">BACK TO MAIN</button>
     </div>
 
@@ -199,16 +179,7 @@
         const serverUrl = "https://railway.app";
 
         var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        var farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
-        
-        var speedlvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
-        var caplvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
-
-        function getSpeedProd() { return speedlvl * 1; }
-        function getMaxCap() { return caplvl * 100; }
-        function getUpgradeCost(type, lvl) {
-            return type === 'speed' ? lvl * 200 : lvl * 300;
-        }
+        var isSpinning = false;
 
         window.onload = async function() {
             if (window.Telegram && window.Telegram.WebApp) {
@@ -216,7 +187,6 @@
                 window.Telegram.WebApp.expand();
             }
             
-            // لۆدکردنی خاڵەکان لە فایربەیسەوە لە کاتی کردنەوەی یارییەکە
             if (userId) {
                 try {
                     const response = await fetch(${serverUrl}/api/user-stats?userId=${userId});
@@ -225,56 +195,75 @@
                         totalCoins = data.balance;
                         localStorage.setItem('chubby_coins', totalCoins);
                     }
-                } catch (err) { console.error("Error loading stats from server:", err); }
+                } catch (err) { console.error("Error loading stats:", err); }
             }
-
-            updateUI();
-            setInterval(executeFarmingGrid, 100);
+            document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
         };
 
-        function executeFarmingGrid() {
-            var max = getMaxCap();
-            if (farmPool < max) {
-                var productionPerTick = (getSpeedProd() / 10);
-                farmPool = Math.min(max, farmPool + productionPerTick);
-                document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
-                localStorage.setItem('farm_pool', farmPool);
+        function startSpinning(type) {
+            if (isSpinning) return;
+            isSpinning = true;
+            
+            // قفڵکردنی دوگمەکان لە کاتی خولانەوەدا
+            document.getElementById('normal-button').disabled = true;
+            document.getElementById('vip-button').disabled = true;
+            document.getElementById('reward-text').innerText = "🔮 Spinning the wheel...";
+
+            // خولانەوەی دەستکرد
+            const randomDegree = Math.floor(Math.random() * 360) + 2160; // لانی کەم ٦ جار دەخولێتەوە
+            const wheel = document.getElementById('wheel');
+            wheel.style.transform = rotate(${randomDegree}deg);
+
+            // دیاریکردنی خەڵاتەکان بەپێی جۆری سپینەکە
+            let rewards = [];
+            if (type === 'normal') {
+                rewards =;
+            } else if (type === 'vip') {
+                rewards =;
             }
-            refreshUpgradeCardStatus();
+            
+            const finalReward = rewards[Math.floor(Math.random() * rewards.length)];
+
+            setTimeout(() => {
+                isSpinning = false;
+                document.getElementById('normal-button').disabled = false;
+                document.getElementById('vip-button').disabled = false;
+                
+                if (type === 'vip') {
+                    document.getElementById('reward-text').innerText = 🔥 JACKPOT VIP: +${finalReward.toLocaleString()} X!;
+                } else {
+                    document.getElementById('reward-text').innerText = 🎉 You Won: +${finalReward.toLocaleString()} X!;
+                }
+                
+                syncBalanceWithServer(finalReward);
+            }, 4000);
         }
 
-        function updateUI() {
-            document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
-            document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
-            document.getElementById('max-capacity').innerText = getMaxCap();
-
-            document.getElementById('speed-lvl').innerText = speedlvl;
-            document.getElementById('speed-val').innerText = getSpeedProd();
-            document.getElementById('speed-cost').innerText = getUpgradeCost('speed', speedlvl);
-
-            document.getElementById('cap-lvl').innerText = caplvl;
-            document.getElementById('cap-cost').innerText = getUpgradeCost('capacity', caplvl);
-        }
-
-        function refreshUpgradeCardStatus() {
-            toggleCardClass('up-speed-card', totalCoins >= getUpgradeCost('speed', speedlvl));
-            toggleCardClass('up-cap-card', totalCoins >= getUpgradeCost('capacity', caplvl));
-        }
-
-        function toggleCardClass(id, isAvailable) {
-            const el = document.getElementById(id);
-            if (el) {
-                if (isAvailable) el.classList.add('available');
-                else el.classList.remove('available');
+        async function syncBalanceWithServer(scoreToAdd) {
+            if (!userId) {
+                totalCoins += scoreToAdd;
+                localStorage.setItem('chubby_coins', totalCoins);
+                document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
+                return;
             }
+            try {
+                const response = await fetch(${serverUrl}/api/save-score, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: userId, score: scoreToAdd })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    totalCoins = data.newBalance;
+                    localStorage.setItem('chubby_coins', totalCoins);
+                    document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
+                }
+            } catch (err) { console.error("Error syncing score:", err); }
         }
 
-        function buyUpgrade(type) {
-            if (type === 'speed') {
-                let cost = getUpgradeCost('speed', speedlvl);
-                if (totalCoins >= cost) {
-                    totalCoins -= cost;
-                    speedlvl++;
-                    localStorage.setItem('farm_speed_lvl', speedlvl);
-                } else { alert("Not enough coins!"); return; }
-            } else {
+        function goToMainMenu() {
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
