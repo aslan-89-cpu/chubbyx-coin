@@ -85,7 +85,6 @@
             clip-path: polygon(50% 100%, 0 0, 100% 0);
             z-index: 10;
         }
-        /* لێرەدا کێشەی وێنە بازنەییەکەم بۆ چاککردوویت */
         .wheel-img {
             width: 180px;
             height: 180px;
@@ -217,6 +216,7 @@
             const wheel = document.getElementById('wheel');
             wheel.style.transform = rotate(${randomDegree}deg);
 
+            // لێرەدا بڕی خەڵاتەکانم بە تەواوی بە ژمارە بۆ داناویت بەپێی داواکارییەکەت
             let rewards = [];
             if (type === 'normal') {
                 rewards =;
