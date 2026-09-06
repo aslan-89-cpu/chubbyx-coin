@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>chubbyX - Cyber Farm</title>
+    <title>chubbyX - Cyber Rocket Crash</title>
     <script src="https://telegram.org"></script>
     <style>
         * {
@@ -67,23 +67,21 @@
             margin-top: 5px;
         }
         .character-box {
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
             margin: 0 auto 15px auto;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 3px solid #15eff2;
+            border-radius: 50%;
+            overflow: hidden;
+            background: rgba(11, 12, 16, 0.6);
         }
         .spinning-character {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            border-radius: 50%;
-            animation: spinToken 4s linear infinite;
-        }
-        @keyframes spinToken {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .pool-text {
             font-size: 22px;
@@ -126,63 +124,43 @@
             font-weight: bold;
         }
 
-        /* 🎡 ڕێکخستنی شیک و جوانی عەجەلەی گرافیکی 🎡 */
-        .wheel-container {
-            position: relative;
-            width: 240px;
-            height: 240px;
-            margin: 20px auto;
-        }
-        .wheel-pointer {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 25px solid #ff0055;
-            z-index: 99;
-        }
-        .wheel-inner {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 5px solid #45f3ff;
+        /* 🚀 دیزاینی شیکی گرافیگی یاری ڕۆکێت کراش 🚀 */
+        .crash-game-box {
+            background: #0b0c10;
+            border: 2px solid #7c2cbf;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(69, 243, 255, 0.5);
-            transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
-            background: #0b0c10;
-        }
-        .wheel-slice {
-            position: absolute;
-            width: 50%;
-            height: 50%;
-            top: 0;
-            right: 0;
-            transform-origin: 0% 100%;
+            min-height: 180px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
+            align-items: center;
         }
-        /* گۆشەی ڕاست و جیاکردنەوەی ژمارەکان */
-        .slice-1 { background: #e5b323; transform: rotate(0deg) skewY(-18deg); }
-        .slice-2 { background: #7c2cbf; transform: rotate(72deg) skewY(-18deg); }
-        .slice-3 { background: #110b29; transform: rotate(144deg) skewY(-18deg); }
-        .slice-4 { background: #15eff2; transform: rotate(216deg) skewY(-18deg); }
-        .slice-5 { background: #0b0c10; transform: rotate(288deg) skewY(-18deg); }
-
-        .slice-text {
-            position: absolute;
-            left: -20px;
-            bottom: 35px;
-            transform: skewY(18deg) rotate(36deg);
-            color: #ffffff;
+        .crash-multiplier {
+            font-size: 42px;
             font-weight: bold;
-            font-size: 15px;
-            text-shadow: 1px 1px 3px #000;
+            color: #45f3ff;
+            text-shadow: 0 0 15px rgba(69, 243, 255, 0.6);
+            margin-bottom: 10px;
+            z-index: 5;
+        }
+        .rocket-animation {
+            font-size: 35px;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            transition: transform 0.1s linear;
+            z-index: 4;
+            display: none;
+        }
+        .crash-status-text {
+            font-size: 14px;
+            color: #e5b323;
+            font-weight: bold;
+            margin-top: 5px;
         }
 
         .claim-btn {
@@ -227,7 +205,7 @@
         </div>
 
         <div class="character-box">
-            <img src="background.png.jpeg" class="spinning-character" alt="Character">
+            <img src="image.png.jpeg" class="spinning-character" alt="Character" onerror="this.src='background.png.jpeg'">
         </div>
 
         <div style="font-size: 13px; color: #c5c6c7;">Farming Pool</div>
@@ -246,23 +224,14 @@
             </div>
         </div>
 
-        <!-- بەشی ڕێکخراوی عەجەلەکە بە دیزاینی جێگیر -->
-        <div class="balance-box" style="margin-top: 20px; padding: 15px 10px;">
-            <div class="balance-label">Daily Lucky Spin</div>
+        <!-- 🚀 بەشی یاری نوێی کراش ڕۆکێت 🚀 -->
+        <div class="crash-game-box">
+            <div id="rocketIcon" class="rocket-animation">🚀</div>
+            <div id="multiplierDisplay" class="crash-multiplier">100 X</div>
+            <div id="crashStatus" class="crash-status-text">Ready to launch!</div>
             
-            <div class="wheel-container">
-                <div class="wheel-pointer"></div>
-                <div id="wheelMenu" class="wheel-inner">
-                    <div class="wheel-slice slice-1"><span class="slice-text">300</span></div>
-                    <div class="wheel-slice slice-2"><span class="slice-text">500</span></div>
-                    <div class="wheel-slice slice-3"><span class="slice-text">1000</span></div>
-                    <div class="wheel-slice slice-4"><span class="slice-text">2000</span></div>
-                    <div class="wheel-slice slice-5"><span class="slice-text">3000</span></div>
-                </div>
-            </div>
-
-            <button id="spin-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 5px;" onclick="startDailySpin()">SPIN NOW</button>
-            <div id="spin-timer" style="font-size: 11px; color: #ef4444; margin-top: 8px; display: none;">You already used your free spin today!</div>
+            <button id="action-game-btn" class="claim-btn" style="background-color: #e5b323; color: #0b0c10; margin-top: 15px; width: 90%;" onclick="handleGameAction()">LAUNCH ROCKET</button>
+            <div id="game-timer-msg" style="font-size: 11px; color: #ef4444; margin-top: 8px; display: none;">You already played your free turn today!</div>
         </div>
 
         <button class="claim-btn" onclick="claimFarmedCoins()">CLAIM COINS</button>
@@ -272,10 +241,45 @@
     <script>
         var totalCoins = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var farmPool = parseFloat(localStorage.getItem('farm_pool')) || 0.0;
-        
         var speedLvl = parseInt(localStorage.getItem('farm_speed_lvl')) || 1;
         var capLvl = parseInt(localStorage.getItem('farm_cap_lvl')) || 1;
 
-        // مەرجەکان: VIP بەردەوام و Normal ٢٤ کاتژمێر جارێک
-        var userType = localStorage.getItem('user_type') || "VIP"; 
+        var userType = localStorage.getItem('user_type') || "VIP"; // گۆڕینی بۆ VIP یان Normal
         var vipSpinsCount = parseInt(localStorage.getItem('vip_spins_count')) || 0;
+        var lastNormalSpinDate = localStorage.getItem('last_normal_spin_date') || "";
+
+        // قۆناغەکانی سەرکەوتنی ڕۆکێتەکە ڕێک بەپێی نرخەکانی تۆ
+        var prizeMilestones =;
+        var currentMilestoneIndex = 0;
+        var gameRunning = false;
+        var gameInterval = null;
+        var crashPointIndex = 0;
+
+        function getSpeedProd() { return speedLvl * 1; }
+        function getMaxCap() { return capLvl * 100; }
+        function getUpgradeCost(type, lvl) { return type === 'speed' ? lvl * 200 : lvl * 300; }
+
+        window.onload = function() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand();
+            }
+            updateUI();
+            checkGameStatus();
+            setInterval(executeFarmingGrid, 100);
+        };
+
+        function executeFarmingGrid() {
+            var max = getMaxCap();
+            if (farmPool < max) {
+                var productionPerTick = (getSpeedProd() / 10);
+                farmPool = Math.min(max, farmPool + productionPerTick);
+                document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
+                localStorage.setItem('farm_pool', farmPool);
+            }
+            refreshUpgradeCardStatus();
+        }
+
+        function updateUI() {
+            document.getElementById('total-coins').innerText = totalCoins.toLocaleString();
+            document.getElementById('farm-pool').innerText = farmPool.toFixed(2);
