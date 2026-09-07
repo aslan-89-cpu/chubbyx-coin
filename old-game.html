@@ -6,8 +6,8 @@
     <title>TELEGRAM MINI GAME</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body, html { width: 100%; height: 100%; overflow: hidden; font-family: sans-serif; background-color: #121216; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body, html { width: 100%; height: 100%; overflow: hidden; font-family: sans-serif; background: linear-gradient(135deg, #1a1a2e, #16213e); }
         
         .game-container {
             width: 100vw;
@@ -23,25 +23,20 @@
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 10;
         }
 
         .image-wrapper {
             width: 160px;
             height: 160px;
-            min-width: 160px;
-            min-height: 160px;
-            border-radius: 50% !important;
-            overflow: hidden !important;
+            border-radius: 50%;
+            overflow: hidden;
             border: 4px solid #ffcc00;
-            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+            box-shadow: 0 0 25px rgba(255, 204, 0, 0.6);
             margin-bottom: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: #222;
-            position: relative;
-            z-index: 20;
         }
 
         .game-image {
@@ -49,7 +44,6 @@
             height: 100%;
             object-fit: cover;
             border-radius: 50%;
-            display: block;
         }
 
         @keyframes spinAnimation {
@@ -77,8 +71,6 @@
             width: 260px;
             text-align: center;
             text-transform: uppercase;
-            position: relative;
-            z-index: 20;
         }
         .btn:active { transform: scale(0.95); }
         .vip-btn { background-color: #9c27b0; color: #fff; }
@@ -96,8 +88,6 @@
             max-width: 85%;
             border: 1px solid rgba(255,255,255,0.1);
             text-transform: uppercase;
-            position: relative;
-            z-index: 20;
         }
     </style>
 </head>
@@ -116,30 +106,35 @@
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        try {
+            const tg = window.Telegram.WebApp;
+            tg.expand();
 
-        tg.BackButton.show();
-        tg.BackButton.onClick(() => {
-            goBackMenu();
-        });
+            if (tg.BackButton) {
+                tg.BackButton.show();
+                tg.BackButton.onClick(() => {
+                    goBackMenu();
+                });
+            }
+        } catch (e) {
+            console.log("Telegram WebApp not initialized", e);
+        }
 
         function goBackMenu() {
             window.location.href = 'index.html'; 
         }
 
-        document.getElementById('backBtn').addEventListener('click', goBackMenu);
-        document.getElementById('normalBtn').addEventListener('click', spinNormal);
-        document.getElementById('vipBtn').addEventListener('click', spinVip);
-
         function triggerSpinEffect(callback) {
             const img = document.getElementById('wheelImage');
-            img.classList.add('spinning');
-            
-            setTimeout(() => {
-                img.classList.remove('spinning');
+            if (img) {
+                img.classList.add('spinning');
+                setTimeout(() => {
+                    img.classList.remove('spinning');
+                    if (callback) callback();
+                }, 1500);
+            } else {
                 if (callback) callback();
-            }, 1500);
+            }
         }
 
         function spinNormal() {
@@ -192,6 +187,27 @@
                 document.getElementById('status').innerText = VIP SUCCESS! YOU WON ${reward} COINS.;
             });
         }
+
+        function bindEvents() {
+            const normalBtn = document.getElementById('normalBtn');
+            const vipBtn = document.getElementById('vipBtn');
+            const backBtn = document.getElementById('backBtn');
+
+            if (normalBtn) {
+                normalBtn.addEventListener('click', (e) => { e.preventDefault(); spinNormal(); });
+                normalBtn.addEventListener('touchend', (e) => { e.preventDefault(); spinNormal(); });
+            }
+            if (vipBtn) {
+                vipBtn.addEventListener('click', (e) => { e.preventDefault(); spinVip(); });
+                vipBtn.addEventListener('touchend', (e) => { e.preventDefault(); spinVip(); });
+            }
+            if (backBtn) {
+                backBtn.addEventListener('click', (e) => { e.preventDefault(); goBackMenu(); });
+                backBtn.addEventListener('touchend', (e) => { e.preventDefault(); goBackMenu(); });
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', bindEvents);
     </script>
 </body>
 </html>
