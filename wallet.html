@@ -3,51 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect Wallet</title>
-    <!-- TON Connect SDK فەرمی -->
+    <title>CHUBBYX Wallet & Stars</title>
+    <!-- Script for TON Connect -->
     <script src="https://unpkg.com"></script>
-    <script src="https://telegram.org"></script>
     <style>
         body {
-            background: #090514;
-            color: white;
-            font-family: sans-serif;
-            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c1b, #201a35);
+            color: #ffffff;
+            margin: 0;
             padding: 20px;
-        }
-        h2 {
-            color: #4a8fff;
-            margin-top: 20px;
-            text-transform: uppercase;
-        }
-        .wallet-box {
-            background: #1c183a;
-            border: 1px solid #331a5e;
-            border-radius: 12px;
-            padding: 30px 20px;
-            margin: 30px 0;
-            min-height: 12px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        h2 { color: #f39c12; margin-bottom: 5px; }
+        p { color: #bdc3c7; font-size: 14px; margin-bottom: 25px; }
+        .btn {
+            background: linear-gradient(90deg, #1e90ff, #00bfff);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .stars-section {
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+        #ton-connect-btn {
+            display: inline-block;
+            margin: 10px auto;
         }
     </style>
 </head>
 <body>
 
-    <h2>ChubbyX Wallet</h2>
-    <div class="wallet-box">
-        <!-- دوگمەی ئۆتۆماتیکی تۆن کۆنێکت لێرە دروست دەبێت -->
-        <div id="ton-connect-button"></div>
+    <div class="container">
+        <h2>CHUBBYX WALLET Hub</h2>
+        <p>Connect your TON Wallet or Buy Coins with Telegram Stars</p>
+
+        <!-- TON Connect Button Container -->
+        <div id="ton-connect-btn"></div>
+
+        <!-- Telegram Stars Section -->
+        <div class="stars-section">
+            <h3 style="color: #f1c40f; margin-bottom: 10px;">⭐ Buy Coins with Stars</h3>
+            <button class="btn" onclick="buyWithStars(50)">Buy 5,000 Coins (50 Stars)</button>
+            <button class="btn" onclick="buyWithStars(100)">Buy 12,000 Coins (100 Stars)</button>
+        </div>
     </div>
 
     <script>
-        // بەستنەوەی جزدانەکان بە شێوەی فەرمی
+        // Initialize TON Connect UI with your new Netlify link
         const tonConnectUI = new TONConnectUI.TonConnectUI({
-            manifestUrl: 'https://railway.app',
-            buttonRootId: 'ton-connect-button'
+            manifestUrl: 'https://netlify.app',
+            buttonRootId: 'ton-connect-btn'
         });
+
+        // Listen for Wallet Connection Status
+        tonConnectUI.onStatusChange(wallet => {
+            if (wallet) {
+                console.log('Wallet connected:', wallet.account.address);
+            }
+        });
+
+        // Function for Telegram Stars Purchase
+        function buyWithStars(starsAmount) {
+            alert(Initiating purchase for ${starsAmount} Stars...);
+        }
     </script>
+
 </body>
 </html>
