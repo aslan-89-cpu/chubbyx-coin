@@ -3,45 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Telegram Mini Game - Spin</title>
+    <title>TELEGRAM MINI GAME</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body, html { width: 100%; height: 100%; overflow: hidden; font-family: sans-serif; }
+        body, html { width: 100%; height: 100%; overflow: hidden; font-family: sans-serif; background-color: #121216; }
         
         .game-container {
             width: 100vw;
             height: 100vh;
-            background-color: #121216;
             background-image: url('Background.png.jpeg');
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
         }
 
         .image-wrapper {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            overflow: hidden;
+            width: 160px;
+            height: 160px;
+            min-width: 160px;
+            min-height: 160px;
+            border-radius: 50% !important;
+            overflow: hidden !important;
             border: 4px solid #ffcc00;
             box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: #222;
+            position: relative;
+            z-index: 20;
         }
 
         .game-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.1s ease;
+            border-radius: 50%;
+            display: block;
         }
 
         @keyframes spinAnimation {
@@ -57,11 +65,11 @@
             background-color: #ffcc00;
             color: #000;
             font-weight: bold;
-            padding: 14px 25px;
-            margin: 10px;
+            padding: 14px 20px;
+            margin: 8px 0;
             border: none;
             border-radius: 25px;
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
             touch-action: manipulation;
             pointer-events: auto;
@@ -69,6 +77,8 @@
             width: 260px;
             text-align: center;
             text-transform: uppercase;
+            position: relative;
+            z-index: 20;
         }
         .btn:active { transform: scale(0.95); }
         .vip-btn { background-color: #9c27b0; color: #fff; }
@@ -76,16 +86,18 @@
         
         #status {
             color: #fff;
-            margin-top: 20px;
-            font-size: 16px;
+            margin-top: 15px;
+            font-size: 14px;
             font-weight: bold;
             text-align: center;
             background: rgba(0,0,0,0.7);
-            padding: 12px 20px;
+            padding: 10px 15px;
             border-radius: 12px;
             max-width: 85%;
             border: 1px solid rgba(255,255,255,0.1);
             text-transform: uppercase;
+            position: relative;
+            z-index: 20;
         }
     </style>
 </head>
@@ -93,12 +105,12 @@
 
     <div class="game-container">
         <div class="image-wrapper">
-            <img src="image.png.jpeg" alt="Game Image" class="game-image" id="wheelImage">
+            <img src="image.png.jpeg" alt="GAME IMAGE" class="game-image" id="wheelImage">
         </div>
 
-        <button class="btn" onclick="spinNormal()">NORMAL SPIN (500 - 4000)</button>
-        <button class="btn vip-btn" onclick="spinVip()">VIP SPIN (6000 - 50000)</button>
-        <button class="btn back-btn" onclick="goBackMenu()">BACK MENU</button>
+        <button class="btn" id="normalBtn">NORMAL SPIN (500 - 4000)</button>
+        <button class="btn vip-btn" id="vipBtn">VIP SPIN (6000 - 50000)</button>
+        <button class="btn back-btn" id="backBtn">BACK MENU</button>
 
         <div id="status">READY TO SPIN!</div>
     </div>
@@ -116,6 +128,10 @@
             window.location.href = 'index.html'; 
         }
 
+        document.getElementById('backBtn').addEventListener('click', goBackMenu);
+        document.getElementById('normalBtn').addEventListener('click', spinNormal);
+        document.getElementById('vipBtn').addEventListener('click', spinVip);
+
         function triggerSpinEffect(callback) {
             const img = document.getElementById('wheelImage');
             img.classList.add('spinning');
@@ -131,7 +147,7 @@
             let today = new Date().toDateString();
 
             if (lastSpin === today) {
-                document.getElementById('status').innerText = "YOU ALREADY USED NORMAL SPIN TODAY! TRY AGAIN TOMORROW.";
+                document.getElementById('status').innerText = "YOU ALREADY USED NORMAL SPIN TODAY!";
                 return;
             }
 
