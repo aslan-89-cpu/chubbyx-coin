@@ -2,9 +2,9 @@
   "name": "chubbyx-coin",
   "version": "1.0.5",
   "description": "chubbyx Safe backend",
-  "main": "server.js",
+  "main": "Server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node Server.js"
   },
   "dependencies": {
     "express": "^4.19.2",
