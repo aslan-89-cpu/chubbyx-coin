@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChubbyX Wallet Hub</title>
-    <!-- Importing the Official and Stable TON Connect SDK -->
+    <title>ChubbyX Wallet & VIP Hub</title>
+    <!-- Official TON Connect SDK -->
     <script src="https://unpkg.com"></script>
     <style>
         body {
@@ -26,19 +26,19 @@
             border-radius: 20px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 360px;
+            max-width: 380px;
         }
         h2 {
             color: #f3ba2f;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-size: 22px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        p {
+        .subtitle {
             color: #a0aec0;
-            font-size: 14px;
-            margin-bottom: 30px;
+            font-size: 13px;
+            margin-bottom: 25px;
         }
         #ton-connect-button {
             display: flex;
@@ -46,44 +46,118 @@
             margin-bottom: 25px;
             min-height: 44px;
         }
-        .btn-back {
-            background: linear-gradient(135deg, #0088cc, #00a6ff);
-            color: white;
-            border: none;
-            padding: 14px 28px;
+        /* VIP Premium Section */
+        .vip-section {
+            background: linear-gradient(135deg, #1e2538, #161b29);
+            border: 1px solid #f3ba2f;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(243, 186, 47, 0.15);
+        }
+        .vip-title {
+            color: #f3ba2f;
             font-size: 16px;
             font-weight: bold;
-            border-radius: 12px;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+        .vip-benefits {
+            color: #cbd5e0;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        .btn-buy-vip {
+            background: linear-gradient(135deg, #f3ba2f, #e2b020);
+            color: #0b0e14;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            box-shadow: 0px 4px 10px rgba(0, 136, 204, 0.3);
-            transition: all 0.3s ease;
+            transition: transform 0.2s;
+        }
+        .btn-buy-vip:active {
+            transform: scale(0.98);
+        }
+        .btn-back {
+            background: transparent;
+            color: #a0aec0;
+            border: 1px solid #a0aec0;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease;
         }
         .btn-back:hover {
-            transform: translateY(-2px);
-            box-shadow: 0px 6px 15px rgba(0, 136, 204, 0.5);
+            color: #ffffff;
+            border-color: #ffffff;
         }
     </style>
 </head>
 <body>
 
     <div class="wallet-container">
-        <h2>CHUBBYX WALLET HUB</h2>
-        <p>Connect your Wallet to manage your coins</p>
+        <h2>ChubbyX Wallet</h2>
+        <p class="subtitle">Connect your TON wallet to access premium status</p>
         
-        <!-- Official TON Connect Button Placement -->
+        <!-- 1. Standard TON Connect Button -->
         <div id="ton-connect-button"></div>
 
-        <!-- Back to Main Dashboard -->
+        <!-- 2. VIP Status Section with TON Purchase -->
+        <div class="vip-section">
+            <div class="vip-title">👑 CHUBBYX VIP PREMIUM</div>
+            <div class="vip-benefits">
+                • 5x Multi-Tap Mining Speed<br>
+                • Exclusive Daily Bonus Rewards<br>
+                • Instant VIP Badge Verification
+            </div>
+            <button onclick="purchaseVIP()" class="btn-buy-vip">Get VIP Status</button>
+        </div>
+
+        <!-- Back Button to Index -->
         <button onclick="backToMenu()" class="btn-back">Back to Menu</button>
     </div>
 
     <script>
-        // Initializing TON Connect using the standard secure manifest to guarantee popup delivery
+        // Initialize official TON Connect SDK using stable open-source manifest
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://githubusercontent.com',
             buttonRootId: 'ton-connect-button'
         });
+
+        // Function to handle the TON Wallet Transaction for VIP Status
+        async function purchaseVIP() {
+            if (!tonConnectUI.connected) {
+                alert("Please connect your TON wallet first using the button above!");
+                return;
+            }
+
+            // Standard secure transaction layout to request 0.5 TON for VIP
+            const transaction = {
+                validUntil: Math.floor(Date.now() / 1000) + 360,
+                messages: [
+                    {
+                        address: "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c", // Replace with your own TON Wallet address later
+                        amount: "500000000" // 0.5 TON (expressed in nanotons)
+                    }
+                ]
+            };
+
+            try {
+                const result = await tonConnectUI.sendTransaction(transaction);
+                alert("Transaction sent successfully! Checking blockchain for validation...");
+            } catch (e) {
+                console.error("Transaction failed", e);
+                alert("Transaction canceled or failed. Please try again.");
+            }
+        }
 
         function backToMenu() {
             window.location.href = "index.html"; 
