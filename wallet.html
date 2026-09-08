@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChubbyX Wallet Hub</title>
-    <!-- Core TON Connect SDK -->
-    <script src="https://unpkg.com"></script>
+    <!-- loading Telegram Official Script directly -->
+    <script src="https://telegram.org"></script>
     <style>
         body {
             background-color: #0b0e14;
@@ -35,16 +35,23 @@
             font-size: 14px;
             margin-bottom: 24px;
         }
-        #ton-connect-btn {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            min-height: 40px;
-        }
-        .btn-back {
-            background: #0088cc;
+        .btn-wallet {
+            background: linear-gradient(135deg, #0088cc, #00a6ff);
             color: white;
             border: none;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 136, 204, 0.3);
+        }
+        .btn-back {
+            background: transparent;
+            color: #a0aec0;
+            border: 1px solid #a0aec0;
             padding: 12px;
             font-size: 16px;
             font-weight: bold;
@@ -58,20 +65,23 @@
 
     <div class="wallet-container">
         <h2>CHUBBYX WALLET HUB</h2>
-        <p>Connect your TON Wallet to manage your coins</p>
+        <p>Connect your Wallet to manage your coins</p>
         
-        <!-- Official Button Root -->
-        <div id="ton-connect-btn"></div>
+        <!-- Native Telegram Wallet Button -->
+        <button onclick="connectTelegramWallet()" class="btn-wallet">Connect Wallet</button>
 
         <button onclick="backToMenu()" class="btn-back">Back to Menu</button>
     </div>
 
     <script>
-        // Injecting the official standard demo manifest directly to ensure it loads anywhere
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://github.io',
-            buttonRootId: 'ton-connect-btn'
-        });
+        // Initialize Telegram WebApp
+        const webapp = window.Telegram.WebApp;
+        webapp.ready();
+
+        function connectTelegramWallet() {
+            // Using native Telegram Link to open the Wallet interface instantly
+            webapp.openTelegramLink('https://t.me');
+        }
 
         function backToMenu() {
             window.location.href = "index.html";
