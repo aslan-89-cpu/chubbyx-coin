@@ -4,89 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChubbyX Wallet Hub</title>
-    <!-- Official TON Connect SDK -->
+    <!-- Core TON Connect SDK -->
     <script src="https://unpkg.com"></script>
     <style>
         body {
             background-color: #0b0e14;
             color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
         }
         .wallet-container {
             text-align: center;
             background: #151a26;
             padding: 30px;
             border-radius: 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 400px;
+            width: 90%;
+            max-width: 360px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
         h2 {
             color: #f3ba2f;
-            margin-bottom: 10px;
-            font-size: 24px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            margin-bottom: 8px;
         }
         p {
             color: #a0aec0;
             font-size: 14px;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
-        #ton-connect {
+        #ton-connect-btn {
             display: flex;
             justify-content: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            min-height: 40px;
         }
         .btn-back {
-            background: linear-gradient(135deg, #0088cc, #00a6ff);
+            background: #0088cc;
             color: white;
             border: none;
-            padding: 14px 28px;
+            padding: 12px;
             font-size: 16px;
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
             width: 100%;
-            box-shadow: 0px 4px 10px rgba(0, 136, 204, 0.3);
-            transition: all 0.3s ease;
-        }
-        .btn-back:hover {
-            transform: translateY(-2px);
-            box-shadow: 0px 6px 15px rgba(0, 136, 204, 0.5);
         }
     </style>
 </head>
 <body>
 
     <div class="wallet-container">
-        <h2>ChubbyX Wallet Hub</h2>
-        <p>Connect your Wallet to manage your coins</p>
+        <h2>CHUBBYX WALLET HUB</h2>
+        <p>Connect your TON Wallet to manage your coins</p>
         
-        <!-- TON Connect Button Interface (Supports OKX, Tonkeeper, Trust Wallet, etc.) -->
-        <div id="ton-connect"></div>
+        <!-- Official Button Root -->
+        <div id="ton-connect-btn"></div>
 
-        <!-- Back to Main Menu -->
         <button onclick="backToMenu()" class="btn-back">Back to Menu</button>
     </div>
 
     <script>
-        // Initialize TON Connect UI with standard multi-wallet manifest
+        // Injecting the official standard demo manifest directly to ensure it loads anywhere
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://githubusercontent.com',
-            buttonRootId: 'ton-connect'
+            manifestUrl: 'https://github.io',
+            buttonRootId: 'ton-connect-btn'
         });
 
-        // Navigation function to return to the game dashboard
         function backToMenu() {
-            window.location.href = "index.html"; 
+            window.location.href = "index.html";
         }
     </script>
 
