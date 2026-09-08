@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChubbyX Wallet Hub</title>
-    <!-- loading Telegram Official Script directly -->
-    <script src="https://telegram.org"></script>
+    <!-- Loading Official TON Connect from CDNJS -->
+    <script src="https://cloudflare.com"></script>
     <style>
         body {
             background-color: #0b0e14;
@@ -35,18 +35,10 @@
             font-size: 14px;
             margin-bottom: 24px;
         }
-        .btn-wallet {
-            background: linear-gradient(135deg, #0088cc, #00a6ff);
-            color: white;
-            border: none;
-            padding: 14px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 15px;
-            box-shadow: 0px 4px 10px rgba(0, 136, 204, 0.3);
+        #ton-connect-btn {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
         }
         .btn-back {
             background: transparent;
@@ -67,21 +59,18 @@
         <h2>CHUBBYX WALLET HUB</h2>
         <p>Connect your Wallet to manage your coins</p>
         
-        <!-- Native Telegram Wallet Button -->
-        <button onclick="connectTelegramWallet()" class="btn-wallet">Connect Wallet</button>
+        <!-- Official TON Connect Interactive Button -->
+        <div id="ton-connect-btn"></div>
 
         <button onclick="backToMenu()" class="btn-back">Back to Menu</button>
     </div>
 
     <script>
-        // Initialize Telegram WebApp
-        const webapp = window.Telegram.WebApp;
-        webapp.ready();
-
-        function connectTelegramWallet() {
-            // Using native Telegram Link to open the Wallet interface instantly
-            webapp.openTelegramLink('https://t.me');
-        }
+        // Using static legal demo manifest to guarantee connection anywhere
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://github.io',
+            buttonRootId: 'ton-connect-btn'
+        });
 
         function backToMenu() {
             window.location.href = "index.html";
