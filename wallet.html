@@ -68,23 +68,23 @@
 
     <div class="wallet-container">
         <h2>ChubbyX Wallet Hub</h2>
-        <p>Connect your TON Wallet to manage your coins</p>
+        <p>Connect your Wallet to manage your coins</p>
         
-        <!-- 1. Official TON Connect Button Placeholder -->
+        <!-- TON Connect Button Interface (Supports OKX, Tonkeeper, Trust Wallet, etc.) -->
         <div id="ton-connect"></div>
 
-        <!-- 2. Back to Menu Button -->
+        <!-- Back to Main Menu -->
         <button onclick="backToMenu()" class="btn-back">Back to Menu</button>
     </div>
 
     <script>
-        // Initialize TON Connect UI using your Netlify domain
+        // Initialize TON Connect UI with standard multi-wallet manifest
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://netlify.app',
+            manifestUrl: 'https://githubusercontent.com',
             buttonRootId: 'ton-connect'
         });
 
-        // Navigation function to return to main game interface
+        // Navigation function to return to the game dashboard
         function backToMenu() {
             window.location.href = "index.html"; 
         }
