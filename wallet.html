@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChubbyX Wallet Hub</title>
-    <!-- Loading Official TON Connect from CDNJS -->
-    <script src="https://cloudflare.com"></script>
+    <!-- Official TON Connect UI SDK -->
+    <script src="https://unpkg.com"></script>
     <style>
         body {
             background-color: #0b0e14;
@@ -16,6 +16,8 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .wallet-container {
             text-align: center;
@@ -29,27 +31,30 @@
         h2 {
             color: #f3ba2f;
             margin-bottom: 8px;
+            text-transform: uppercase;
         }
         p {
             color: #a0aec0;
             font-size: 14px;
             margin-bottom: 24px;
         }
-        #ton-connect-btn {
+        #ton-connect {
             display: flex;
             justify-content: center;
             margin-bottom: 20px;
+            min-height: 44px;
         }
         .btn-back {
-            background: transparent;
-            color: #a0aec0;
-            border: 1px solid #a0aec0;
+            background: linear-gradient(135deg, #0088cc, #00a6ff);
+            color: white;
+            border: none;
             padding: 12px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
             width: 100%;
+            box-shadow: 0px 4px 10px rgba(0, 136, 204, 0.2);
         }
     </style>
 </head>
@@ -59,17 +64,17 @@
         <h2>CHUBBYX WALLET HUB</h2>
         <p>Connect your Wallet to manage your coins</p>
         
-        <!-- Official TON Connect Interactive Button -->
-        <div id="ton-connect-btn"></div>
+        <!-- Official TON Connect Interactive Button Placeholder -->
+        <div id="ton-connect"></div>
 
         <button onclick="backToMenu()" class="btn-back">Back to Menu</button>
     </div>
 
     <script>
-        // Using static legal demo manifest to guarantee connection anywhere
+        // Initialize TON Connect UI directly linked to your verified manifest
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://github.io',
-            buttonRootId: 'ton-connect-btn'
+            manifestUrl: 'https://netlify.app',
+            buttonRootId: 'ton-connect'
         });
 
         function backToMenu() {
