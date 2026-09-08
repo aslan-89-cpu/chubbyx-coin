@@ -3,26 +3,28 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 // Production Server URL
-const serverUrl = "https://railway.app";
-const botUsername = "ChubbyX_Coin_bot";
+const serverurl = window.location.origin;
+const botusername = "Chubbyx_Coin_bot";
 
-const userId = tg.initDataUnsafe?.user?.id || 0;
+const userid = tg.initDataUnsafe?.user?.id || 0;
 
-function shareInviteLink() {
-    if (!userId) {
+function shareinviteLink() {
+    if (!userid) {
         alert("User data not found. Please open via Telegram.");
         return;
     }
-    const inviteLink = https://t.me{botUsername}/app?startapp=${userId};
-    const shareUrl = https://t.me{encodeURIComponent(inviteLink)}&text=${encodeURIComponent("Join ChubbyX and earn coins! 🚀")};
-    tg.openTelegramLink(shareUrl);
+    
+    const invitelink = https://t.me{botusername}/app?startapp=r_${userid};
+    const shareurl = https://t.me{encodeURIComponent(invitelink)}&text=${encodeURIComponent("Join ChubbyX and earn coins! 🚀")};
+    
+    tg.openTelegramLink(shareurl);
 }
 
-async function checkInviteStatus() {
-    if (!userId) return;
+async function checkinvitestatus() {
+    if (!userid) return;
     
     try {
-        const response = await fetch(${serverUrl}/api/user-stats?userId=${userId});
+        const response = await fetch(${serverurl}/api/user-stats?userId=${userid});
         const data = await response.json();
         
         if (data.success) {
@@ -35,5 +37,5 @@ async function checkInviteStatus() {
     }
 }
 
-// کاتێک لاپەڕەکە لۆد دەبێت، ئۆتۆماتیکی خاڵەکان لە سێرڤەرەوە دەخوێنێتەوە
-document.addEventListener("DOMContentLoaded", checkInviteStatus);
+// Automatically load invite status when the page is ready
+document.addEventListener("DOMContentLoaded", checkinvitestatus);
