@@ -3,94 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHUBBYX Wallet & Stars</title>
-    <!-- Script for TON Connect -->
+    <title>ChubbyX Wallet Hub</title>
+    <!-- Official TON Connect SDK -->
     <script src="https://unpkg.com"></script>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f0c1b, #201a35);
+            background-color: #0b0e14;
             color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
+            box-sizing: border-box;
         }
-        .container {
-            background: rgba(255, 255, 255, 0.05);
+        .wallet-container {
+            text-align: center;
+            background: #151a26;
             padding: 30px;
             border-radius: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            max-width: 400px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
             width: 100%;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            max-width: 400px;
         }
-        h2 { color: #f39c12; margin-bottom: 5px; }
-        p { color: #bdc3c7; font-size: 14px; margin-bottom: 25px; }
-        .btn {
-            background: linear-gradient(90deg, #1e90ff, #00bfff);
+        h2 {
+            color: #f3ba2f;
+            margin-bottom: 10px;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        p {
+            color: #a0aec0;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        #ton-connect {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        .btn-back {
+            background: linear-gradient(135deg, #0088cc, #00a6ff);
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 14px 28px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
             width: 100%;
-            margin-top: 15px;
-            transition: transform 0.2s;
+            box-shadow: 0px 4px 10px rgba(0, 136, 204, 0.3);
+            transition: all 0.3s ease;
         }
-        .btn:active { transform: scale(0.98); }
-        .stars-section {
-            margin-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 20px;
-        }
-        #ton-connect-btn {
-            display: inline-block;
-            margin: 10px auto;
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0px 6px 15px rgba(0, 136, 204, 0.5);
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>CHUBBYX WALLET Hub</h2>
-        <p>Connect your TON Wallet or Buy Coins with Telegram Stars</p>
+    <div class="wallet-container">
+        <h2>ChubbyX Wallet Hub</h2>
+        <p>Connect your TON Wallet to manage your coins</p>
+        
+        <!-- 1. Official TON Connect Button Placeholder -->
+        <div id="ton-connect"></div>
 
-        <!-- TON Connect Button Container -->
-        <div id="ton-connect-btn"></div>
-
-        <!-- Telegram Stars Section -->
-        <div class="stars-section">
-            <h3 style="color: #f1c40f; margin-bottom: 10px;">⭐ Buy Coins with Stars</h3>
-            <button class="btn" onclick="buyWithStars(50)">Buy 5,000 Coins (50 Stars)</button>
-            <button class="btn" onclick="buyWithStars(100)">Buy 12,000 Coins (100 Stars)</button>
-        </div>
+        <!-- 2. Back to Menu Button -->
+        <button onclick="backToMenu()" class="btn-back">Back to Menu</button>
     </div>
 
     <script>
-        // Initialize TON Connect UI with your new Netlify link
-        const tonConnectUI = new TONConnectUI.TonConnectUI({
+        // Initialize TON Connect UI using your Netlify domain
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://netlify.app',
-            buttonRootId: 'ton-connect-btn'
+            buttonRootId: 'ton-connect'
         });
 
-        // Listen for Wallet Connection Status
-        tonConnectUI.onStatusChange(wallet => {
-            if (wallet) {
-                console.log('Wallet connected:', wallet.account.address);
-            }
-        });
-
-        // Function for Telegram Stars Purchase
-        function buyWithStars(starsAmount) {
-            alert(Initiating purchase for ${starsAmount} Stars...);
+        // Navigation function to return to main game interface
+        function backToMenu() {
+            window.location.href = "index.html"; 
         }
     </script>
 
