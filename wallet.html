@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChubbyX Wallet Hub</title>
+    <!-- Official Telegram WebApp Script to interact inside the app -->
+    <script src="https://telegram.org"></script>
     <style>
         body {
             background-color: #0b0e14;
@@ -48,8 +50,6 @@
             width: 100%;
             margin-bottom: 15px;
             box-shadow: 0px 4px 10px rgba(0, 136, 204, 0.3);
-            display: block;
-            text-decoration: none;
         }
         .btn-back {
             background: transparent;
@@ -70,13 +70,21 @@
         <h2>CHUBBYX WALLET HUB</h2>
         <p>Connect your Wallet to manage your coins</p>
         
-        <!-- Native Link Button that opens Wallet directly -->
-        <a href="https://t.me" target="_blank" class="btn-connect">Connect Wallet</a>
+        <!-- Native Click Button -->
+        <button onclick="openWallet()" class="btn-connect">Connect Wallet</button>
 
         <button onclick="backToMenu()" class="btn-back">Back to Menu</button>
     </div>
 
     <script>
+        // Tell Telegram the webapp is ready
+        window.Telegram.WebApp.ready();
+
+        function openWallet() {
+            // Using the official SDK method to force open Telegram Wallet deep-link inside the app
+            window.Telegram.WebApp.openTelegramLink('https://t.me');
+        }
+
         function backToMenu() {
             window.location.href = "index.html";
         }
