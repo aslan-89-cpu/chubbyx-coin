@@ -3,166 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChubbyX Wallet & VIP Hub</title>
-    <!-- Official TON Connect SDK -->
+    <title>ChubbyX - Connect Wallet</title>
+    <!-- Importing TON Connect SDK -->
     <script src="https://unpkg.com"></script>
     <style>
         body {
-            background-color: #0b0e14;
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
             color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .wallet-container {
             text-align: center;
-            background: #151a26;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 380px;
+            padding: 50px 20px;
         }
-        h2 {
-            color: #f3ba2f;
-            margin-bottom: 5px;
-            font-size: 22px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
         }
-        .subtitle {
-            color: #a0aec0;
-            font-size: 13px;
-            margin-bottom: 25px;
+        p {
+            color: #aaaaaa;
+            font-size: 16px;
         }
         #ton-connect-button {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 25px;
-            min-height: 44px;
-        }
-        /* VIP Premium Section */
-        .vip-section {
-            background: linear-gradient(135deg, #1e2538, #161b29);
-            border: 1px solid #f3ba2f;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(243, 186, 47, 0.15);
-        }
-        .vip-title {
-            color: #f3ba2f;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            letter-spacing: 0.5px;
-        }
-        .vip-benefits {
-            color: #cbd5e0;
-            font-size: 12px;
-            line-height: 1.5;
-            margin-bottom: 15px;
-        }
-        .btn-buy-vip {
-            background: linear-gradient(135deg, #f3ba2f, #e2b020);
-            color: #0b0e14;
-            border: none;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            transition: transform 0.2s;
-        }
-        .btn-buy-vip:active {
-            transform: scale(0.98);
-        }
-        .btn-back {
-            background: transparent;
-            color: #a0aec0;
-            border: 1px solid #a0aec0;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.2s ease;
-        }
-        .btn-back:hover {
-            color: #ffffff;
-            border-color: #ffffff;
+            margin-top: 30px;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
 
-    <div class="wallet-container">
-        <h2>ChubbyX Wallet</h2>
-        <p class="subtitle">Connect your TON wallet to access premium status</p>
-        
-        <!-- 1. Standard TON Connect Button -->
-        <div id="ton-connect-button"></div>
+    <h1>ChubbyX Coin</h1>
+    <p>Connect your TON wallet to claim your tokens</p>
 
-        <!-- 2. VIP Status Section with TON Purchase -->
-        <div class="vip-section">
-            <div class="vip-title">👑 CHUBBYX VIP PREMIUM</div>
-            <div class="vip-benefits">
-                • 5x Multi-Tap Mining Speed<br>
-                • Exclusive Daily Bonus Rewards<br>
-                • Instant VIP Badge Verification
-            </div>
-            <button onclick="purchaseVIP()" class="btn-buy-vip">Get VIP Status</button>
-        </div>
-
-        <!-- Back Button to Index -->
-        <button onclick="backToMenu()" class="btn-back">Back to Menu</button>
-    </div>
+    <!-- This div will render the Tonkeeper / TON Connect button -->
+    <div id="ton-connect-button"></div>
 
     <script>
-        // Initialize official TON Connect SDK using stable open-source manifest
+        // Initialize TON Connect UI
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://githubusercontent.com',
+            manifestUrl: 'https://netlify.app',
             buttonRootId: 'ton-connect-button'
         });
-
-        // Function to handle the TON Wallet Transaction for VIP Status
-        async function purchaseVIP() {
-            if (!tonConnectUI.connected) {
-                alert("Please connect your TON wallet first using the button above!");
-                return;
-            }
-
-            // Standard secure transaction layout to request 0.5 TON for VIP
-            const transaction = {
-                validUntil: Math.floor(Date.now() / 1000) + 360,
-                messages: [
-                    {
-                        address: "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c", // Replace with your own TON Wallet address later
-                        amount: "500000000" // 0.5 TON (expressed in nanotons)
-                    }
-                ]
-            };
-
-            try {
-                const result = await tonConnectUI.sendTransaction(transaction);
-                alert("Transaction sent successfully! Checking blockchain for validation...");
-            } catch (e) {
-                console.error("Transaction failed", e);
-                alert("Transaction canceled or failed. Please try again.");
-            }
-        }
-
-        function backToMenu() {
-            window.location.href = "index.html"; 
-        }
     </script>
-
 </body>
 </html>
