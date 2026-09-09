@@ -25,7 +25,6 @@
         .header div { font-size: 14px; opacity: 0.7; letter-spacing: 2px; }
         .header h1 { font-size: 48px; font-weight: bold; color: #fff; margin-top: 5px; }
         
-        /* Game Screen */
         .game-screen {
             flex: 1;
             display: flex;
@@ -50,7 +49,6 @@
         .bar-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 8px; overflow: hidden; }
         .bar-fill { height: 100%; width: 100%; background: #facc15; transition: width 0.1s ease; }
 
-        /* Wallet Screen (Hidden by default) */
         .wallet-screen {
             display: none;
             flex: 1;
@@ -63,7 +61,6 @@
         .wallet-screen h2 { font-size: 28px; margin-bottom: 10px; }
         .wallet-screen p { color: #a1a1aa; margin-bottom: 30px; }
 
-        /* Navigation Bar */
         .nav-bar {
             width: 100%;
             background: #070412;
@@ -98,7 +95,6 @@
     <div id="walletTab" class="wallet-screen">
         <h2>Connect Wallet</h2>
         <p>Link your TON wallet to receive your airdrop tokens</p>
-        <!-- TON Connect Button Renders Here Directly -->
         <div id="ton-connect-btn"></div>
     </div>
 
@@ -109,19 +105,16 @@
     </div>
 
     <script>
-        // Initialize Telegram WebApp
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
         }
 
-        // Initialize TON Connect UI Directly inside the app!
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://netlify.app',
             buttonRootId: 'ton-connect-btn'
         });
 
-        // Game Logic
         let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         let energy = 500;
         document.getElementById('score').innerText = count.toLocaleString();
@@ -138,7 +131,6 @@
             }
         });
 
-        // Energy Recovery
         setInterval(() => {
             if (energy < 500) {
                 energy = Math.min(500, energy + 3);
@@ -147,7 +139,6 @@
             }
         }, 1000);
 
-        // Tab Switching Logic (No iframes, No Crashes!)
         function switchTab(tab) {
             const gameTab = document.getElementById('gameTab');
             const walletTab = document.getElementById('walletTab');
