@@ -166,7 +166,7 @@
 
                     tapElement.classList.add('tap-zone-active');
 
-                    var touch = e.touches[0];
+                    var touch = e.touches;
                     var rect = coinContainer.getBoundingClientRect();
                     var x = touch.clientX - rect.left;
                     var y = touch.clientY - rect.top;
