@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Hub</title>
+    <!-- Fixed Telegram WebApp SDK Link -->
     <script src="https://telegram.org"></script>
     <style>
         * {
@@ -165,7 +166,7 @@
 
                     tapElement.classList.add('tap-zone-active');
 
-                    var touch = e.touches;
+                    var touch = e.touches[0];
                     var rect = coinContainer.getBoundingClientRect();
                     var x = touch.clientX - rect.left;
                     var y = touch.clientY - rect.top;
@@ -233,4 +234,4 @@
         });
     </script>
 </body>
-</html>.
+</html>
