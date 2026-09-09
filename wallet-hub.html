@@ -3,49 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChubbyX - Connect Wallet</title>
-    <!-- Correct and complete TON Connect SDK link -->
+    <title>ChubbyX - Wallet Hub</title>
+    <!-- لێرەدا ناونیشانی فەرمی و درێژی واڵێتەکە بە تەواوی دانراوە -->
     <script src="https://unpkg.com"></script>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #121212;
-            color: #ffffff;
+            color: white;
             text-align: center;
             padding: 50px 20px;
         }
-        h1 { font-size: 28px; margin-bottom: 10px; }
-        p { color: #aaaaaa; font-size: 16px; }
-        #ton-connect-button { margin-top: 30px; display: inline-block; }
+        #ton-connect-button {
+            margin-top: 30px;
+            display: inline-block;
+        }
+        .back-btn {
+            margin-top: 40px;
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #222;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
 
-    <h1>ChubbyX Coin</h1>
-    <p>Connect your TON wallet to claim your tokens</p>
+    <h1>ChubbyX Wallet</h1>
+    <p>Connect your TON wallet to claim your coins</p>
 
+    <!-- دوگمەی واڵێتەکە لێرە بە سەلامەتی دروست دەبێت -->
     <div id="ton-connect-button"></div>
 
+    <br>
+    <a href="index.html" class="back-btn">Go Back to Game</a>
+
     <script>
+        // Initialize TON Connect UI
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://netlify.app',
             buttonRootId: 'ton-connect-button'
-        });
-
-        tonConnectUI.onStatusChange(wallet => {
-            if (wallet) {
-                const walletAddress = wallet.account.address;
-                console.log("Wallet Connected:", walletAddress);
-                
-                fetch('/.netlify/functions/save-wallet', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ address: walletAddress })
-                })
-                .then(res => res.json())
-                .then(data => console.log("Response:", data))
-                .catch(err => console.error("Error:", err));
-            }
         });
     </script>
 </body>
