@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChubbyX - Connect Wallet</title>
-    <!-- Importing TON Connect SDK -->
+    <!-- Correct and complete TON Connect SDK link -->
     <script src="https://unpkg.com"></script>
     <style>
         body {
@@ -27,27 +27,24 @@
     <div id="ton-connect-button"></div>
 
     <script>
-        // Initialize TON Connect UI
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://netlify.app',
             buttonRootId: 'ton-connect-button'
         });
 
-        // Listen for wallet connection
         tonConnectUI.onStatusChange(wallet => {
             if (wallet) {
                 const walletAddress = wallet.account.address;
                 console.log("Wallet Connected:", walletAddress);
                 
-                // Sending the wallet address to Netlify Serverless Function
                 fetch('/.netlify/functions/save-wallet', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ address: walletAddress })
                 })
                 .then(res => res.json())
-                .then(data => console.log("Response from server:", data))
-                .catch(err => console.error("Error saving wallet:", err));
+                .then(data => console.log("Response:", data))
+                .catch(err => console.error("Error:", err));
             }
         });
     </script>
