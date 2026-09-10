@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Premium Hub</title>
-    <!-- Core SDKs: Telegram & TON Connect -->
+    <!-- Core SDKs: Telegram & TON Connect UI -->
     <script src="https://telegram.org"></script>
     <script src="https://unpkg.com"></script>
     <style>
@@ -70,7 +70,7 @@
             bottom: 0;
             padding: 15px 10px calc(15px + env(safe-area-inset-bottom));
         }
-        .nav-item { flex: 1; text-align: center; font-size: 14px; color: #71717a; cursor: pointer; font-weight: bold; }
+        .nav-item { flex: 1; text-align: center; font-size: 14px; color: #71717a; cursor: pointer; font-weight: bold; padding: 10px 0; }
         .nav-item.active { color: #facc15; }
     </style>
 </head>
@@ -98,7 +98,7 @@
         <div id="ton-connect-btn"></div>
     </div>
 
-    <!-- NAVIGATION -->
+    <!-- NAVIGATION BAR -->
     <div class="nav-bar">
         <div class="nav-item active" id="btnGame" onclick="switchTab('game')">Game</div>
         <div class="nav-item" id="btnWallet" onclick="switchTab('wallet')">Wallet</div>
@@ -110,8 +110,9 @@
             window.Telegram.WebApp.expand();
         }
 
+        // Fixed Manifest link using your official Github Pages
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://netlify.app',
+            manifestUrl: 'https://github.io',
             buttonRootId: 'ton-connect-btn'
         });
 
@@ -139,6 +140,7 @@
             }
         }, 1000);
 
+        // Safe tab switching logic that completely avoids iFrame reloads/crashes
         function switchTab(tab) {
             const gameTab = document.getElementById('gameTab');
             const walletTab = document.getElementById('walletTab');
