@@ -2,40 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChubbyX - Game App</title>
-    
-    <!-- Load TON Connect SDK -->
-    <script src="https://unpkg.com"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ChubbyX Hub</title>
+    <script src="https://telegram.org"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: white;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+        body {
+            background: #1c1437 url('background.png.jpeg') no-repeat center top fixed;
+            background-size: cover;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+            touch-action: none;
+        }
+        .header {
+            margin-top: 35px;
             text-align: center;
-            overflow-x: hidden;
+            z-index: 10;
+            pointer-events: none;
         }
+        .header div { font-size: 14px; opacity: 0.8; letter-spacing: 1px; }
+        .header h1 { font-size: 44px; font-weight: bold; margin-top: 5px; }
 
-        /* Pages management */
-        .page-content {
-            padding: 20px;
-            display: none;
-            height: calc(100vh - 80px);
-            box-sizing: border-box;
-            position: relative;
-        }
-
-        .active-page {
-            display: block;
-        }
-
-        /* Floating Airdrop Button (Top Right) */
         .airdrop-container {
             position: absolute;
-            top: 20px;
+            top: 35px;
             right: 20px;
             display: flex;
             flex-direction: column;
@@ -43,133 +43,228 @@
             cursor: pointer;
             z-index: 100;
         }
-
         .airdrop-icon {
-            width: 48px;
-            height: 48px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
-            border: 2px solid #ffcc00;
-            box-shadow: 0 0 10px rgba(255, 204, 0, 0.6);
-            background-color: #1e1e1e;
+            border: 2px solid #eab308;
+            box-shadow: 0 0 10px rgba(234, 179, 8, 0.6);
+            background-color: rgba(13, 8, 27, 0.8);
         }
-
         .airdrop-container span {
-            font-size: 11px;
-            color: #ffcc00;
-            margin-top: 5px;
+            font-size: 10px;
+            color: #eab308;
+            margin-top: 4px;
             font-weight: bold;
             text-transform: uppercase;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
         }
 
-        /* Navigation Bar (Bottom) */
+        .coin-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            z-index: 5;
+        }
+        .tap-zone {
+            position: absolute;
+            top: 25%;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: transparent;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 999;
+            touch-action: manipulation;
+            transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .tap-zone-active {
+            transform: scale(0.93) !important;
+        }
+        .floating-text {
+            position: absolute;
+            color: #eab308;
+            font-weight: bold;
+            font-size: 24px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: floatUpAndFade 0.6s ease-out forwards;
+            text-shadow: 0 0 8px rgba(234, 179, 8, 0.7);
+            font-family: sans-serif;
+        }
+        @keyframes floatUpAndFade {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-130px) scale(1.2); }
+        }
+        .energy-container {
+            width: 80%;
+            text-align: center;
+            z-index: 10;
+            margin-bottom: 105px;
+            pointer-events: none;
+        }
+        .energy-bar-bg { width: 100%; height: 12px; background: rgba(255,255,255,0.2); border-radius: 6px; margin-top: 8px; overflow: hidden; }
+        .energy-bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #eab308, #ef4444); border-radius: 6px; transition: width 0.1s ease; }
+
         .nav-bar {
+            width: 100%;
+            background: rgba(13, 8, 27, 0.96);
+            border-top: 2px solid #7b2cbf;
+            display: flex;
             position: fixed;
             bottom: 0;
+            padding: 15px 15px calc(15px + env(safe-area-inset-bottom));
+            z-index: 2000;
+        }
+        .nav-item { flex: 1; text-align: center; font-size: 12px; color: #8d4add; text-decoration: none; cursor: pointer; padding: 5px 0; font-weight: bold; transition: color 0.2s; }
+        .nav-item.active { color: white; }
+
+        .app-iframe {
+            display: none;
+            position: fixed;
+            top: 0;
             left: 0;
-            width: 100%;
-            background-color: #100f14;
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0;
-            box-shadow: 0 -2px 15px rgba(0,0,0,0.6);
-            border-top: 1px solid #1e1d24;
-        }
-
-        .nav-item {
-            background: none;
+            width: 100vw;
+            height: 100vh;
             border: none;
-            color: #716f81;
-            font-size: 12px;
-            cursor: pointer;
-            flex: 1;
-            font-weight: 500;
-        }
-
-        .nav-item.active {
-            color: #9d4edd; /* Matches your purple layout theme */
-            font-weight: bold;
-        }
-
-        /* TON Connect Button Wrapper */
-        #ton-connect-button {
-            margin-top: 40px;
-            display: inline-block;
+            z-index: 3000;
+            background: #090514;
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. MAIN GAME PAGE -->
-    <div id="page-game" class="page-content active-page">
-        <!-- Floating Airdrop Icon (Redirects directly to Wallet tab) -->
-        <div class="airdrop-container" onclick="showPage('wallet', document.getElementById('btn-wallet'))">
-            <img src="https://github.io" alt="Airdrop" class="airdrop-icon">
-            <span>Airdrop</span>
-        </div>
-
-        <!-- Place your existing game image, text, and coin clicker right here -->
-        <h2 style="margin-top: 80px;">CHUBBYX BALANCE</h2>
-        <h1 style="font-size: 42px; margin: 10px 0;">80,044</h1>
-        
-        <p style="color: #888;">[ Your game content/character goes here ]</p>
+    <div class="airdrop-container" onclick="loadExternalPage('wallet-hub.html')">
+        <img src="background.png.jpeg" alt="Airdrop" class="airdrop-icon">
+        <span>Airdrop</span>
     </div>
 
-    <!-- 2. TASKS PAGE -->
-    <div id="page-tasks" class="page-content">
-        <h2>Tasks</h2>
-        <p style="color: #666;">Complete tasks to earn more rewards.</p>
+    <div class="header">
+        <div>CHUBBYX BALANCE</div>
+        <h1 id="score">0</h1>
     </div>
 
-    <!-- 3. INVITE PAGE -->
-    <div id="page-invite" class="page-content">
-        <h2>Invite Friends</h2>
-        <p style="color: #666;">Share your link and get bonus points.</p>
+    <div class="coin-container" id="coinContainer">
+        <div class="tap-zone" id="tapCoin"></div>
     </div>
 
-    <!-- 4. MINI GAMES PAGE -->
-    <div id="page-minigames" class="page-content">
-        <h2>Mini Games</h2>
-        <p style="color: #666;">Play quick games to maximize earnings.</p>
+    <div class="energy-container">
+        <div>⚡ <span id="energyText">500</span> / 500</div>
+        <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyFill"></div></div>
     </div>
 
-    <!-- 5. WALLET PAGE -->
-    <div id="page-wallet" class="page-content">
-        <h2>Wallet Connection</h2>
-        <p style="color: #aaa; margin-bottom: 30px;">Connect your TON wallet to receive your airdrop allocation.</p>
-        
-        <!-- The official TON Button renders here -->
-        <div id="ton-connect-button"></div>
-    </div>
-
-    <!-- Fixed Bottom Navigation Menu -->
     <div class="nav-bar">
-        <button class="nav-item" onclick="showPage('tasks', this)">Tasks</button>
-        <button class="nav-item" onclick="showPage('invite', this)">Invite</button>
-        <button id="btn-game" class="nav-item active" onclick="showPage('game', this)">Games</button>
-        <button class="nav-item" onclick="showPage('minigames', this)">Mini Games</button>
-        <button id="btn-wallet" class="nav-item" onclick="showPage('wallet', this)">Wallet</button>
+        <div class="nav-item" onclick="loadExternalPage('tasks.html')">Tasks</div>
+        <div class="nav-item" onclick="loadExternalPage('invite.html')">Invite</div>
+        <div class="nav-item" onclick="location.reload()">Games</div>
+        <div class="nav-item" onclick="loadExternalPage('old-game.html')">Mini Games</div>
+        <div class="nav-item" onclick="loadExternalPage('wallet-hub.html')">Wallet</div>
     </div>
+
+    <iframe id="appFrame" class="app-iframe"></iframe>
 
     <script>
-        // Smooth page navigation logic
-        function showPage(pageId, buttonElement) {
-            const pages = document.querySelectorAll('.page-content');
-            pages.forEach(page => page.classList.remove('active-page'));
-
-            const buttons = document.querySelectorAll('.nav-item');
-            buttons.forEach(btn => btn.classList.remove('active'));
-
-            document.getElementById('page-' + pageId).classList.add('active-page');
-            buttonElement.classList.add('active');
+        if (window.Telegram && window.Telegram.WebApp) {
+            const webapp = window.Telegram.WebApp;
+            webapp.ready();
+            webapp.expand();
+            webapp.setHeaderColor('#1c1437');
+            webapp.setBackgroundColor('#1c1437');
         }
 
-        // Initialize official TON Connect Button link
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: './tonconnect-manifest.json',
-            buttonRootId: 'ton-connect-button'
+        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+        var energy = 500;
+
+        document.getElementById('score').innerText = count.toLocaleString();
+
+        var tapElement = document.getElementById('tapCoin');
+        var coinContainer = document.getElementById('coinContainer');
+
+        if (tapElement) {
+            tapElement.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                if (energy > 0) {
+                    count++;
+                    energy--;
+                    document.getElementById('score').innerText = count.toLocaleString();
+                    updateUI();
+                    localStorage.setItem('chubby_coins', count);
+
+                    playChubbVoice();
+
+                    tapElement.classList.add('tap-zone-active');
+
+                    var touch = e.touches[0];
+                    var rect = coinContainer.getBoundingClientRect();
+                    var x = touch.clientX - rect.left;
+                    var y = touch.clientY - rect.top;
+
+                    createFloatingText(x, y);
+                }
+            });
+
+            tapElement.addEventListener('touchend', function(e) {
+                setTimeout(() => {
+                    tapElement.classList.remove('tap-zone-active');
+                }, 50);
+            });
+        }
+
+        function playChubbVoice() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                var utterance = new SpeechSynthesisUtterance('Chub');
+                utterance.lang = 'en-US';
+                utterance.pitch = 1.4;
+                utterance.rate = 1.6;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function createFloatingText(x, y) {
+            var textNode = document.createElement('div');
+            textNode.className = 'floating-text';
+            textNode.innerText = '+1';
+            textNode.style.left = (x - 40) + 'px';
+            textNode.style.top = (y - 20) + 'px';
+
+            coinContainer.appendChild(textNode);
+
+            setTimeout(() => { textNode.remove(); }, 600);
+        }
+
+        function updateUI() {
+            document.getElementById('energyText').innerText = energy;
+            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%';
+        }
+
+        setInterval(function() {
+            if (energy < 500) { energy += 3; if (energy > 500) energy = 500; updateUI(); }
+        }, 1000);
+
+        function loadExternalPage(url) {
+            const frame = document.getElementById('appFrame');
+            frame.src = url;
+            frame.style.display = 'block';
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            if(window.event && window.event.currentTarget) {
+                window.event.currentTarget.classList.add('active');
+            }
+        }
+
+        window.addEventListener('message', function(event) {
+            if (event.data === 'closePage') {
+                document.getElementById('appFrame').style.display = 'none';
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+                document.getElementById('score').innerText = count.toLocaleString();
+            }
         });
     </script>
-
 </body>
 </html>
