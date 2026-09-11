@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChubbyX Premium Hub</title>
-    <!-- Core SDKs: Telegram & TON Connect UI -->
+    <title>ChubbyX Hub</title>
+    <!-- Fixed Telegram WebApp SDK Link -->
     <script src="https://telegram.org"></script>
-    <script src="https://unpkg.com"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
-            background: #0f0a24;
+            background: #1c1437 url('background.png.jpeg') no-repeat center top fixed;
+            background-size: cover;
             color: white;
-            font-family: 'Arial', sans-serif;
+            font-family: sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -21,144 +25,223 @@
             user-select: none;
             touch-action: none;
         }
-        .header { margin-top: 40px; text-align: center; }
-        .header div { font-size: 14px; opacity: 0.7; letter-spacing: 2px; }
-        .header h1 { font-size: 48px; font-weight: bold; color: #fff; margin-top: 5px; }
-        
-        .game-screen {
+        .header {
+            margin-top: 35px;
+            text-align: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .header div { font-size: 14px; opacity: 0.8; letter-spacing: 1px; }
+        .header h1 { font-size: 44px; font-weight: bold; margin-top: 5px; }
+
+        .coin-container {
             flex: 1;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             width: 100%;
+            position: relative;
+            z-index: 5;
         }
-        .coin-btn {
-            width: 240px;
-            height: 240px;
+        .tap-zone {
+            position: absolute;
+            top: 25%;
+            width: 260px;
+            height: 260px;
             border-radius: 50%;
-            background: radial-gradient(circle, #facc15 0%, #ca8a04 100%);
-            box-shadow: 0 0 30px rgba(250, 204, 21, 0.4);
             cursor: pointer;
-            transition: transform 0.05s ease;
+            background: transparent;
             -webkit-tap-highlight-color: transparent;
+            z-index: 999;
+            touch-action: manipulation;
+            transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .coin-btn:active { transform: scale(0.92); }
-        
-        .energy-box { margin-top: 30px; text-align: center; width: 80%; }
-        .bar-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 8px; overflow: hidden; }
-        .bar-fill { height: 100%; width: 100%; background: #facc15; transition: width 0.1s ease; }
-
-        .wallet-screen {
-            display: none;
-            flex: 1;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            padding: 20px;
+        .tap-zone-active {
+            transform: scale(0.93) !important;
         }
-        .wallet-screen h2 { font-size: 28px; margin-bottom: 10px; }
-        .wallet-screen p { color: #a1a1aa; margin-bottom: 30px; }
+        .floating-text {
+            position: absolute;
+            color: #eab308;
+            font-weight: bold;
+            font-size: 24px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: floatUpAndFade 0.6s ease-out forwards;
+            text-shadow: 0 0 8px rgba(234, 179, 8, 0.7);
+            font-family: sans-serif;
+        }
+        @keyframes floatUpAndFade {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-130px) scale(1.2); }
+        }
+        .energy-container {
+            width: 80%;
+            text-align: center;
+            z-index: 10;
+            margin-bottom: 105px;
+            pointer-events: none;
+        }
+        .energy-bar-bg { width: 100%; height: 12px; background: rgba(255,255,255,0.2); border-radius: 6px; margin-top: 8px; overflow: hidden; }
+        .energy-bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #eab308, #ef4444); border-radius: 6px; transition: width 0.1s ease; }
 
         .nav-bar {
             width: 100%;
-            background: #070412;
-            border-top: 1px solid #27272a;
+            background: rgba(13, 8, 27, 0.96);
+            border-top: 2px solid #7b2cbf;
             display: flex;
             position: fixed;
             bottom: 0;
-            padding: 15px 10px calc(15px + env(safe-area-inset-bottom));
+            padding: 15px 15px calc(15px + env(safe-area-inset-bottom));
+            z-index: 2000;
         }
-        .nav-item { flex: 1; text-align: center; font-size: 14px; color: #71717a; cursor: pointer; font-weight: bold; padding: 10px 0; }
-        .nav-item.active { color: #facc15; }
+        .nav-item { flex: 1; text-align: center; font-size: 12px; color: #8d4add; text-decoration: none; cursor: pointer; padding: 5px 0; font-weight: bold; transition: color 0.2s; }
+        .nav-item.active { color: white; }
+
+        .app-iframe {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            z-index: 3000;
+            background: #090514;
+        }
     </style>
 </head>
 <body>
-
-    <!-- 1. GAME TAB -->
-    <div id="gameTab" class="game-screen">
-        <div class="header">
-            <div>CHUBBYX BALANCE</div>
-            <h1 id="score">0</h1>
-        </div>
-        <div style="flex:1; display:flex; align-items:center;">
-            <div class="coin-btn" id="tapButton"></div>
-        </div>
-        <div class="energy-box">
-            <div>⚡ <span id="energyText">500</span> / 500</div>
-            <div class="bar-bg"><div class="bar-fill" id="energyFill"></div></div>
-        </div>
+    <div class="header">
+        <div>CHUBBYX BALANCE</div>
+        <h1 id="score">0</h1>
     </div>
 
-    <!-- 2. WALLET TAB -->
-    <div id="walletTab" class="wallet-screen">
-        <h2>Connect Wallet</h2>
-        <p>Link your TON wallet to receive your airdrop tokens</p>
-        <div id="ton-connect-btn"></div>
+    <div class="coin-container" id="coinContainer">
+        <div class="tap-zone" id="tapCoin"></div>
     </div>
 
-    <!-- NAVIGATION BAR -->
+    <div class="energy-container">
+        <div>⚡ <span id="energyText">500</span> / 500</div>
+        <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyFill"></div></div>
+    </div>
+
     <div class="nav-bar">
-        <div class="nav-item active" id="btnGame" onclick="switchTab('game')">Game</div>
-        <div class="nav-item" id="btnWallet" onclick="switchTab('wallet')">Wallet</div>
+        <div class="nav-item" onclick="loadExternalPage('tasks.html')">Tasks</div>
+        <div class="nav-item" onclick="loadExternalPage('invite.html')">Invite</div>
+        <div class="nav-item" onclick="location.reload()">Games</div>
+        <div class="nav-item" onclick="loadExternalPage('old-game.html')">Mini Games</div>
+        <!-- Safe Telegram Direct Wallet Launch -->
+        <div class="nav-item" id="btnWallet" onclick="openTelegramWallet()">Wallet</div>
     </div>
+
+    <iframe id="appFrame" class="app-iframe"></iframe>
 
     <script>
         if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
+            const webapp = window.Telegram.WebApp;
+            webapp.ready();
+            webapp.expand();
+            webapp.setHeaderColor('#1c1437');
+            webapp.setBackgroundColor('#1c1437');
         }
 
-        // Fixed Manifest link using your official Github Pages
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://github.io',
-            buttonRootId: 'ton-connect-btn'
-        });
+        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+        var energy = 500;
 
-        let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        let energy = 500;
         document.getElementById('score').innerText = count.toLocaleString();
 
-        document.getElementById('tapButton').addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            if (energy > 0) {
-                count++;
-                energy--;
-                document.getElementById('score').innerText = count.toLocaleString();
-                localStorage.setItem('chubby_coins', count);
-                document.getElementById('energyText').innerText = energy;
-                document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%';
-            }
-        });
+        var tapElement = document.getElementById('tapCoin');
+        var coinContainer = document.getElementById('coinContainer');
 
-        setInterval(() => {
-            if (energy < 500) {
-                energy = Math.min(500, energy + 3);
-                document.getElementById('energyText').innerText = energy;
-                document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%';
-            }
-        }, 1000);
+        if (tapElement) {
+            tapElement.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                if (energy > 0) {
+                    count++;
+                    energy--;
+                    document.getElementById('score').innerText = count.toLocaleString();
+                    updateUI();
+                    localStorage.setItem('chubby_coins', count);
 
-        // Safe tab switching logic that completely avoids iFrame reloads/crashes
-        function switchTab(tab) {
-            const gameTab = document.getElementById('gameTab');
-            const walletTab = document.getElementById('walletTab');
-            const btnGame = document.getElementById('btnGame');
-            const btnWallet = document.getElementById('btnWallet');
+                    playChubbVoice();
 
-            if (tab === 'game') {
-                gameTab.style.display = 'flex';
-                walletTab.style.display = 'none';
-                btnGame.classList.add('active');
-                btnWallet.classList.remove('active');
-            } else if (tab === 'wallet') {
-                gameTab.style.display = 'none';
-                walletTab.style.display = 'flex';
-                btnGame.classList.remove('active');
-                btnWallet.classList.add('active');
+                    tapElement.classList.add('tap-zone-active');
+
+                    var touch = e.touches;
+                    var rect = coinContainer.getBoundingClientRect();
+                    var x = touch.clientX - rect.left;
+                    var y = touch.clientY - rect.top;
+
+                    createFloatingText(x, y);
+                }
+            });
+
+            tapElement.addEventListener('touchend', function(e) {
+                setTimeout(() => {
+                    tapElement.classList.remove('tap-zone-active');
+                }, 50);
+            });
+        }
+
+        function playChubbVoice() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                var utterance = new SpeechSynthesisUtterance('Chub');
+                utterance.lang = 'en-US';
+                utterance.pitch = 1.4;
+                utterance.rate = 1.6;
+                window.speechSynthesis.speak(utterance);
             }
         }
+
+        function createFloatingText(x, y) {
+            var textNode = document.createElement('div');
+            textNode.className = 'floating-text';
+            textNode.innerText = '+1';
+            textNode.style.left = (x - 40) + 'px';
+            textNode.style.top = (y - 20) + 'px';
+
+            coinContainer.appendChild(textNode);
+
+            setTimeout(() => { textNode.remove(); }, 600);
+        }
+
+        function updateUI() {
+            document.getElementById('energyText').innerText = energy;
+            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%';
+        }
+
+        setInterval(function() {
+            if (energy < 500) { energy += 3; if (energy > 500) energy = 500; updateUI(); }
+        }, 1000);
+
+        function loadExternalPage(url) {
+            const frame = document.getElementById('appFrame');
+            frame.src = url;
+            frame.style.display = 'block';
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            if(event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+        }
+
+        // Logic to launch official Telegram wallet app safely without crashing
+        function openTelegramWallet() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.openTelegramLink('https://t.me');
+            } else {
+                window.open('https://t.me', '_blank');
+            }
+        }
+
+        window.addEventListener('message', function(event) {
+            if (event.data === 'closePage') {
+                document.getElementById('appFrame').style.display = 'none';
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+                document.getElementById('score').innerText = count.toLocaleString();
+            }
+        });
     </script>
 </body>
 </html>
