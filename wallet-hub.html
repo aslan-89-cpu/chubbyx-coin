@@ -3,40 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChubbyX - Wallet Hub</title>
-    
-    <!-- لێرەدا بەستەرە ڕاستەکەت بۆ پۆلینکراوە -->
-    <script src="https://unpkg.com/@tonconnect/uidlatest/dist/to
-ui.min.js"></script>
-
+    <title>ChubbyX Wallet</title>
+    <script src="https://unpkg.com"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: white;
-            text-align: center;
-            padding: 50px 20px;
-        }
-        #ton-connect-button {
-            margin-top: 30px;
-            display: inline-block;
-        }
+        body { font-family: Arial, sans-serif; background-color: #121212; color: white; text-align: center; padding: 50px 20px; }
+        #ton-connect-button { margin-top: 30px; display: inline-block; }
     </style>
 </head>
 <body>
-
     <h1>ChubbyX Wallet Connection</h1>
-    
-    <!-- ئەمە ئەو شوێنەیە کە دوگمەی والێتەکەی تێدا دەرکەوێت -->
     <div id="ton-connect-button"></div>
-
     <script>
-        // ئەم کۆدە دوگمەکە کارپێدەکات
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://aslan-89-cpu.github.io/chubbyx-coin/tonconnect-manifest.json',
             buttonRootId: 'ton-connect-button'
         });
     </script>
-
 </body>
 </html>
