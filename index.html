@@ -3,47 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChubbyX - Game & Wallet</title>
-    
-    <!-- سکرێپتی فەرمی و پێویست بۆ جزدانی TON -->
-    <script src="https://unpkg.com"></script>
-
+    <title>ChubbyX Coin - Menu</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url('image.png.jpeg'); /* وێنەی باکگراوندەکەت */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background-color: #121212;
             color: white;
             text-align: center;
+            padding: 50px 20px;
             margin: 0;
-            padding: 20px;
         }
-        .container {
-            margin-top: 50px;
+        h1 { color: #f39c12; margin-bottom: 40px; }
+        .btn {
+            display: block;
+            width: 80%;
+            max-width: 300px;
+            margin: 15px auto;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: 0.3s;
         }
-        #ton-connect-button {
-            margin: 20px auto;
-            display: inline-block;
-        }
+        .btn-game { background-color: #27ae60; }
+        .btn-wallet { background-color: #2980b9; }
+        .btn:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Welcome to ChubbyX Coin</h1>
-        
-        <!-- لێرەدا دوگمەی شینی جزدانەکە بار دەبێت -->
-        <div id="ton-connect-button"></div>
-    </div>
+    <h1>ChubbyX Coin</h1>
 
-    <script>
-        // بەستنەوەی جزدان بە فایلە مانێفێستە دروستەکەت
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://github.io',
-            buttonRootId: 'ton-connect-button'
-        });
-    </script>
+    <!-- ئەم دوگمەیە بەکارهێنەر دەباتە سەر فایلی یارییەکە -->
+    <a href="old-game.html" class="btn btn-game">🎮 Play Mini Game</a>
+
+    <!-- ئەم دوگمەیە بەکارهێنەر دەباتە سەر فایلی جزدانەکە -->
+    <a href="wallet-hub.html" class="btn btn-wallet">💼 Connect Wallet</a>
+
 </body>
 </html>
