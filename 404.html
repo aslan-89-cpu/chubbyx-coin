@@ -1,14 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Redirecting...</title>
-    <script>
-        // ئەم سکرێپتە ڕاستەوخۆ بەکارهێنەر دەباتەوە سەر لاپەڕەی سەرەکی
-        window.location.href = "https://github.io";
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChubbyX Coin - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('image.png.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .header-container {
+            position: relative;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        .airdrop-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #f1c40f;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .airdrop-icon img {
+            width: 50px;
+            height: 50px;
+            display: block;
+            margin: 0 auto 5px;
+        }
+        .balance-title {
+            font-size: 14px;
+            color: #ccc;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        .balance-amount {
+            font-size: 45px;
+            margin: 5px 0 0 0;
+            font-weight: bold;
+        }
+        .main-avatar {
+            width: 240px;
+            margin: 30px auto;
+            display: block;
+        }
+        .coin-title {
+            color: #f39c12;
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        .energy-bar {
+            font-size: 16px;
+            color: #fff;
+            margin-top: 15px;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #110722;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 2px solid #3c1e70;
+            z-index: 100;
+        }
+        .nav-item {
+            color: #a29bfe;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .nav-item.active {
+            color: #fdcb6e;
+        }
+    </style>
 </head>
 <body>
-    <p>Loading ChubbyX Coin...</p>
+
+    <div class="header-container">
+        <a href="wallet.html" class="airdrop-icon">
+            <img src="image_okKb6u.png.jpeg" alt="Airdrop">
+            AIRDROP
+        </a>
+        <p class="balance-title">CHUBBYX BALANCE</p>
+        <h1 class="balance-amount">80,135</h1>
+    </div>
+
+    <img src="image_okKb6u.png.jpeg" alt="Chubby Avatar" class="main-avatar">
+
+    <h2 class="coin-title">CHUBBYX COIN</h2>
+    
+    <p class="energy-bar">⚡ 500 / 500</p>
+    
+    <div style="height: 100px;"></div>
+
+    <div class="bottom-nav">
+        <a href="tasks.html" class="nav-item">Tasks</a>
+        <a href="invite.html" class="nav-item">Invite</a>
+        <a href="mini-game.html" class="nav-item">Mini Games</a>
+        <a href="wallet.html" class="nav-item">Wallet</a>
+    </div>
+
 </body>
 </html>
