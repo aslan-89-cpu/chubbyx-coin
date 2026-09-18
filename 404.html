@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChubbyX Coin - Home</title>
-    <!-- لکاندنی ئایکۆنە فەرمییەکان بۆ ئەوەی دیزاینەکە زۆر جوان دەرچێت -->
-    <link rel="stylesheet" href="https://cloudflare.com">
+    <title>ChubbyX Coin</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -24,57 +22,38 @@
             padding: 20px;
             margin-top: 30px;
         }
-        /* دیزاینی نوێ و زۆر جوانی بەشی ئێردرۆپ */
+        /* ئەمە ستایلی AIRDROPە کۆنەکەی خۆتە بەڵام بە ڕەنگی تۆکمە بۆ ئەوەی جوان دیار بێت */
         .airdrop-icon {
             position: absolute;
-            top: 20px;
+            top: 25px;
             right: 25px;
             text-align: center;
             text-decoration: none;
-            color: #f1c40f;
-            font-size: 11px;
+            color: #ffca28;
+            font-size: 14px;
             font-weight: bold;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .airdrop-icon:hover {
-            transform: scale(1.1);
-        }
-        /* دیزاینی ئایکۆنە زێڕینەکە لەجیاتی وێنە کۆنەکە */
-        .airdrop-icon i {
-            font-size: 32px;
-            color: #f1c40f;
-            margin-bottom: 5px;
-            text-shadow: 0 0 10px rgba(241, 196, 15, 0.6);
+            text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.8);
         }
         .balance-title {
             font-size: 14px;
             color: #ccc;
             letter-spacing: 1px;
             margin: 0;
+            text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
         }
         .balance-amount {
             font-size: 45px;
             margin: 5px 0 0 0;
             font-weight: bold;
+            text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
         }
+        /* ڕێکخستنی وێنە مۆرەکە بۆ ئەوەی چوارگۆشە ڕەشەکە لاببرێت یان کەم بکرێتەوە */
         .main-avatar {
-            width: 240px;
-            margin: 30px auto;
+            width: 250px;
+            margin: 20px auto;
             display: block;
-        }
-        .coin-title {
-            color: #f39c12;
-            font-size: 24px;
-            margin: 10px 0;
-        }
-        .energy-bar {
-            font-size: 16px;
-            color: #fff;
-            margin-top: 15px;
+            border-radius: 20px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.6);
         }
         .bottom-nav {
             position: fixed;
@@ -91,7 +70,7 @@
         .nav-item {
             color: #a29bfe;
             text-decoration: none;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
         }
         .nav-item.active {
@@ -102,27 +81,22 @@
 <body>
 
     <div class="header-container">
-        <!-- بەشی ئێردرۆپی نوێکراوە بە ئایکۆنی گرافیکی و کەنێکت بۆ سەر فایلی wallet.html -->
-        <a href="wallet.html" class="airdrop-icon">
-            <i class="fa-solid fa-parachute-box"></i>
-            AIRDROP
-        </a>
+        <!-- بەستنەوەی AIRDROP بە فایلی جزدانەکە وەک خۆت دەتویست -->
+        <a href="wallet.html" class="airdrop-icon">AIRDROP</a>
         <p class="balance-title">CHUBBYX BALANCE</p>
         <h1 class="balance-amount">80,135</h1>
     </div>
 
+    <!-- وێنەی ئاڤاتارە کۆنەکەی خۆت بە ستایلێکی ڕێک و پێک -->
     <img src="image_okKb6u.png.jpeg" alt="Chubby Avatar" class="main-avatar">
 
-    <h2 class="coin-title">CHUBBYX COIN</h2>
-    
-    <p class="energy-bar">⚡ 500 / 500</p>
-    
     <div style="height: 100px;"></div>
 
+    <!-- مینیووی خوارەوە کە بەستراوەتەوە بە فایلە جیاوازەکانت بۆ ئەوەی دوگمەکان کار بکەن -->
     <div class="bottom-nav">
         <a href="tasks.html" class="nav-item">Tasks</a>
         <a href="invite.html" class="nav-item">Invite</a>
-        <a href="mini-game.html" class="nav-item">Mini Games</a>
+        <a href="index.html" class="nav-item active">Mini Games</a>
         <a href="wallet.html" class="nav-item">Wallet</a>
     </div>
 
