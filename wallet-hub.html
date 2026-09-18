@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChubbyX - Wallet</title>
+    <script src="https://unpkg.com"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #121212; color: white; text-align: center; padding: 50px 20px; }
+        .btn-back { display: inline-block; margin-top: 40px; color: #aaa; text-decoration: none; }
+        #ton-connect-button { margin-top: 30px; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <h1>ChubbyX Wallet Connection</h1>
+    
+    <div id="ton-connect-button"></div>
+
+    <br>
+    <a href="index.html" class="btn-back">⬅️ Back to Menu</a>
+
+    <script>
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://github.io',
+            buttonRootId: 'ton-connect-button'
+        });
+    </script>
+</body>
+</html>
