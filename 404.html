@@ -33,6 +33,34 @@
         .header div { font-size: 14px; opacity: 0.8; letter-spacing: 1px; }
         .header h1 { font-size: 44px; font-weight: bold; margin-top: 5px; }
 
+        .airdrop-container {
+            position: absolute;
+            top: 35px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .airdrop-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 2px solid #eab308;
+            box-shadow: 0 0 10px rgba(234, 179, 8, 0.6);
+            background-color: rgba(13, 8, 27, 0.8);
+        }
+        .airdrop-container span {
+            font-size: 10px;
+            color: #eab308;
+            margin-top: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+        }
+
         .coin-container {
             flex: 1;
             display: flex;
@@ -110,6 +138,12 @@
     </style>
 </head>
 <body>
+
+    <div class="airdrop-container" onclick="loadExternalPage('wallet-hub.html')">
+        <img src="background.png.jpeg" alt="Airdrop" class="airdrop-icon">
+        <span>Airdrop</span>
+    </div>
+
     <div class="header">
         <div>CHUBBYX BALANCE</div>
         <h1 id="score">0</h1>
@@ -129,7 +163,7 @@
         <div class="nav-item" onclick="loadExternalPage('invite.html')">Invite</div>
         <div class="nav-item" onclick="location.reload()">Games</div>
         <div class="nav-item" onclick="loadExternalPage('old-game.html')">Mini Games</div>
-        <div class="nav-item" onclick="loadExternalPage('wallet.html')">Wallet</div>
+        <div class="nav-item" onclick="loadExternalPage('wallet-hub.html')">Wallet</div>
     </div>
 
     <iframe id="appFrame" class="app-iframe"></iframe>
@@ -165,7 +199,7 @@
 
                     tapElement.classList.add('tap-zone-active');
 
-                    var touch = e.touches;
+                    var touch = e.touches[0];
                     var rect = coinContainer.getBoundingClientRect();
                     var x = touch.clientX - rect.left;
                     var y = touch.clientY - rect.top;
@@ -218,8 +252,8 @@
             frame.src = url;
             frame.style.display = 'block';
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            if(event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
+            if(window.event && window.event.currentTarget) {
+                window.event.currentTarget.classList.add('active');
             }
         }
 
@@ -233,4 +267,4 @@
         });
     </script>
 </body>
-</html>.
+</html>
