@@ -1,4 +1,9 @@
-// Navigation System (Tab Switching)
+// Initialize Telegram Web App SDK
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand(); // Forces the app to open in full screen inside Telegram
+
+// Navigation System (Tab Switching) + Telegram Back Button Logic
 function showTab(tabId, element) {
     // Hide all tab contents
     const contents = document.querySelectorAll('.tab-content');
@@ -18,21 +23,42 @@ function showTab(tabId, element) {
         const targetNav = document.getElementById(nav-${tabId});
         if(targetNav) targetNav.classList.add('active');
     }
+
+    // --- TELEGRAM OFFICIAL BACK BUTTON LOGIC ---
+    if (tabId === 'home') {
+        tg.BackButton.hide(); // Hide button on main screen
+    } else {
+        tg.BackButton.show(); // Show button on other tabs
+    }
 }
 
-// Tap Tap and Score System
+// Function for the HTML "Back to Home" button inside tabs
+function returnToHome() {
+    showTab('home', document.getElementById('nav-home'));
+}
+
+// When user clicks the Telegram native Back Button, return to Home Screen
+tg.BackButton.onClick(() => {
+    returnToHome();
+});
+
+// Tap Tap Clicker and Score System
 let score = parseInt(localStorage.getItem('chubby_score')) || 0;
-document.getElementById('score').innerText = score;
+if (document.getElementById('score')) {
+    document.getElementById('score').innerText = score;
+}
 
 const tapZone = document.getElementById('tap-zone');
-tapZone.addEventListener('click', (e) => {
-    score += 1; // Increase coin per tap
-    document.getElementById('score').innerText = score;
-    localStorage.setItem('chubby_score', score); // Save balance locally
-    
-    // Trigger floating text effect (+1)
-    createTapEffect(e);
-});
+if (tapZone) {
+    tapZone.addEventListener('click', (e) => {
+        score += 1; // Increase coin per tap
+        document.getElementById('score').innerText = score;
+        localStorage.setItem('chubby_score', score); // Save balance locally
+        
+        // Trigger floating text effect (+1)
+        createTapEffect(e);
+    });
+}
 
 // Floating +1 Text Effect
 function createTapEffect(e) {
