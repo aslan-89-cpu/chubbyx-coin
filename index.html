@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Mini App</title>
-    <!-- چاککردنی بەستەری فەرمی تێلیگرام بۆ کارکردنی دوگمەکان -->
-    <script src="game.js"></script>
-    <!-- چاککردنی بەستەری فەرمی تۆن کەنێکت بۆ بەستنەوەی جزدان -->
-    <script src="wallet.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -72,66 +68,83 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            position: relative;
         }
         .tab-content.active {
             display: flex;
         }
-        /* ناوچەی لێدان (Tap Zone) */
+        
+        /* شاشەی سەرەکی یارییەکە - جوڵاندنی شوێنی سندوق و بازنە */
+        .game-main-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            margin-top: -30px; /* کەمێک هێنانە سەرەوەی هەموو بەشەکە */
+        }
+
+        /* سندوقی سکۆر - دانانی لە سەر سەری ورچەکە */
+        .score-box {
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+            padding: 8px 22px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.18);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 75px; /* بۆشایی دانان بۆ ئەوەی بکەوێتە سەر سەری بۆتەکە */
+            z-index: 5;
+        }
+        .score-display {
+            font-size: 36px;
+            font-weight: 900;
+            color: #ffe066;
+            text-shadow: 0px 2px 8px rgba(0,0,0,0.7);
+        }
+        .coin-title {
+            font-size: 18px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* بازنە زێڕینەکە - بچووککردنەوە و هێنانە خوارەوە بۆ سەر سکی ورچەکە */
         .coin-container {
             position: relative;
             cursor: pointer;
             transition: transform 0.05s;
-            margin-top: 10px;
-            width: 250px;
-            height: 250px;
+            width: 175px; /* بچووککردنەوەی قەبارەکەی */
+            height: 175px;
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 5;
+            margin-top: 10px; /* هێنانە خوارەوەی ڕێک بۆ سەر سکی ورچەکە */
         }
         .coin-container:active {
             transform: scale(0.92);
         }
-        /* دروستکردنی لۆگۆی زێڕینی گەشاوە بۆ لێدان بە ناوی CHUB */
         .gold-coin-clickable {
-            width: 200px;
-            height: 200px;
+            width: 100%;
+            height: 100%;
             background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%);
             border-radius: 50%;
-            box-shadow: 0 0 35px rgba(245, 176, 65, 0.9), inset 0 0 20px rgba(255,255,255,0.6);
-            border: 5px solid #fff;
+            box-shadow: 0 0 25px rgba(245, 176, 65, 0.85), inset 0 0 15px rgba(255,255,255,0.6);
+            border: 4px solid #fff;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 900;
             color: #78281f;
-            text-shadow: 0 2px 4px rgba(255,255,255,0.3);
+            text-shadow: 0 1px 3px rgba(255,255,255,0.3);
         }
-        /* چاککردنی سندوقی نیشاندانی سکۆری زێڕین بە ناوی ChubbyX */
-        .score-box {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            padding: 10px 25px;
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.15);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .score-display {
-            font-size: 42px;
-            font-weight: 900;
-            color: #ffe066; /* گۆڕینی ڕەنگی سکۆر بۆ زێڕین */
-            text-shadow: 0px 2px 8px rgba(0,0,0,0.6);
-        }
-        .coin-title {
-            font-size: 20px;
-            color: #fff;
-            font-weight: bold;
-        }
+
         .tab-title { font-size: 28px; margin-bottom: 5px; color: white; }
         .tab-desc { font-size: 16px; color: #ccc; margin-bottom: 25px; }
+        
         .task-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -147,7 +160,7 @@
             color: white;
         }
         .navbar-bottom {
-            background: rgba(15, 15, 25, 0.85);
+            background: rgba(15, 15, 25, 0.9);
             backdrop-filter: blur(15px);
             display: flex;
             justify-content: space-around;
@@ -169,7 +182,7 @@
             font-weight: bold;
         }
         .nav-icon { font-size: 22px; margin-bottom: 4px; }
-        #ton-connect-button { margin-top: 15px; }
+        #ton-connect-button { margin-top: 15px; color: black; }
     </style>
 </head>
 <body>
@@ -183,13 +196,14 @@
 
         <!-- 1. Home Tab (Game Screen) -->
         <div id="home" class="tab-content active">
-            <div class="score-box">
-                <span class="score-display" id="score">0</span>
-                <span class="coin-title">ChubbyX</span>
-            </div>
-            <div class="coin-container" id="tap-zone">
-                <!-- لۆگۆ نوێیە زێڕینەکە لێرە جێگیرکرا بۆ ئەوەی وێنە کۆنەکە نەمێنێت -->
-                <div class="gold-coin-clickable">CHUB</div>
+            <div class="game-main-layout">
+                <div class="score-box">
+                    <span class="score-display" id="score">0</span>
+                    <span class="coin-title">ChubbyX</span>
+                </div>
+                <div class="coin-container" id="tap-zone">
+                    <div class="gold-coin-clickable">CHUB</div>
+                </div>
             </div>
         </div>
 
@@ -197,7 +211,7 @@
         <div id="invite" class="tab-content">
             <button class="btn-back-home" onclick="returnToHome()">⬅️ Back to Home</button>
             <h2 class="tab-title">Invite Friends</h2>
-            <p class="tab-desc">Share your link and earn +5,000 Coins!</p>
+            <p class="tab-desc">Share your link and earn reward coins!</p>
             <button class="btn-top" style="background:#0066ff; padding:15px 30px; font-size:16px;" onclick="copyInviteLink()">Copy Link</button>
         </div>
 
@@ -221,7 +235,7 @@
             <button class="btn-back-home" onclick="returnToHome()">⬅️ Back to Home</button>
             <h2 class="tab-title">Connect Wallet</h2>
             <p class="tab-desc">Connect your TON wallet for airdrop.</p>
-            <div id="ton-connect-button"></div>
+            <div id="ton-connect-button" style="background: white; color: black; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer;" onclick="alert('Wallet system connecting...')">Connect TON Wallet</div>
         </div>
 
         <!-- 5. Hidden Airdrop Tab -->
@@ -252,10 +266,9 @@
         </nav>
     </div>
 
-    <!-- فایلی ڕاستەقینەی بەستنەوەی سکریپتەکان -->
-    <script src="game.js"></script>
-    <script src="wallet.js"></script>
-    <script src="tasks.js"></script>
-    <script src="invite.js"></script>
-</body>
-</html>
+    <!-- فایلی ڕاستەقینەی بەستنەوەی سکریپتەکان بە کامڵی لێرە جێگیر بوو تا نەبڕێت -->
+    <script>
+        function showTab(tabId, element) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
