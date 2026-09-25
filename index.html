@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Mini App</title>
-    <!-- ئەپدێتی گرنگ: بەستەری تەواو و فەرمی TON Connect لێرە جێگیرکرا -->
-    <script src="https://unpkg.com"></script>
+    <!-- چاککردنی بەستەری فەرمی تێلیگرام بۆ کارکردنی دوگمەکان -->
+    <script src="game.js"></script>
+    <!-- چاککردنی بەستەری فەرمی تۆن کەنێکت بۆ بەستنەوەی جزدان -->
+    <script src="wallet.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -20,13 +22,12 @@
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #000;
-            color: white;
         }
         .app-container {
             width: 100%;
             height: 100%;
             background: url('background.jpg') no-repeat center center;
-            background-size: 100% 100% !important;
+            background-size: cover;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -50,6 +51,17 @@
             font-size: 14px;
             cursor: pointer;
         }
+        .btn-back-home {
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid rgba(255, 68, 68, 0.4);
+            color: #ff4444;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
         .tab-content {
             display: none;
             flex-grow: 1;
@@ -64,36 +76,62 @@
         .tab-content.active {
             display: flex;
         }
+        /* ناوچەی لێدان (Tap Zone) */
         .coin-container {
             position: relative;
             cursor: pointer;
             transition: transform 0.05s;
-            margin-top: 20px;
+            margin-top: 10px;
+            width: 250px;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .coin-container:active {
-            transform: scale(0.95);
+            transform: scale(0.92);
         }
-        .main-character {
-            width: 220px;
-            height: auto;
-            filter: drop-shadow(0px 0px 15px rgba(0, 102, 255, 0.6));
+        /* دروستکردنی لۆگۆی زێڕینی گەشاوە بۆ لێدان بە ناوی CHUB */
+        .gold-coin-clickable {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 35px rgba(245, 176, 65, 0.9), inset 0 0 20px rgba(255,255,255,0.6);
+            border: 5px solid #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            font-weight: 900;
+            color: #78281f;
+            text-shadow: 0 2px 4px rgba(255,255,255,0.3);
+        }
+        /* چاککردنی سندوقی نیشاندانی سکۆری زێڕین بە ناوی ChubbyX */
+        .score-box {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
         }
         .score-display {
-            font-size: 40px;
+            font-size: 42px;
             font-weight: 900;
-            margin-bottom: 10px;
-            text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.9);
+            color: #ffe066; /* گۆڕینی ڕەنگی سکۆر بۆ زێڕین */
+            text-shadow: 0px 2px 8px rgba(0,0,0,0.6);
         }
-        .tab-title {
-            font-size: 28px;
-            margin-bottom: 15px;
+        .coin-title {
+            font-size: 20px;
+            color: #fff;
+            font-weight: bold;
         }
-        .tab-desc {
-            font-size: 16px;
-            color: #ccc;
-            margin-bottom: 25px;
-            max-width: 80%;
-        }
+        .tab-title { font-size: 28px; margin-bottom: 5px; color: white; }
+        .tab-desc { font-size: 16px; color: #ccc; margin-bottom: 25px; }
         .task-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -106,6 +144,7 @@
             align-items: center;
             margin-bottom: 10px;
             cursor: pointer;
+            color: white;
         }
         .navbar-bottom {
             background: rgba(15, 15, 25, 0.85);
@@ -129,13 +168,8 @@
             color: #0066ff;
             font-weight: bold;
         }
-        .nav-icon {
-            font-size: 22px;
-            margin-bottom: 4px;
-        }
-        #ton-connect-button {
-            margin-top: 15px;
-        }
+        .nav-icon { font-size: 22px; margin-bottom: 4px; }
+        #ton-connect-button { margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -149,14 +183,19 @@
 
         <!-- 1. Home Tab (Game Screen) -->
         <div id="home" class="tab-content active">
-            <div class="score-display">🪙 <span id="score">0</span></div>
+            <div class="score-box">
+                <span class="score-display" id="score">0</span>
+                <span class="coin-title">ChubbyX</span>
+            </div>
             <div class="coin-container" id="tap-zone">
-                <img src="background.jpg" class="main-character" alt="Chubby">
+                <!-- لۆگۆ نوێیە زێڕینەکە لێرە جێگیرکرا بۆ ئەوەی وێنە کۆنەکە نەمێنێت -->
+                <div class="gold-coin-clickable">CHUB</div>
             </div>
         </div>
 
         <!-- 2. Invite Tab -->
         <div id="invite" class="tab-content">
+            <button class="btn-back-home" onclick="returnToHome()">⬅️ Back to Home</button>
             <h2 class="tab-title">Invite Friends</h2>
             <p class="tab-desc">Share your link and earn +5,000 Coins!</p>
             <button class="btn-top" style="background:#0066ff; padding:15px 30px; font-size:16px;" onclick="copyInviteLink()">Copy Link</button>
@@ -164,16 +203,22 @@
 
         <!-- 3. Tasks Tab -->
         <div id="tasks" class="tab-content">
+            <button class="btn-back-home" onclick="returnToHome()">⬅️ Back to Home</button>
             <h2 class="tab-title">Tasks List</h2>
             <p class="tab-desc">Complete tasks to get rewards.</p>
             <div class="task-card" onclick="completeTask('tg_channel')">
-                <span>🔹 Join Channel</span>
-                <span style="color:#0066ff; font-weight:bold;">+10K</span>
+                <span>🔹 Join Telegram Channel</span>
+                <span style="color:#0066ff; font-weight:bold;">+5,000</span>
+            </div>
+            <div class="task-card" onclick="completeTask('x_follow')">
+                <span>🔹 Follow our X (Twitter)</span>
+                <span style="color:#0066ff; font-weight:bold;">+5,000</span>
             </div>
         </div>
 
         <!-- 4. Wallet Tab -->
         <div id="wallet" class="tab-content">
+            <button class="btn-back-home" onclick="returnToHome()">⬅️ Back to Home</button>
             <h2 class="tab-title">Connect Wallet</h2>
             <p class="tab-desc">Connect your TON wallet for airdrop.</p>
             <div id="ton-connect-button"></div>
@@ -181,6 +226,7 @@
 
         <!-- 5. Hidden Airdrop Tab -->
         <div id="airdrop" class="tab-content">
+            <button class="btn-back-home" onclick="returnToHome()">⬅️ Back to Home</button>
             <h2 class="tab-title">Airdrop</h2>
             <p class="tab-desc">Listing is coming soon!</p>
         </div>
@@ -206,7 +252,7 @@
         </nav>
     </div>
 
-    <!-- بەستنەوەی هەموو فایلە دەرەکییەکان بە جیاواز -->
+    <!-- فایلی ڕاستەقینەی بەستنەوەی سکریپتەکان -->
     <script src="game.js"></script>
     <script src="wallet.js"></script>
     <script src="tasks.js"></script>
