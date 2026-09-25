@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ChubbyX Mini App</title>
+    <!-- بەستنەوەی سکریپتی فەرمی TON Connect بۆ جزدان -->
+    <script src="https://unpkg.com"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000;
+            color: white;
+        }
+        /* وێنەی باکگراوندەکە لێرەدا بە تەواوی شاشەکە دەگرێت */
+        .app-container {
+            width: 100%;
+            height: 100%;
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        /* سەرەوەی شاشەکە: مێنیو لە چەپ، ئێردرۆپ لە ڕاست */
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 15px;
+            z-index: 10;
+        }
+        .btn-top {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-top:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        /* بەشەکانی ناو ئەپەکە */
+        .tab-content {
+            display: none;
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .tab-content.active {
+            display: flex;
+        }
+        /* بەشی یاریەکە و کلیک کەرەکە (Home) */
+        .coin-container {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.05s;
+            margin-top: 20px;
+        }
+        .coin-container:active {
+            transform: scale(0.95);
+        }
+        .main-character {
+            width: 220px;
+            height: auto;
+            filter: drop-shadow(0px 0px 15px rgba(0, 102, 255, 0.6));
+        }
+        .score-display {
+            font-size: 40px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.9);
+            letter-spacing: 1px;
+        }
+        /* ناوەڕۆکی لاپەڕەکانی تر */
+        .tab-title {
+            font-size: 28px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+        .tab-desc {
+            font-size: 16px;
+            color: #ccc;
+            margin-bottom: 25px;
+            max-width: 80%;
+        }
+        .task-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 350px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        /* شریتی خوارەوە بۆ گۆڕینی لاپەڕەکان */
+        .navbar-bottom {
+            background: rgba(15, 15, 25, 0.85);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #888;
+            font-size: 12px;
+            cursor: pointer;
+            width: 25%;
+            transition: color 0.2s;
+        }
+        .nav-item.active {
+            color: #0066ff;
+            font-weight: bold;
+        }
+        .nav-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+        #ton-connect-button {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- سەرەوە: مێنیو لە چەپ، ئێردرۆپ لە ڕاست -->
+        <div class="header-bar">
+            <button class="btn-top" onclick="alert('Menu Clicked')">☰ Menu</button>
+            <button class="btn-top" onclick="showTab('airdrop')">🎁 Airdrop</button>
+        </div>
+
+        <!-- ١. بەشی سەرەکی: یاریەکە (Home) -->
+        <div id="home" class="tab-content active">
+            <div class="score-display">🪙 <span id="score">0</span></div>
+            <div class="coin-container" id="tap-zone">
+                <!-- لۆگۆ یان کارەکتەرەکەت لێرە دەبێت -->
+                <img src="background.jpg" class="main-character" alt="Chubby">
+            </div>
+        </div>
+
+        <!-- ٢. بەشی فەیس / Invite -->
+        <div id="invite" class="tab-content">
+            <h2 class="tab-title">Invite Friends</h2>
+            <p class="tab-desc">Share your referral link and earn +5,000 Coins for each friend!</p>
+            <button class="btn-top" style="background:#0066ff; padding:15px 30px; font-size:16px;">Copy Invite Link</button>
+        </div>
+
+        <!-- ٣. بەشی تایکەکان / Tasks -->
+        <div id="tasks" class="tab-content">
+            <h2 class="tab-title">Tasks List</h2>
+            <p class="tab-desc">Complete simple tasks to earn big rewards.</p>
+            <div class="task-card">
+                <span>🔹 Follow Telegram Channel</span>
+                <span style="color:#0066ff; font-weight:bold;">+10K</span>
+            </div>
+            <div class="task-card">
+                <span>🔹 Follow X (Twitter)</span>
+                <span style="color:#0066ff; font-weight:bold;">+5K</span>
+            </div>
+        </div>
+
+        <!-- ٤. بەشی جزدان / Wallet -->
+        <div id="wallet" class="tab-content">
+            <h2 class="tab-title">Connect Wallet</h2>
+            <p class="tab-desc">Connect your TON wallet to receive your Airdrop tokens when distributing.</p>
+            <!-- لێرە دوگمەی فەرمی تۆن کەنێکت کاتژمێر دەبێت -->
+            <div id="ton-connect-button"></div>
+        </div>
+
+        <!-- ٥. بەشی ئێردرۆپ / Airdrop (کاتێک لە سەرەوە لای ڕاست کلیک دەکات) -->
+        <div id="airdrop" class="tab-content">
+            <h2 class="tab-title">ChubbyX Airdrop</h2>
+            <p class="tab-desc">The listing is coming soon! Keep active, complete tasks, and build your score.</p>
+        </div>
+
+        <!-- شریتی خوارەوە: Home, Invite, Tasks, Wallet -->
+        <nav class="navbar-bottom">
+            <div class="nav-item active" id="nav-home" onclick="showTab('home', this)">
+                <span class="nav-icon">🏠</span>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" id="nav-invite" onclick="showTab('invite', this)">
+                <span class="nav-icon">👥</span>
+                <span>Invite</span>
+            </div>
+            <div class="nav-item" id="nav-tasks" onclick="showTab('tasks', this)">
+                <span class="nav-icon">📋</span>
+                <span>Tasks</span>
+            </div>
+            <div class="nav-item" id="nav-wallet" onclick="showTab('wallet', this)">
+                <span class="nav-icon">💼</span>
+                <span>Wallet</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- بەستنەوەی فایلە جاڤاسکریتەکان -->
+    <script src="game.js"></script>
+    <script src="wallet.js"></script>
+</body>
+</html>
