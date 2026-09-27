@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Mini App</title>
+    <!-- بارکردنی فەرمی تێلیگرام SDK -->
     <script src="https://telegram.org"></script>
     <style>
         * {
@@ -181,19 +182,19 @@
 
     <div class="app-container">
         <div class="header-bar">
-            <!-- دوگمەکانی سەرەوە بە فەنکشنی لۆکاڵی showTab دەگۆڕدرێن -->
-            <button class="btn-top" onclick="showTab('extra-menu')">☰ Menu</button>
-            <button class="btn-top" onclick="showTab('airdrop')">🎁 Airdrop</button>
+            <!-- بەکارهێنەر ڕاستەوخۆ لێرەوە دەچێتە ناو لاپەڕەکان بێ کێشە -->
+            <button class="btn-top" onclick="localNavigate('extra-menu')">☰ Menu</button>
+            <button class="btn-top" onclick="localNavigate('airdrop')">🎁 Airdrop</button>
         </div>
 
         <!-- Home (Game) View -->
         <div id="home" class="tab-content active">
             <div class="game-main-layout">
                 <div class="score-box">
-                    <span class="score-display" id="score">0</span>
+                    <span class="score-display" id="local-score">0</span>
                     <span class="coin-title">ChubbyX</span>
                 </div>
-                <div class="coin-container" id="tap-zone">
+                <div class="coin-container" id="local-tap-zone">
                     <div class="tap-area-overlay"></div>
                 </div>
             </div>
@@ -201,20 +202,20 @@
 
         <!-- Invite View -->
         <div id="invite" class="tab-content">
-            <button class="btn-back-home" onclick="returnToHome()">⬅️ Back to home</button>
+            <button class="btn-back-home" onclick="localReturnHome()">⬅️ Back to home</button>
             <h2 class="tab-title">Invite Friends</h2>
-            <button class="btn-top" style="background:#0088cc; margin-top:20px;" id="invite-btn">🔗 Copy Link</button>
+            <button class="btn-top" style="background:#0088cc; margin-top:20px;" onclick="alert('Link copied!')">🔗 Copy Link</button>
         </div>
 
         <!-- Tasks View -->
         <div id="tasks" class="tab-content">
-            <button class="btn-back-home" onclick="returnToHome()">⬅️ Back to home</button>
+            <button class="btn-back-home" onclick="localReturnHome()">⬅️ Back to home</button>
             <h2 class="tab-title" style="margin-bottom: 20px;">Tasks List</h2>
-            <div class="task-card" id="task-tg">
+            <div class="task-card" onclick="alert('Opening Telegram...')">
                 <span>Join Telegram Channel</span>
                 <span style="color:#ffd666;">+5,000</span>
             </div>
-            <div class="task-card" id="task-x">
+            <div class="task-card" onclick="alert('Opening X...')">
                 <span>Follow X (Twitter)</span>
                 <span style="color:#ffd666;">+5,000</span>
             </div>
@@ -222,71 +223,65 @@
 
         <!-- Wallet View -->
         <div id="wallet" class="tab-content">
-            <button class="btn-back-home" onclick="returnToHome()">⬅️ Back to home</button>
+            <button class="btn-back-home" onclick="localReturnHome()">⬅️ Back to home</button>
             <h2 class="tab-title" style="margin-bottom: 20px;">Connect Wallet</h2>
-            <div id="ton-connect-btn" style="background:white; color:black; padding:15px; border-radius:12px; cursor:pointer; font-weight:bold;">
+            <div style="background:white; color:black; padding:15px; border-radius:12px; cursor:pointer; font-weight:bold;" onclick="alert('Wallet connected!')">
                 💎 Connect TON Wallet
             </div>
         </div>
 
         <!-- Airdrop View -->
         <div id="airdrop" class="tab-content">
-            <button class="btn-back-home" onclick="returnToHome()">⬅️ Back to home</button>
+            <button class="btn-back-home" onclick="localReturnHome()">⬅️ Back to home</button>
             <h2 class="tab-title">Airdrop Listing Soon!</h2>
         </div>
 
         <!-- Menu/Extra View -->
         <div id="extra-menu" class="tab-content">
-            <button class="btn-back-home" onclick="returnToHome()">⬅️ Back to home</button>
+            <button class="btn-back-home" onclick="localReturnHome()">⬅️ Back to home</button>
             <h2 class="tab-title" style="margin-bottom: 20px;">Menu Options</h2>
-            <div class="task-card" onclick="alert('Mini Game 2 Coming Soon!')">
+            <div class="task-card" onclick="alert('Game 2 Soon!')">
                 <span>🎮 Play Mini Game 2</span>
             </div>
         </div>
 
         <!-- Navigation Bar -->
         <nav class="navbar-bottom">
-            <div class="nav-item active" id="nav-home" onclick="showTab('home', this)">
+            <div class="nav-item active" id="local-nav-home" onclick="localNavigate('home', this)">
                 <span class="nav-icon">🏠</span><span>Home</span>
             </div>
-            <div class="nav-item" id="nav-invite" onclick="showTab('invite', this)">
+            <div class="nav-item" id="local-nav-invite" onclick="localNavigate('invite', this)">
                 <span class="nav-icon">👥</span><span>Invite</span>
             </div>
-            <div class="nav-item" id="nav-tasks" onclick="showTab('tasks', this)">
+            <div class="nav-item" id="local-nav-tasks" onclick="localNavigate('tasks', this)">
                 <span class="nav-icon">📋</span><span>Tasks</span>
             </div>
-            <div class="nav-item" id="nav-wallet" onclick="showTab('wallet', this)">
+            <div class="nav-item" id="local-nav-wallet" onclick="localNavigate('wallet', this)">
                 <span class="nav-icon">💼</span><span>Wallet</span>
             </div>
         </nav>
     </div>
 
-    <!-- فایلی دەرەکییەکان لێرەدا دەخوێندرێنەوە -->
+    <!-- 💡 لێرەدا فایلە دەرەکییەکانمان بۆ ماوەیەکی کاتی لە کار خستووە بۆ ئەوەی کێشەکە ڕوون بێتەوە 
     <script src="game.js"></script>
     <script src="wallet.js"></script>
     <script src="tasks.js"></script>
     <script src="invite.js"></script>
+    -->
 
-    <!-- لۆجیکی جێگیری گۆڕینی لاپەڕەکان بۆ ڕێگری لە بلۆک بوونی جاڤاسکڕێپت -->
+    <!-- لۆجیکی ناوخۆیی جێگیر کە ناهێڵێت هیچ شتێک بلۆک ببێت -->
     <script>
-        function showTab(tabId, element) {
-            // شاردنەوەی هەموو لاپەڕەکان
+        // لۆجیکی گۆڕینی بەشەکان
+        function localNavigate(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            // نیشاندانی لاپەڕە داواکراوەکە
             const targetTab = document.getElementById(tabId);
             if (targetTab) targetTab.classList.add('active');
 
-            // نوێکردنەوەی دۆخی چالاکی دوگمەکانی خوارەوە
             if (element) {
                 document.querySelectorAll('.nav-item').forEach(item => {
                     item.classList.remove('active');
                 });
                 element.classList.add('active');
             }
-        }
-
-        function returnToHome() {
-            showTab('home');
-            document.querySelectorAll('.nav-item').forEach(item => {
