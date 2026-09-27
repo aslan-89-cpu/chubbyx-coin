@@ -12,7 +12,6 @@
             padding: 0;
         }
         body {
-            /* ⚠️ لێرەدا پاشگری وێنەکە گۆڕدرا تەنها بۆ background.jpg */
             background: #1c1437 url('background.jpg') no-repeat center top fixed;
             background-size: cover;
             color: white;
@@ -67,6 +66,7 @@
             pointer-events: none;
             z-index: 1000;
             animation: floatUpAndFade 0.6s ease-out forwards;
+            text-shadow: 0 0 8px rgba(234, 179, 8, 0.7);
         }
         @keyframes floatUpAndFade {
             0% { opacity: 1; transform: translateY(0) scale(1); }
@@ -82,7 +82,7 @@
         .energy-bar-bg { width: 100%; height: 12px; background: rgba(255,255,255,0.2); border-radius: 6px; margin-top: 8px; overflow: hidden; }
         .energy-bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #eab308, #ef4444); border-radius: 6px; transition: width 0.1s ease; }
 
-        /* ناوچەی پیشاندانی لاپەڕە داینامیکییەکان */
+        /* ناوچەی لاپەڕە داینامیکییەکان (Tasks, Wallet و هتد) */
         .dynamic-view {
             display: none;
             position: fixed;
@@ -92,7 +92,7 @@
             height: calc(100vh - 70px);
             background: #0d081b;
             z-index: 1500;
-            padding: 30px 20px;
+            padding: 40px 20px;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
@@ -100,6 +100,31 @@
         }
         .dynamic-view.active {
             display: flex;
+        }
+        .view-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: white;
+        }
+        .view-desc {
+            font-size: 15px;
+            color: #ccc;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .custom-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 20px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 360px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
         }
 
         .nav-bar {
@@ -118,33 +143,72 @@
 </head>
 <body>
 
-    <!-- یاری سەرەکی ئەسڵی خۆت -->
-    <div class="header" id="mainHeader">
-        <div>CHUBBYX BALANCE</div>
-        <h1 id="score">0</h1>
+    <!-- 🏠 لاپەڕەی سەرەکی (Home View) -->
+    <div id="home-layout" style="display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%;">
+        <div class="header">
+            <div>CHUBBYX BALANCE</div>
+            <h1 id="score">0</h1>
+        </div>
+
+        <div class="coin-container" id="coinContainer">
+            <div class="tap-zone" id="tapCoin"></div>
+        </div>
+
+        <div class="energy-container">
+            <div>⚡ <span id="energyText">500</span> / 500</div>
+            <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyFill"></div></div>
+        </div>
     </div>
 
-    <div class="coin-container" id="coinContainer">
-        <div class="tap-zone" id="tapCoin"></div>
+    <!-- 📋 لاپەڕەی Tasks -->
+    <div id="tasks-view" class="dynamic-view">
+        <h2 class="view-title">Tasks List 📋</h2>
+        <p class="view-desc">Complete social tasks to earn extra ChubbyX coins.</p>
+        <div class="custom-card" id="task-tg-btn">
+            <span>Join Telegram Channel</span>
+            <span style="color:#ffd666; font-weight:bold;">+5,000</span>
+        </div>
+        <div class="custom-card" id="task-x-btn">
+            <span>Follow X (Twitter)</span>
+            <span style="color:#ffd666; font-weight:bold;">+5,000</span>
+        </div>
     </div>
 
-    <div class="energy-container" id="mainEnergy">
-        <div>⚡ <span id="energyText">500</span> / 500</div>
-        <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyFill"></div></div>
+    <!-- 👥 لاپەڕەی Invite -->
+    <div id="invite-view" class="dynamic-view">
+        <h2 class="view-title">Invite Friends 👥</h2>
+        <p class="view-desc">Share your referral link and earn progressive tier rewards!</p>
+        <button id="invite-action-btn" style="background:#0088cc; color:white; border:none; padding:14px 28px; border-radius:15px; font-weight:bold; font-size:16px; cursor:pointer;">
+            🔗 Copy Invite Link
+        </button>
     </div>
 
-    <!-- لاپەڕە داینامیکییەکان -->
-    <div id="tasks-view" class="dynamic-view"></div>
-    <div id="invite-view" class="dynamic-view"></div>
-    <div id="mini-games-view" class="dynamic-view"></div>
-    <div id="wallet-view" class="dynamic-view"></div>
+    <!-- 🎮 لاپەڕەی Games -->
+    <div id="games-view" class="dynamic-view">
+        <h2 class="view-title">ChubbyX Games 🎮</h2>
+        <p class="view-desc">Play mini games to boost your daily earnings.</p>
+        <div class="custom-card" onclick="alert('Lucky Wheel starting soon!')">
+            <span>🎰 Lucky Wheel Spin</span>
+            <span style="color:#a0e670;">Play</span>
+        </div>
+    </div>
 
+    <!-- 💼 لاپەڕەی Wallet -->
+    <div id="wallet-view" class="dynamic-view">
+        <h2 class="view-title">Connect Wallet 💼</h2>
+        <p class="view-desc">Connect your TON wallet to secure your future airdrop allocation.</p>
+        <div id="wallet-action-btn" style="background:white; color:black; padding:15px 30px; border-radius:12px; cursor:pointer; font-weight:bold; font-size:16px;">
+            💎 Connect TON Wallet
+        </div>
+    </div>
+
+    <!-- ⬇️ مینیۆ بارەکەت بەو ناوانەی خۆت ویستت ڕێکخران -->
     <div class="nav-bar">
-        <div class="nav-item" onclick="openPage('tasks', this)">Tasks</div>
-        <div class="nav-item" onclick="openPage('invite', this)">Invite</div>
-        <div class="nav-item active" onclick="closeAllPages(this)">Games</div>
-        <div class="nav-item" onclick="openPage('mini-games', this)">Mini Games</div>
-        <div class="nav-item" onclick="openPage('wallet', this)">Wallet</div>
+        <div class="nav-item" onclick="navigateTo('tasks', this)">Tasks</div>
+        <div class="nav-item" onclick="navigateTo('invite', this)">Invite</div>
+        <div class="nav-item active" id="default-nav" onclick="navigateTo('home', this)">Home</div>
+        <div class="nav-item" onclick="navigateTo('games', this)">Games</div>
+        <div class="nav-item" onclick="navigateTo('wallet', this)">Wallet</div>
     </div>
 
     <script>
@@ -152,14 +216,14 @@
             const webapp = window.Telegram.WebApp;
             webapp.ready();
             webapp.expand();
-            webapp.setHeaderColor('#1c1437');
-            webapp.setBackgroundColor('#1c1437');
         }
 
+        // ١. لۆجیکی جێگیری سەرەکی تاپ-تاپ و پاشەکەوتکردن
         var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        var energy = 500;
+        var energy = parseInt(localStorage.getItem('chubby_energy')) || 500;
 
         document.getElementById('score').innerText = count.toLocaleString();
+        updateUI();
 
         var tapElement = document.getElementById('tapCoin');
         var coinContainer = document.getElementById('coinContainer');
@@ -173,12 +237,12 @@
                     document.getElementById('score').innerText = count.toLocaleString();
                     updateUI();
                     localStorage.setItem('chubby_coins', count);
+                    localStorage.setItem('chubby_energy', energy);
 
                     playChubbVoice();
-
                     tapElement.classList.add('tap-zone-active');
 
-                    var touch = e.touches;
+                    var touch = e.touches[0];
                     var rect = coinContainer.getBoundingClientRect();
                     var x = touch.clientX - rect.left;
                     var y = touch.clientY - rect.top;
@@ -188,9 +252,7 @@
             });
 
             tapElement.addEventListener('touchend', function(e) {
-                setTimeout(() => {
-                    tapElement.classList.remove('tap-zone-active');
-                }, 50);
+                setTimeout(() => { tapElement.classList.remove('tap-zone-active'); }, 50);
             });
         }
 
@@ -201,52 +263,3 @@
                 utterance.lang = 'en-US';
                 utterance.pitch = 1.4;
                 utterance.rate = 1.6;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        function createFloatingText(x, y) {
-            var textNode = document.createElement('div');
-            textNode.className = 'floating-text';
-            textNode.innerText = '+1';
-            textNode.style.left = (x - 20) + 'px';
-            textNode.style.top = (y - 20) + 'px';
-
-            coinContainer.appendChild(textNode);
-
-            setTimeout(() => { textNode.remove(); }, 600);
-        }
-
-        function updateUI() {
-            document.getElementById('energyText').innerText = energy;
-            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%';
-        }
-
-        setInterval(function() {
-            if (energy < 500) { energy += 3; if (energy > 500) energy = 500; updateUI(); }
-        }, 1000);
-
-        function openPage(pageId, element) {
-            document.querySelectorAll('.dynamic-view').forEach(view => view.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            
-            const targetView = document.getElementById(${pageId}-view);
-            if (targetView) targetView.classList.add('active');
-            if (element) element.classList.add('active');
-        }
-
-        function closeAllPages(element) {
-            document.querySelectorAll('.dynamic-view').forEach(view => view.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            if (element) element.classList.add('active');
-            
-            count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-            document.getElementById('score').innerText = count.toLocaleString();
-        }
-    </script>
-
-    <script src="wallet.js"></script>
-    <script src="tasks.js"></script>
-    <script src="invite.js"></script>
-</body>
-</html>
