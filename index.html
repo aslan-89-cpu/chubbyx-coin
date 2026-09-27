@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChubbyX Hub</title>
-    <!-- بارکردنی فەرمی و نوێی تێلیگرام SDK -->
+    <title>ChubbyX Mining Hub</title>
     <script src="https://telegram.org"></script>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         body {
-            background: #1c1437 url('background.jpg') no-repeat center top -120px fixed;
-            background-size: cover;
-            color: white;
-            font-family: sans-serif;
+            background: #090611 linear-gradient(180deg, #0f0a1c 0%, #05030a 100%);
+            color: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -26,237 +24,249 @@
             -webkit-user-select: none;
             touch-action: none;
         }
-        .header-bar {
+        .header-status {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 20px 20px 0 20px;
-            z-index: 2500;
-        }
-        .btn-top {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .header {
-            margin-top: 15px;
-            text-align: center;
             z-index: 10;
-            pointer-events: none;
         }
-        .header div { font-size: 14px; opacity: 0.8; letter-spacing: 1px; }
-        .header h1 { font-size: 32px; font-weight: bold; margin-top: 5px; }
-
-        .coin-container {
+        .user-badge {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .user-name { font-weight: bold; font-size: 16px; color: #fff; }
+        .lvl-tag {
+            background: rgba(234, 179, 8, 0.15);
+            border: 1px solid #eab308;
+            color: #eab308;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+            width: fit-content;
+        }
+        .wallet-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #ccc;
+            font-weight: 500;
+        }
+        
+        .main-layout {
             flex: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            position: relative;
+        }
+
+        .assets-title { font-size: 11px; color: #888; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 10px; }
+        .balance-display { font-size: 34px; font-weight: 800; color: #fff; margin: 5px 0 15px 0; }
+        .balance-display span { color: #eab308; font-size: 20px; font-weight: 600; }
+
+        .pool-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+        .pool-box span { color: #fff; font-weight: bold; }
+
+        /* ژمارەی سەوزی ماینینگ ڕێک وەک ئەپی ATF */
+        .mining-profit {
+            font-size: 36px;
+            font-weight: bold;
+            color: #22c55e;
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+            margin-bottom: 25px;
+        }
+
+        /* دراوە زێڕینە گەورەکەی ناوەڕاست */
+        .coin-wrapper {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            margin-bottom: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+        .gold-coin {
             width: 100%;
-            position: relative;
-            z-index: 5;
-        }
-        /* گەورەکردنی تەواوی ناوچەی کلیک بۆ ئەوەی بە دڵنیایی لێدانی بەرکەوێت */
-        .tap-zone {
-            position: absolute;
-            top: 15%; 
-            width: 320px;
-            height: 320px;
+            height: 100%;
             border-radius: 50%;
+            background: linear-gradient(135deg, #ffd700 0%, #b8860b 50%, #d4af37 100%);
+            box-shadow: 0 0 35px rgba(212, 175, 55, 0.25), inset 0 0 20px rgba(0,0,0,0.4);
+            border: 8px double #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
-            background: transparent;
-            -webkit-tap-highlight-color: transparent;
-            z-index: 999;
-            touch-action: manipulation;
-            transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.05s ease;
         }
-        .tap-zone-active {
-            transform: scale(0.93) !important;
-        }
+        .gold-coin:active { transform: scale(0.94); }
+        .coin-text { font-size: 42px; font-weight: 900; color: #000; text-shadow: 1px 1px 0px #fff; }
+
         .floating-text {
             position: absolute;
-            color: #eab308;
+            color: #22c55e;
             font-weight: bold;
             font-size: 24px;
             pointer-events: none;
             z-index: 1000;
-            animation: floatUpAndFade 0.6s ease-out forwards;
-            text-shadow: 0 0 8px rgba(234, 179, 8, 0.7);
+            animation: floatUp 0.6s ease-out forwards;
         }
-        @keyframes floatUpAndFade {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-130px) scale(1.2); }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-100px); }
         }
-        .energy-container {
-            width: 80%;
-            text-align: center;
-            z-index: 10;
-            margin-bottom: 125px; 
-            pointer-events: none;
-        }
-        .energy-bar-bg { width: 100%; height: 12px; background: rgba(255,255,255,0.2); border-radius: 6px; margin-top: 8px; overflow: hidden; }
-        .energy-bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #eab308, #ef4444); border-radius: 6px; transition: width 0.1s ease; }
 
-        .dynamic-view {
+        /* دوگمەی گەورەی CLAIM وەک ATF */
+        .claim-btn {
+            width: 100%;
+            max-width: 340px;
+            background: #eab308;
+            color: #000;
+            border: none;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+            margin-bottom: 100px;
+        }
+        .claim-btn:active { transform: scale(0.98); }
+
+        /* لاپەڕە داینامیکییەکان */
+        .dynamic-page {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
-            height: calc(100vh - 85px);
-            background: #0d081b;
+            height: calc(100vh - 75px);
+            background: #090611;
             z-index: 1500;
-            padding: 80px 20px 40px 20px;
+            padding: 40px 20px;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            overflow-y: auto;
         }
-        .dynamic-view.active {
-            display: flex;
-        }
+        .dynamic-page.active { display: flex; }
+        .page-title { font-size: 26px; font-weight: bold; margin-bottom: 25px; color: #eab308; }
 
-        .nav-bar {
+        /* مینیۆ بارەکەی خوارەوە */
+        .bottom-nav {
             width: 100%;
-            background: rgba(13, 8, 27, 0.96);
-            border-top: 2px solid #7b2cbf;
+            background: #05030a;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             position: fixed;
             bottom: 0;
-            padding: 15px 15px calc(25px + env(safe-area-inset-bottom)); 
+            padding: 12px 10px calc(12px + env(safe-area-inset-bottom));
             z-index: 2000;
         }
-        .nav-item { flex: 1; text-align: center; font-size: 13px; color: #8d4add; text-decoration: none; cursor: pointer; padding: 5px 0; font-weight: bold; transition: color 0.2s; }
-        .nav-item.active { color: white; }
+        .nav-link { flex: 1; text-align: center; font-size: 12px; color: #666; text-decoration: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: 500; }
+        .nav-link.active { color: #eab308; font-weight: bold; }
+        .nav-icon { font-size: 20px; }
     </style>
 </head>
 <body>
 
-    <!-- دوگمەکانی سەرەوە -->
-    <div class="header-bar">
-        <button class="btn-top" onclick="navigateTo('menu')">☰ Menu</button>
-        <button class="btn-top" onclick="navigateTo('airdrop')">🎁 Airdrop</button>
+    <!-- بەشی سەرەوەی ناسنامە -->
+    <div class="header-status">
+        <div class="user-badge">
+            <span class="user-name">ChubbyX Miner</span>
+            <span class="lvl-tag">Lvl 1 • READY</span>
+        </div>
+        <div class="wallet-badge" id="wallet-status">UQDb...io_R ⌵</div>
     </div>
 
-    <!-- 🏠 لاپەڕەی سەرەکی (Home View) -->
-    <div id="home-layout" style="display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%;">
-        <div class="header">
-            <div>CHUBBYX BALANCE</div>
-            <h1 id="score">0</h1>
+    <!-- 🏠 ڕوونمای سەرەکی ماینینگ (Mine View) -->
+    <div class="main-layout" id="mine-layout">
+        <span class="assets-title">Assets</span>
+        <div class="balance-display"><span id="main-balance">0</span> <span>ChubbyX</span></div>
+        
+        <div class="pool-box">POOL WALLET: <span id="pool-balance">0.0000</span></div>
+        
+        <!-- ژمارەی سەوزی ماینینگی کاتی -->
+        <div class="mining-profit" id="mining-live">+0.0000</div>
+
+        <!-- دراوە زێڕینەکە -->
+        <div class="coin-wrapper" id="coinContainer">
+            <div class="gold-coin" id="clickCoin">
+                <div class="coin-text">CX</div>
+            </div>
         </div>
 
-        <div class="coin-container" id="coinContainer">
-            <div class="tap-zone" id="tapCoin"></div>
-        </div>
-
-        <div class="energy-container">
-            <div>⚡ <span id="energyText">500</span> / 500</div>
-            <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyFill"></div></div>
-        </div>
+        <!-- دوگمەی Claim -->
+        <button class="claim-btn" id="claimAction">Claim</button>
     </div>
 
-    <!-- شوێنی لاپەڕە داینامیکییەکان -->
-    <div id="tasks-view" class="dynamic-view"></div>
-    <div id="invite-view" class="dynamic-view"></div>
-    <div id="games-view" class="dynamic-view"></div>
-    <div id="wallet-view" class="dynamic-view"></div>
-    <div id="menu-view" class="dynamic-view"></div>
-    <div id="airdrop-view" class="dynamic-view"></div>
+    <!-- لاپەڕە داینامیکییەکانی تر -->
+    <div id="tasks-page" class="dynamic-page"><h2 class="page-title">Tasks List</h2></div>
+    <div id="miners-page" class="dynamic-page"><h2 class="page-title">Miners Upgrade</h2></div>
+    <div id="friends-page" class="dynamic-page"><h2 class="page-title">Friends Referral</h2></div>
+    <div id="profile-page" class="dynamic-page"><h2 class="page-title">User Profile</h2></div>
 
-    <!-- مینیۆ بارەکەت -->
-    <div class="nav-bar">
-        <div class="nav-item" onclick="navigateTo('tasks', this)">Tasks</div>
-        <div class="nav-item" onclick="navigateTo('invite', this)">Invite</div>
-        <div class="nav-item active" id="default-nav" onclick="navigateTo('home', this)">Home</div>
-        <div class="nav-item" onclick="navigateTo('games', this)">Games</div>
-        <div class="nav-item" onclick="navigateTo('wallet', this)">Wallet</div>
+    <!-- مینیۆ باری خوارەوە بە ستایلی ATF -->
+    <div class="bottom-nav">
+        <div class="nav-link active" id="default-nav" onclick="switchPage('mine', this)">
+            <span class="nav-icon">⛏️</span><span>Mine</span>
+        </div>
+        <div class="nav-link" onclick="switchPage('tasks', this)">
+            <span class="nav-icon">📋</span><span>Tasks</span>
+        </div>
+        <div class="nav-link" onclick="switchPage('miners', this)">
+            <span class="nav-icon">⚡</span><span>Miners</span>
+        </div>
+        <div class="nav-link" onclick="switchPage('friends', this)">
+            <span class="nav-icon">👥</span><span>Friends</span>
+        </div>
+        <div class="nav-link" onclick="switchPage('profile', this)">
+            <span class="nav-icon">👤</span><span>Profile</span>
+        </div>
     </div>
 
     <script>
-        // چالاککردنی فەرمی تێلیگرام WebApp بۆ لابردنی بلۆکی شاشە
+        // چالاککردنی تێلیگرام بۆ لابردنی بەستنی شاشە
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
         }
 
-        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        var energy = parseInt(localStorage.getItem('chubby_energy')) || 500;
+        // ١. سیستەمی داتای کاتی و ماینینگی ئۆتۆماتیکی وەک ATF
+        let mainBalance = parseFloat(localStorage.getItem('cx_main_balance')) || 0;
+        let poolBalance = parseFloat(localStorage.getItem('cx_pool_balance')) || 0;
+        
+        document.getElementById('main-balance').innerText = mainBalance.toFixed(4);
+        document.getElementById('pool-balance').innerText = poolBalance.toFixed(4);
 
-        document.getElementById('score').innerText = count.toLocaleString();
-        updateUI();
-
-        var tapElement = document.getElementById('tapCoin');
-        var coinContainer = document.getElementById('coinContainer');
-
-        // چارەسەری لێدان: گۆڕینی فەرمانەکە بۆ شێوازی گشتی (Pointer Events) کە هەم مۆبایل و هەم کۆمپیوتەر دەخوێنێتەوە
-        if (tapElement) {
-            tapElement.addEventListener('pointerdown', function(e) {
-                e.preventDefault();
-                if (energy > 0) {
-                    count++;
-                    energy--;
-                    document.getElementById('score').innerText = count.toLocaleString();
-                    updateUI();
-                    localStorage.setItem('chubby_coins', count);
-                    localStorage.setItem('chubby_energy', energy);
-
-                    // لێدانی دەنگ
-                    if ('speechSynthesis' in window) {
-                        window.speechSynthesis.cancel();
-                        var utterance = new SpeechSynthesisUtterance('Chub');
-                        utterance.lang = 'en-US';
-                        utterance.pitch = 1.4;
-                        utterance.rate = 1.6;
-                        window.speechSynthesis.speak(utterance);
-                    }
-
-                    tapElement.classList.add('tap-zone-active');
-
-                    // ئەژمارکردنی شوێنی پەنجە بۆ دەقی پۆینتی +1
-                    var rect = coinContainer.getBoundingClientRect();
-                    var x = e.clientX - rect.left;
-                    var y = e.clientY - rect.top;
-
-                    var textNode = document.createElement('div');
-                    textNode.className = 'floating-text';
-                    textNode.innerText = '+1';
-                    textNode.style.left = (x - 20) + 'px';
-                    textNode.style.top = (y - 20) + 'px';
-                    coinContainer.appendChild(textNode);
-                    setTimeout(() => { textNode.remove(); }, 600);
-                }
-            });
-
-            tapElement.addEventListener('pointerup', function() {
-                setTimeout(() => { tapElement.classList.remove('tap-zone-active'); }, 50);
-            });
-        }
-
-        function updateUI() {
-            document.getElementById('energyText').innerText = energy;
-            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%';
-        }
-
-        setInterval(function() {
-            if (energy < 500) { 
-                energy += 3; 
-                if (energy > 500) energy = 500; 
-                updateUI(); 
-                localStorage.setItem('chubby_energy', energy);
-            }
-        }, 1000);
-
-        function navigateTo(pageId, element) {
-            document.getElementById('home-layout').style.display = 'none';
-            document.querySelectorAll('.dynamic-view').forEach(view => view.classList.remove('active'));
+        // ماینینگی کاتی: هەر چرکەیەک دۆخی ماینینگەکە زیاد دەکات
+        setInterval(() => {
+            let pendingProfit = Math.random() * 0.0005; // زیادبوونی هەڕەمەکی بۆ جوانی دیمەنەکە
+            poolBalance += pendingProfit;
             
-            if (element && element.classList.contains('nav-item')) {
-                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-                element.classList.add('active');
+            document.getElementById('mining-live').innerText = "+" + pendingProfit.toFixed(4);
+            document.getElementById('pool-balance').innerText = poolBalance.toFixed(4);
+            
+            localStorage.setItem('cx_pool_balance', poolBalance);
+        }, 1500);
+
+        // ٢. لۆجیکی دوگمەی CLAIM
+        document.getElementById('claimAction').addEventListener('click', () => {
