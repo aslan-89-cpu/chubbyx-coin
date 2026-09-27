@@ -12,8 +12,8 @@
             padding: 0;
         }
         body {
-            /* ⬇️ لێرەدا وێنەکەمان کەمێک بەرزکردووەتەوە بۆ سەرەوە (center top -20px) */
-            background: #1c1437 url('background.jpg') no-repeat center top -20px fixed;
+            /* ⬇️ لێرەدا وێنەکە زۆر زیاتر براوەتە سەرەوە بۆ جێگیربوونی تەواو */
+            background: #1c1437 url('background.jpg') no-repeat center top -120px fixed;
             background-size: cover;
             color: white;
             font-family: sans-serif;
@@ -62,12 +62,12 @@
             position: relative;
             z-index: 5;
         }
-        /* ⬇️ گەورەکردنی ناوچەی کلیکی بووکەڵەکە بۆ ٣٠٠پێکسڵ و بردنە سەرەوەی */
+        /* ⬇️ جێگیرکردنی ناوچەی کلیکی گەورەکراو ڕێک لەسەر بووکەڵە مۆرەکە */
         .tap-zone {
             position: absolute;
-            top: 20%; 
-            width: 300px;
-            height: 300px;
+            top: 15%; 
+            width: 320px;
+            height: 320px;
             border-radius: 50%;
             cursor: pointer;
             background: transparent;
@@ -97,7 +97,7 @@
             width: 80%;
             text-align: center;
             z-index: 10;
-            margin-bottom: 130px; 
+            margin-bottom: 125px; 
             pointer-events: none;
         }
         .energy-bar-bg { width: 100%; height: 12px; background: rgba(255,255,255,0.2); border-radius: 6px; margin-top: 8px; overflow: hidden; }
@@ -147,7 +147,6 @@
             cursor: pointer;
         }
 
-        /* ⬇️ چاککردنی کۆتایی مینیۆ بارەکە بۆ ئەوەی کەمێک بەرزتر بێتەوە و دەقەکان دیار بن */
         .nav-bar {
             width: 100%;
             background: rgba(13, 8, 27, 0.96);
@@ -195,7 +194,7 @@
     <div id="menu-view" class="dynamic-view"></div>
     <div id="airdrop-view" class="dynamic-view"></div>
 
-    <!-- مینیۆ بارەکەت (تاگەکەی لێرەدا ۱۰۰٪ داخراوە) -->
+    <!-- مینیۆ بارەکەت -->
     <div class="nav-bar">
         <div class="nav-item" onclick="navigateTo('tasks', this)">Tasks</div>
         <div class="nav-item" onclick="navigateTo('invite', this)">Invite</div>
@@ -235,7 +234,7 @@
                     playChubbVoice();
                     tapElement.classList.add('tap-zone-active');
 
-                    var touch = e.touches;
+                    var touch = e.touches[0];
                     var rect = coinContainer.getBoundingClientRect();
                     var x = touch.clientX - rect.left;
                     var y = touch.clientY - rect.top;
@@ -272,3 +271,9 @@
 
         function updateUI() {
             document.getElementById('energyText').innerText = energy;
+            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%';
+        }
+
+        setInterval(function() {
+            if (energy < 500) { 
+                energy += 3;
