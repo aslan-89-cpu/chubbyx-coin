@@ -95,7 +95,7 @@
             width: 80%;
             text-align: center;
             z-index: 10;
-            margin-bottom: 115px; /* بەرزکردنەوەی وزە بۆ ئەوەی لە مینیۆکە دوور بێت */
+            margin-bottom: 125px; 
             pointer-events: none;
         }
         .energy-bar-bg { width: 100%; height: 12px; background: rgba(255,255,255,0.2); border-radius: 6px; margin-top: 8px; overflow: hidden; }
@@ -145,7 +145,6 @@
             cursor: pointer;
         }
 
-        /* ⬇️ کەمێک بەرزکردنەوەی مینیۆ بارەکە بۆ سەرەوە و ڕێکخستنی شوێنەکەی */
         .nav-bar {
             width: 100%;
             background: rgba(13, 8, 27, 0.96);
@@ -153,7 +152,7 @@
             display: flex;
             position: fixed;
             bottom: 0;
-            padding: 15px 15px calc(25px + env(safe-area-inset-bottom)); /* بەرزکردنەوەی پادینگی خوارەوە */
+            padding: 15px 15px calc(25px + env(safe-area-inset-bottom)); 
             z-index: 2000;
         }
         .nav-item { flex: 1; text-align: center; font-size: 13px; color: #8d4add; text-decoration: none; cursor: pointer; padding: 5px 0; font-weight: bold; transition: color 0.2s; }
@@ -193,7 +192,7 @@
     <div id="menu-view" class="dynamic-view"></div>
     <div id="airdrop-view" class="dynamic-view"></div>
 
-    <!-- مینیۆ بارەکەت (تاگی لێرەدا بە تەواوی داخراوە) -->
+    <!-- مینیۆ بارەکەت -->
     <div class="nav-bar">
         <div class="nav-item" onclick="navigateTo('tasks', this)">Tasks</div>
         <div class="nav-item" onclick="navigateTo('invite', this)">Invite</div>
@@ -233,7 +232,7 @@
                     playChubbVoice();
                     tapElement.classList.add('tap-zone-active');
 
-                    var touch = e.touches;
+                    var touch = e.touches[0];
                     var rect = coinContainer.getBoundingClientRect();
                     var x = touch.clientX - rect.left;
                     var y = touch.clientY - rect.top;
@@ -274,4 +273,10 @@
         }
 
         setInterval(function() {
-            if (energy < 500) {
+            if (energy < 500) { 
+                energy += 3; 
+                if (energy > 500) energy = 500; 
+                updateUI(); 
+                localStorage.setItem('chubby_energy', energy);
+            }
+        }, 1000);
