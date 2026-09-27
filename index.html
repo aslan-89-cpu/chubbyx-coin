@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Hub</title>
+    <!-- بارکردنی فەرمی و نوێی تێلیگرام SDK -->
     <script src="https://telegram.org"></script>
     <style>
         * {
@@ -12,7 +13,6 @@
             padding: 0;
         }
         body {
-            /* ⬇️ لێرەدا وێنەکە زۆر زیاتر براوەتە سەرەوە بۆ جێگیربوونی تەواو */
             background: #1c1437 url('background.jpg') no-repeat center top -120px fixed;
             background-size: cover;
             color: white;
@@ -23,6 +23,7 @@
             height: 100vh;
             overflow: hidden;
             user-select: none;
+            -webkit-user-select: none;
             touch-action: none;
         }
         .header-bar {
@@ -62,7 +63,7 @@
             position: relative;
             z-index: 5;
         }
-        /* ⬇️ جێگیرکردنی ناوچەی کلیکی گەورەکراو ڕێک لەسەر بووکەڵە مۆرەکە */
+        /* گەورەکردنی تەواوی ناوچەی کلیک بۆ ئەوەی بە دڵنیایی لێدانی بەرکەوێت */
         .tap-zone {
             position: absolute;
             top: 15%; 
@@ -120,31 +121,6 @@
         }
         .dynamic-view.active {
             display: flex;
-        }
-        .view-title {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: white;
-        }
-        .view-desc {
-            font-size: 15px;
-            color: #ccc;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .custom-card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 16px 20px;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 360px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
         }
 
         .nav-bar {
@@ -204,13 +180,12 @@
     </div>
 
     <script>
+        // چالاککردنی فەرمی تێلیگرام WebApp بۆ لابردنی بلۆکی شاشە
         if (window.Telegram && window.Telegram.WebApp) {
-            const webapp = window.Telegram.WebApp;
-            webapp.ready();
-            webapp.expand();
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
         }
 
-        // لۆجیکی جێگیری سەرەکی تاپ-تاپ و پاشەکەوتکردن
         var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var energy = parseInt(localStorage.getItem('chubby_energy')) || 500;
 
@@ -220,8 +195,9 @@
         var tapElement = document.getElementById('tapCoin');
         var coinContainer = document.getElementById('coinContainer');
 
+        // چارەسەری لێدان: گۆڕینی فەرمانەکە بۆ شێوازی گشتی (Pointer Events) کە هەم مۆبایل و هەم کۆمپیوتەر دەخوێنێتەوە
         if (tapElement) {
-            tapElement.addEventListener('touchstart', function(e) {
+            tapElement.addEventListener('pointerdown', function(e) {
                 e.preventDefault();
                 if (energy > 0) {
                     count++;
@@ -231,42 +207,36 @@
                     localStorage.setItem('chubby_coins', count);
                     localStorage.setItem('chubby_energy', energy);
 
-                    playChubbVoice();
+                    // لێدانی دەنگ
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        var utterance = new SpeechSynthesisUtterance('Chub');
+                        utterance.lang = 'en-US';
+                        utterance.pitch = 1.4;
+                        utterance.rate = 1.6;
+                        window.speechSynthesis.speak(utterance);
+                    }
+
                     tapElement.classList.add('tap-zone-active');
 
-                    var touch = e.touches[0];
+                    // ئەژمارکردنی شوێنی پەنجە بۆ دەقی پۆینتی +1
                     var rect = coinContainer.getBoundingClientRect();
-                    var x = touch.clientX - rect.left;
-                    var y = touch.clientY - rect.top;
+                    var x = e.clientX - rect.left;
+                    var y = e.clientY - rect.top;
 
-                    createFloatingText(x, y);
+                    var textNode = document.createElement('div');
+                    textNode.className = 'floating-text';
+                    textNode.innerText = '+1';
+                    textNode.style.left = (x - 20) + 'px';
+                    textNode.style.top = (y - 20) + 'px';
+                    coinContainer.appendChild(textNode);
+                    setTimeout(() => { textNode.remove(); }, 600);
                 }
             });
 
-            tapElement.addEventListener('touchend', function(e) {
+            tapElement.addEventListener('pointerup', function() {
                 setTimeout(() => { tapElement.classList.remove('tap-zone-active'); }, 50);
             });
-        }
-
-        function playChubbVoice() {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                var utterance = new SpeechSynthesisUtterance('Chub');
-                utterance.lang = 'en-US';
-                utterance.pitch = 1.4;
-                utterance.rate = 1.6;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        function createFloatingText(x, y) {
-            var textNode = document.createElement('div');
-            textNode.className = 'floating-text';
-            textNode.innerText = '+1';
-            textNode.style.left = (x - 20) + 'px';
-            textNode.style.top = (y - 20) + 'px';
-            coinContainer.appendChild(textNode);
-            setTimeout(() => { textNode.remove(); }, 600);
         }
 
         function updateUI() {
@@ -276,4 +246,17 @@
 
         setInterval(function() {
             if (energy < 500) { 
-                energy += 3;
+                energy += 3; 
+                if (energy > 500) energy = 500; 
+                updateUI(); 
+                localStorage.setItem('chubby_energy', energy);
+            }
+        }, 1000);
+
+        function navigateTo(pageId, element) {
+            document.getElementById('home-layout').style.display = 'none';
+            document.querySelectorAll('.dynamic-view').forEach(view => view.classList.remove('active'));
+            
+            if (element && element.classList.contains('nav-item')) {
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                element.classList.add('active');
