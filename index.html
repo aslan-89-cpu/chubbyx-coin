@@ -4,179 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Mini App</title>
+    <script src="https://telegram.org"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-            margin: 0;
-            padding: 0;
-        }
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #000;
-        }
-        .app-container {
-            width: 100%;
-            height: 100%;
-            background: url('background.jpg') no-repeat center center;
-            background-size: cover;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 15px;
-            z-index: 1;
-        }
-        .header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 15px;
-            z-index: 10;
-            width: 100%;
-        }
-        .btn-top {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            text-align: center;
-            cursor: pointer;
-        }
-        .tab-content {
-            display: none;
-            flex-grow: 1;
-            width: 100%;
-            height: 100%;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .tab-content.active {
-            display: flex;
-        }
-        .game-main-layout {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            height: 100%;
-            width: 100%;
-            padding-top: 15px;
-        }
-        .score-box {
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(5px);
-            padding: 6px 15px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        /* ⬇️ لێرەدا قەبارەی فۆنتی خاڵەکان کەمێک بچووک کراوەتەوە */
-        .score-display {
-            font-size: 24px; 
-            font-weight: 900;
-            color: #ffd666;
-            text-shadow: 0px 2px 4px rgba(0,0,0,0.7);
-        }
-        .coin-title {
-            font-size: 16px;
-            color: #fff;
-            font-weight: bold;
-        }
-        /* ⬇️ لێرەدا بووکەڵەکە گەورە کراوە و ئەنیمەیشنی بۆ دانراوە */
-        .coin-container {
-            position: relative;
-            cursor: pointer;
-            width: 260px; /* قەبارەی بووکەڵەکە گەورەتر کراوە */
-            height: 260px;
-            font-weight: bold;
-            transition: transform 0.1s ease; /* نەرمکردنی جووڵەکە */
-        }
-        /* ⬇️ ئەم کلاسە وا دەکات لە کاتی کلیکدا بووکەڵەکە بجوڵێت */
-        .coin-container:active {
-            transform: scale(0.92); /* لە کاتی داگرتندا کەمێک بچووک دەبێتەوە */
-        }
-        .tap-area-overlay {
-            width: 100%;
-            height: 100%;
-            background: transparent;
-        }
-        .btn-back-home {
-            position: relative;
-            margin-bottom: 25px;
-        }
-        .tab-title {
-            font-size: 28px;
-            margin-bottom: 10px;
-            color: white;
-        }
-        .tab-desc {
-            font-size: 16px;
-            color: #ccc;
-            margin-bottom: 35px;
-        }
-        .task-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 15px 20px;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 350px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-            cursor: pointer;
-        }
-        .navbar-bottom {
-            background: rgba(15, 15, 15, 0.9);
-            backdrop-filter: blur(15px);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 10px 0;
-            border-radius: 18px;
-            width: 100%;
-            max-width: 450px;
-            margin-bottom: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #8a8a8a;
-            font-size: 12px;
-            cursor: pointer;
-            width: 25%;
-        }
-        .nav-item.active {
-            color: #0088cc;
-            font-weight: bold;
-        }
-        .nav-icon {
-            font-size: 22px;
-            margin-bottom: 4px;
-        }
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; margin: 0; padding: 0; }
+        body, html { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; background-color: #000; }
+        .app-container { width: 100%; height: 100%; background: url('background.jpg') no-repeat center center; background-size: cover; position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px 15px; z-index: 1; }
+        .header-bar { display: flex; justify-content: space-between; align-items: center; padding: 20px 15px; z-index: 10; width: 100%; }
+        .btn-top { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.2); color: white; padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: bold; text-align: center; cursor: pointer; }
+        .tab-content { display: none; flex-grow: 1; width: 100%; height: 100%; flex-direction: column; justify-content: center; align-items: center; }
+        .tab-content.active { display: flex; }
+        .game-main-layout { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; width: 100%; padding-top: 15px; }
+        .score-box { background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(5px); padding: 6px 15px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.15); text-align: center; margin-bottom: 20px; }
+        .score-display { font-size: 24px; font-weight: 900; color: #ffd666; text-shadow: 0px 2px 4px rgba(0,0,0,0.7); }
+        .coin-title { font-size: 16px; color: #fff; font-weight: bold; }
+        .coin-container { position: relative; cursor: pointer; width: 270px; height: 270px; font-weight: bold; transition: transform 0.1s ease; }
+        .coin-container:active { transform: scale(0.92); }
+        .tap-area-overlay { width: 100%; height: 100%; background: transparent; }
+        .btn-back-home { position: relative; margin-bottom: 25px; }
+        .tab-title { font-size: 28px; margin-bottom: 10px; color: white; }
+        .tab-desc { font-size: 16px; color: #ccc; margin-bottom: 35px; }
+        .task-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 15px 20px; border-radius: 15px; width: 100%; max-width: 350px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; color: white; cursor: pointer; }
+        .navbar-bottom { background: rgba(15, 15, 15, 0.9); backdrop-filter: blur(15px); display: flex; justify-content: space-around; align-items: center; padding: 10px 0; border-radius: 18px; width: 100%; max-width: 450px; margin-bottom: 5px; border: 1px solid rgba(255, 255, 255, 0.08); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #8a8a8a; font-size: 12px; cursor: pointer; width: 25%; }
+        .nav-item.active { color: #0088cc; font-weight: bold; }
+        .nav-icon { font-size: 22px; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
         <div class="header-bar">
-            <button class="btn-top" onclick="alert('Menu open')">☰ Menu</button>
+            <!-- ⬇️ لێرەدا فەرمانی ئۆلێرتەکە لابراوە و فەنکشنی فەرمی نیشاندانی مینووی بۆ دانراوە -->
+            <button class="btn-top" onclick="showTab('extra-menu')">☰ Menu</button>
             <button class="btn-top" onclick="showTab('airdrop')">🎁 Airdrop</button>
         </div>
 
@@ -187,49 +46,18 @@
                     <span class="score-display" id="score">0</span>
                     <span class="coin-title">ChubbyX</span>
                 </div>
-                
-                <!-- وێنەی بووکەڵەکە لێرەدایە و ئێستا گەورە و جوڵاوە -->
                 <div class="coin-container" id="tap-zone">
                     <div class="tap-area-overlay"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Invite View -->
-        <div id="invite" class="tab-content">
-            <button class="btn-top btn-back-home" onclick="returnToHome()">⬅️ Back to home</button>
-            <h2 class="tab-title">Invite Friends</h2>
-            <button class="btn-top" style="background:#0088cc;" onclick="copyInviteLink()">🔗 Copy Link</button>
-        </div>
-
-        <!-- Tasks View -->
-        <div id="tasks" class="tab-content">
-            <button class="btn-top btn-back-home" onclick="returnToHome()">⬅️ Back to home</button>
-            <h2 class="tab-title">Tasks List</h2>
-            <div class="task-card" onclick="completeTask('tg')">
-                <span>Join Telegram Channel</span>
-                <span style="color:#ffd666;">+5,000</span>
-            </div>
-            <div class="task-card" onclick="completeTask('x')">
-                <span>Follow X (Twitter)</span>
-                <span style="color:#ffd666;">+5,000</span>
-            </div>
-        </div>
-
-        <!-- Wallet View -->
-        <div id="wallet" class="tab-content">
-            <button class="btn-top btn-back-home" onclick="returnToHome()">⬅️ Back to home</button>
-            <h2 class="tab-title">Connect Wallet</h2>
-            <div id="ton-connect-btn" style="background:white; color:black; padding:12px; border-radius:12px; cursor:pointer;">
-                💎 Connect TON Wallet
-            </div>
-        </div>
-
-        <!-- Airdrop View -->
-        <div id="airdrop" class="tab-content">
-            <button class="btn-top btn-back-home" onclick="returnToHome()">⬅️ Back to home</button>
-            <h2 class="tab-title">Airdrop Listing Soon!</h2>
-        </div>
+        <!-- Links Tabs (ئەم بەشانە بە جاڤاسکڕێپت ناوەڕۆکیان تێدا دروست دەبێت) -->
+        <div id="invite" class="tab-content"></div>
+        <div id="tasks" class="tab-content"></div>
+        <div id="wallet" class="tab-content"></div>
+        <div id="airdrop" class="tab-content"></div>
+        <div id="extra-menu" class="tab-content"></div>
 
         <!-- Navigation Bar -->
         <nav class="navbar-bottom">
@@ -248,42 +76,12 @@
         </nav>
     </div>
 
-    <!-- ⬇️ نێوانبەستنی فایلە دەرەکییەکانی جاڤاسکڕێپت بۆ کارکردنی هەموو بەشەکان -->
+    <!-- ⚠️ گرنگترین بەش: ڕیزبەندی دروستی سکڕێپتەکان ⚠️ -->
+    <!-- game.js دەبێت یەکەم بێت چونکە فەنکشنی showTab لە ناو ئەودایە -->
     <script src="game.js"></script>
     <script src="wallet.js"></script>
     <script src="tasks.js"></script>
     <script src="invite.js"></script>
 
-    <script>
-        // سیستەمی گۆڕینی لاپەڕەکان (Tabs)
-        function showTab(tabId, element) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
-
-            if(element) {
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.classList.remove('active');
-                });
-                element.classList.add('active');
-            }
-        }
-
-        function returnToHome() {
-            showTab('home');
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            document.getElementById('nav-home').classList.add('active');
-        }
-
-        // کۆدی بنەڕەتی Tap-Tap ئەگەر لە game.js نەبێت
-        let score = parseInt(localStorage.getItem('chubby_score')) || 0;
-        const scoreDisplay = document.getElementById('score');
-        if (scoreDisplay) scoreDisplay.innerText = score;
-
-        const tapZone = document.getElementById('tap-zone');
-        if (tapZone) {
-            tapZone.addEventListener('click', () => {
-                score += 1;
+</body>
+</html>
