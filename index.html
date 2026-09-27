@@ -24,8 +24,27 @@
             user-select: none;
             touch-action: none;
         }
+        .header-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 20px 0 20px;
+            z-index: 2500;
+        }
+        .btn-top {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
         .header {
-            margin-top: 35px;
+            margin-top: 15px;
             text-align: center;
             z-index: 10;
             pointer-events: none;
@@ -82,7 +101,6 @@
         .energy-bar-bg { width: 100%; height: 12px; background: rgba(255,255,255,0.2); border-radius: 6px; margin-top: 8px; overflow: hidden; }
         .energy-bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #eab308, #ef4444); border-radius: 6px; transition: width 0.1s ease; }
 
-        /* ناوچەی لاپەڕە داینامیکییەکان (Tasks, Wallet و هتد) */
         .dynamic-view {
             display: none;
             position: fixed;
@@ -92,7 +110,7 @@
             height: calc(100vh - 70px);
             background: #0d081b;
             z-index: 1500;
-            padding: 40px 20px;
+            padding: 80px 20px 40px 20px;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
@@ -143,6 +161,12 @@
 </head>
 <body>
 
+    <!-- دوگمەکانی سەرەوە -->
+    <div class="header-bar">
+        <button class="btn-top" onclick="navigateTo('menu')">☰ Menu</button>
+        <button class="btn-top" onclick="navigateTo('airdrop')">🎁 Airdrop</button>
+    </div>
+
     <!-- 🏠 لاپەڕەی سەرەکی (Home View) -->
     <div id="home-layout" style="display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%;">
         <div class="header">
@@ -160,49 +184,15 @@
         </div>
     </div>
 
-    <!-- 📋 لاپەڕەی Tasks -->
-    <div id="tasks-view" class="dynamic-view">
-        <h2 class="view-title">Tasks List 📋</h2>
-        <p class="view-desc">Complete social tasks to earn extra ChubbyX coins.</p>
-        <div class="custom-card" id="task-tg-btn">
-            <span>Join Telegram Channel</span>
-            <span style="color:#ffd666; font-weight:bold;">+5,000</span>
-        </div>
-        <div class="custom-card" id="task-x-btn">
-            <span>Follow X (Twitter)</span>
-            <span style="color:#ffd666; font-weight:bold;">+5,000</span>
-        </div>
-    </div>
+    <!-- شوێنی لاپەڕە داینامیکییەکان (ناوەڕۆکیان لە ناو فایلە .jsەکان دروست دەبێت) -->
+    <div id="tasks-view" class="dynamic-view"></div>
+    <div id="invite-view" class="dynamic-view"></div>
+    <div id="games-view" class="dynamic-view"></div>
+    <div id="wallet-view" class="dynamic-view"></div>
+    <div id="menu-view" class="dynamic-view"></div>
+    <div id="airdrop-view" class="dynamic-view"></div>
 
-    <!-- 👥 لاپەڕەی Invite -->
-    <div id="invite-view" class="dynamic-view">
-        <h2 class="view-title">Invite Friends 👥</h2>
-        <p class="view-desc">Share your referral link and earn progressive tier rewards!</p>
-        <button id="invite-action-btn" style="background:#0088cc; color:white; border:none; padding:14px 28px; border-radius:15px; font-weight:bold; font-size:16px; cursor:pointer;">
-            🔗 Copy Invite Link
-        </button>
-    </div>
-
-    <!-- 🎮 لاپەڕەی Games -->
-    <div id="games-view" class="dynamic-view">
-        <h2 class="view-title">ChubbyX Games 🎮</h2>
-        <p class="view-desc">Play mini games to boost your daily earnings.</p>
-        <div class="custom-card" onclick="alert('Lucky Wheel starting soon!')">
-            <span>🎰 Lucky Wheel Spin</span>
-            <span style="color:#a0e670;">Play</span>
-        </div>
-    </div>
-
-    <!-- 💼 لاپەڕەی Wallet -->
-    <div id="wallet-view" class="dynamic-view">
-        <h2 class="view-title">Connect Wallet 💼</h2>
-        <p class="view-desc">Connect your TON wallet to secure your future airdrop allocation.</p>
-        <div id="wallet-action-btn" style="background:white; color:black; padding:15px 30px; border-radius:12px; cursor:pointer; font-weight:bold; font-size:16px;">
-            💎 Connect TON Wallet
-        </div>
-    </div>
-
-    <!-- ⬇️ مینیۆ بارەکەت بەو ناوانەی خۆت ویستت ڕێکخران -->
+    <!-- مینیۆ بارەکەت -->
     <div class="nav-bar">
         <div class="nav-item" onclick="navigateTo('tasks', this)">Tasks</div>
         <div class="nav-item" onclick="navigateTo('invite', this)">Invite</div>
@@ -218,7 +208,7 @@
             webapp.expand();
         }
 
-        // ١. لۆجیکی جێگیری سەرەکی تاپ-تاپ و پاشەکەوتکردن
+        // لۆجیکی جێگیری سەرەکی تاپ-تاپ و پاشەکەوتکردن
         var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var energy = parseInt(localStorage.getItem('chubby_energy')) || 500;
 
@@ -242,7 +232,7 @@
                     playChubbVoice();
                     tapElement.classList.add('tap-zone-active');
 
-                    var touch = e.touches[0];
+                    var touch = e.touches;
                     var rect = coinContainer.getBoundingClientRect();
                     var x = touch.clientX - rect.left;
                     var y = touch.clientY - rect.top;
@@ -263,3 +253,26 @@
                 utterance.lang = 'en-US';
                 utterance.pitch = 1.4;
                 utterance.rate = 1.6;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function createFloatingText(x, y) {
+            var textNode = document.createElement('div');
+            textNode.className = 'floating-text';
+            textNode.innerText = '+1';
+            textNode.style.left = (x - 20) + 'px';
+            textNode.style.top = (y - 20) + 'px';
+            coinContainer.appendChild(textNode);
+            setTimeout(() => { textNode.remove(); }, 600);
+        }
+
+        function updateUI() {
+            document.getElementById('energyText').innerText = energy;
+            document.getElementById('energyFill').style.width = (energy / 500 * 100) + '%';
+        }
+
+        setInterval(function() {
+            if (energy < 500) { 
+                energy += 3; 
+                if (energy > 500) energy = 500;
