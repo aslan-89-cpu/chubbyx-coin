@@ -85,26 +85,28 @@
             margin-bottom: 25px;
         }
 
-        .coin-wrapper {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            margin-bottom: 30px;
+        .coin-container {
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 100%;
+            position: relative;
+            z-index: 5;
         }
-        /* گەڕانەوەی تەواوی ناوچەی کلیکی تاپ-تاپی ئەسڵی لەسەر بووکەڵەکەت */
+        /* دڵنیابوون لەوەی ناوچەی تاپ-تاپەکە بە تەواوی لەسەر بووکەڵە مۆرەکەیە */
         .transparent-tap-zone {
-            width: 260px;
-            height: 260px;
+            position: absolute;
+            top: 25%;
+            width: 280px;
+            height: 280px;
             border-radius: 50%;
             background: transparent;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
             z-index: 999;
             touch-action: manipulation;
-            transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.05s ease;
         }
         .transparent-tap-zone-active { 
             transform: scale(0.93) !important; 
@@ -193,8 +195,7 @@
         
         <div class="mining-profit" id="mining-live">+0.0000</div>
 
-        <!-- ناوچەی کلیکی گەشەسەندوو لەسەر بووکەڵەکەت -->
-        <div class="coin-wrapper" id="coinContainer">
+        <div class="coin-container" id="coinContainer">
             <div class="transparent-tap-zone" id="clickCoin"></div>
         </div>
 
@@ -231,7 +232,6 @@
             window.Telegram.WebApp.expand();
         }
 
-        // ڕێکخستنی یەکجاری متغیرەکان بەو شێوازەی لە کۆدە ئەسڵییەکەتدا بێ کێشە کار دەکات
         var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         var poolBalance = parseFloat(localStorage.getItem('cx_pool_balance')) || 0;
         
@@ -252,7 +252,7 @@
         // دوگمەی CLAIM
         document.getElementById('claimAction').addEventListener('click', function() {
             if (poolBalance > 0) {
-                count += Math.floor(poolBalance * 100); // گۆڕینی داتای پاشەکەوت بۆ کۆینی تەواو
+                count += Math.floor(poolBalance * 100); 
                 alert("Successfully Claimed ChubbyX Coins! 🚀");
                 poolBalance = 0;
                 
@@ -266,6 +266,12 @@
             }
         });
 
-        // چالاککردنی لێدانی تاپ-تاپ و بەرکەوتنی فرە-پەنجە (Multi-touch) ڕێک وەک هۆکەکەی خۆت
+        // 🛠️ ڕاستکردنەوەی فەرمی کۆدی تاپ-تاپ و حیسابکردنی پەنجە
         var tapElement = document.getElementById('clickCoin');
         var coinContainer = document.getElementById('coinContainer');
+        
+        if (tapElement) {
+            tapElement.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                count++;
+                poolBalance += 0.01;
