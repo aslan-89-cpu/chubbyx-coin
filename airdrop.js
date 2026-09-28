@@ -1,19 +1,12 @@
-// ChubbyX Independent Airdrop System
-document.addEventListener("DOMContentLoaded", () => {
-    const airdropView = document.getElementById("airdrop-view");
-    if (!airdropView) return;
+const airdropPage = document.getElementById('airdrop-page');
 
-    airdropView.innerHTML = `
-        <h2 class="view-title">Airdrop Listing 🎁</h2>
-        <p class="view-desc" style="max-width: 320px;">The ChubbyX Token airdrop will be distributed based on your total balance and completed tasks. Stay tuned for listing dates!</p>
-        
-        <div class="custom-card" style="border-color: #ffd666;">
-            <span>Current Status</span>
-            <span style="color:#ffd666; font-weight:bold;">Snapshot Pending</span>
+if (airdropPage) {
+    airdropPage.innerHTML = `
+        <h2 class="page-title">Airdrop Tasks</h2>
+        <div class="page-content" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <p style="color: #ccc; font-size: 15px; max-width: 260px; line-height: 1.5;">Listing and distribution parameters will be announced soon.</p>
+            <h3 style="color: #eeb308; margin-top: 25px; font-size: 18px; letter-spacing: 1px;">Listing Status: TBD</h3>
         </div>
-        <div class="custom-card">
-            <span>Minimum Requirements</span>
-            <span style="color:#ccc;">100K Coins</span>
-        </div>
+        <button class="btn-top" onclick="switchPage('home')" style="width: 100%; max-width: 200px; margin-top: 20px; padding: 12px;">Back to Home</button>
     `;
-});
+}
