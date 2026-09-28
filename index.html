@@ -13,7 +13,6 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         body {
-            /* ⚠️ جێگیرکردنی وێنە ئەسڵییەکەی خۆت بە بەرزییە دروستەکەی */
             background: #1c1437 url('background.jpg') no-repeat center top -120px fixed;
             background-size: cover;
             color: #ffffff;
@@ -26,7 +25,6 @@
             -webkit-user-select: none;
             touch-action: none;
         }
-        /* 👑 گەڕانەوەی دوگمەکانی سەرەوە */
         .header-bar {
             width: 100%;
             display: flex;
@@ -64,7 +62,6 @@
             position: relative;
             z-index: 5;
         }
-        /* ناوچەی تاپ-تاپی شەفاف ڕێک لەسەر بووکەڵە مۆرەکە */
         .transparent-tap-zone {
             position: absolute;
             top: 25%;
@@ -86,7 +83,7 @@
             position: absolute;
             color: #eab308;
             font-weight: bold;
-            font-size: 26px;
+            font-size: 28px;
             pointer-events: none;
             z-index: 1000;
             animation: floatUp 0.6s ease-out forwards;
@@ -94,10 +91,9 @@
         }
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-130px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-120px) scale(1.1); }
         }
 
-        /* لاپەڕە داینامیکییەکان بۆ دوگمەکانی خوارەوە و سەرەوە */
         .dynamic-page {
             display: none;
             position: fixed;
@@ -131,14 +127,14 @@
 </head>
 <body>
 
-    <!-- 👑 دوگمەکانی سەرەوە (Menu & Airdrop) -->
+    <!-- دوگمەکانی سەرەوە -->
     <div class="header-bar">
         <button class="btn-top" onclick="switchPage('menu')">☰ Menu</button>
         <button class="btn-top" onclick="switchPage('airdrop')">🎁 Airdrop</button>
     </div>
 
-    <!-- 🏠 لاپەڕەی سەرەکی (Mine/Home View) - هەموو زانیارییە زیادەکان لادران -->
-    <div class="main-layout" id="mine-layout" style="display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%;">
+    <!-- 🏠 لاپەڕەی سەرەکی Home -->
+    <div class="main-layout" id="home-layout" style="display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%;">
         <div class="header">
             <div>CHUBBYX BALANCE</div>
             <h1 id="main-score">0</h1>
@@ -149,15 +145,15 @@
         </div>
     </div>
 
-    <!-- شوێنی لاپەڕە داینامیکییەکان (ناوەڕۆکیان لە ناو فایلە .jsەکان دروست دەبێت) -->
+    <!-- لاپەڕە داینامیکییەکان -->
     <div id="tasks-page" class="dynamic-page"><h2 class="page-title">Tasks List</h2></div>
-    <div id="miners-page" class="dynamic-page"><h2 class="page-title">Miners Upgrade</h2></div>
     <div id="friends-page" class="dynamic-page"><h2 class="page-title">Friends Referral</h2></div>
+    <div id="game-page" class="dynamic-page"><h2 class="page-title">ChubbyX Mini Games</h2></div>
     <div id="profile-page" class="dynamic-page"><h2 class="page-title">User Profile</h2></div>
     <div id="menu-page" class="dynamic-page"></div>
-    <div id="airdrop-page" class="dynamic-view dynamic-page"></div>
+    <div id="airdrop-page" class="dynamic-page"></div>
 
-    <!-- 🗺️ مینیۆ باری خوارەوە بەو ناوانەی خۆت ویستت -->
+    <!-- 🗺️ مینیۆ باری خوارەوە (ناوی دوگمەکان گۆڕدرا بۆ Tasks, Friends, Home, Game, Profile) -->
     <div class="bottom-nav">
         <div class="nav-link" onclick="switchPage('tasks', this)">
             <span class="nav-icon">📋</span><span>Tasks</span>
@@ -165,11 +161,11 @@
         <div class="nav-link" onclick="switchPage('friends', this)">
             <span class="nav-icon">👥</span><span>Friends</span>
         </div>
-        <div class="nav-link active" id="default-nav" onclick="switchPage('mine', this)">
-            <span class="nav-icon">⛏️</span><span>Mine</span>
+        <div class="nav-link active" id="default-nav" onclick="switchPage('home', this)">
+            <span class="nav-icon">🏠</span><span>Home</span>
         </div>
-        <div class="nav-link" onclick="switchPage('miners', this)">
-            <span class="nav-icon">⚡</span><span>Miners</span>
+        <div class="nav-link" onclick="switchPage('game', this)">
+            <span class="nav-icon">🎮</span><span>Game</span>
         </div>
         <div class="nav-link" onclick="switchPage('profile', this)">
             <span class="nav-icon">👤</span><span>Profile</span>
@@ -182,7 +178,6 @@
             window.Telegram.WebApp.expand();
         }
 
-        // لۆجیکی جێگیری سەرەکی باڵانسی ڕاستەقینە وەک جاران
         var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
         document.getElementById('main-score').innerText = count.toLocaleString();
 
@@ -190,13 +185,13 @@
         var coinContainer = document.getElementById('coinContainer');
         
         if (tapElement) {
-            tapElement.addEventListener('touchstart', function(e) {
+            // 🛠️ بەکارهێنەر سیستەمی جێگیری بە بەرکەوتنی گشتی (Pointer Event) بۆ تێپەڕاندنی بەستنی تێلیگرام
+            tapElement.addEventListener('pointerdown', function(e) {
                 e.preventDefault();
                 count++;
                 document.getElementById('main-score').innerText = count.toLocaleString();
                 localStorage.setItem('chubby_coins', count);
 
-                // دەنگی فەرمی Chub
                 if ('speechSynthesis' in window) {
                     window.speechSynthesis.cancel();
                     var utterance = new SpeechSynthesisUtterance('Chub');
@@ -208,38 +203,45 @@
 
                 tapElement.classList.add('transparent-tap-zone-active');
 
-                // حیسابکردنی شوێنی ئەنیمەیشنی +1 لەسەر مۆبایل بە بێ کێشە
-                if (e.touches && e.touches.length > 0) {
-                    var touch = e.touches[0];
-                    var rect = coinContainer.getBoundingClientRect();
-                    var x = touch.clientX - rect.left;
-                    var y = touch.clientY - rect.top;
-                    
-                    var textNode = document.createElement('div');
-                    textNode.className = 'floating-text';
-                    textNode.innerText = '+1';
-                    textNode.style.left = (x - 20) + 'px';
-                    textNode.style.top = (y - 20) + 'px';
-                    coinContainer.appendChild(textNode);
-                    setTimeout(function() { textNode.remove(); }, 600);
-                }
+                // ⬇️ حیسابکردنی جێگیر بەبێ بەکارهێنانی touch.clientX بۆ ڕێگری لە بلۆکبوون لە مۆبایلدا
+                var rect = coinContainer.getBoundingClientRect();
+                var x = e.clientX - rect.left;
+                var y = e.clientY - rect.top;
+                
+                // ئەگەر کلیک لەسەر تێلیگرام بێت و کۆردینات سفر بێت، دەخرێتە ناوەڕاست
+                if (!x || x < 0) { x = 135; y = 135; }
+
+                var textNode = document.createElement('div');
+                textNode.className = 'floating-text';
+                textNode.innerText = '+1';
+                textNode.style.left = (x - 15) + 'px';
+                textNode.style.top = (y - 30) + 'px';
+                coinContainer.appendChild(textNode);
+                setTimeout(function() { textNode.remove(); }, 600);
             });
 
-            tapElement.addEventListener('touchend', function() {
+            tapElement.addEventListener('pointerup', function() {
                 setTimeout(function() { tapElement.classList.remove('transparent-tap-zone-active'); }, 50);
             });
         }
 
-        // فەنکشنی گۆڕینی لاپەڕەکان
         function switchPage(pageId, element) {
-            document.getElementById('mine-layout').style.display = 'none';
+            document.getElementById('home-layout').style.display = 'none';
             document.querySelectorAll('.dynamic-page').forEach(function(page) { page.classList.remove('active'); });
             
             if (element && element.classList.contains('nav-link')) {
                 document.querySelectorAll('.nav-link').forEach(function(link) { link.classList.remove('active'); });
                 element.classList.add('active');
-            } else if (pageId === 'mine') {
+            } else if (pageId === 'home') {
                 document.querySelectorAll('.nav-link').forEach(function(link) { link.classList.remove('active'); });
                 var defNav = document.getElementById('default-nav');
                 if (defNav) defNav.classList.add('active');
+            } else {
+                document.querySelectorAll('.nav-link').forEach(function(link) { link.classList.remove('active'); });
+            }
+
+            if (pageId === 'home') {
+                document.getElementById('home-layout').style.display = 'flex';
+                count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+                document.getElementById('main-score').innerText = count.toLocaleString();
             } else {
