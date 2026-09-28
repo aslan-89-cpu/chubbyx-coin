@@ -93,7 +93,6 @@
             100% { opacity: 0; transform: translateY(-120px) scale(1.1); }
         }
 
-        /* ستایلی نایاب بۆ کارتی ناو لاپەڕەکان ڕێک وەک ئەپە فەرمییەکان */
         .dynamic-page {
             display: none;
             position: fixed;
@@ -143,12 +142,13 @@
 </head>
 <body>
 
+    <!-- دوگمەکانی سەرەوە -->
     <div class="header-bar">
         <button class="btn-top" onclick="switchPage('menu')">☰ Menu</button>
         <button class="btn-top" onclick="switchPage('airdrop')">🎁 Airdrop</button>
     </div>
 
-    <!-- 🏠 لاپەڕەی Home -->
+    <!-- 🏠 لاپەڕەی سەرەکی Home -->
     <div class="main-layout" id="home-layout" style="display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%;">
         <div class="header">
             <div>CHUBBYX BALANCE</div>
@@ -198,7 +198,7 @@
         <button id="spin-btn" style="background:#ffd666; color:#000; border:none; padding:12px; border-radius:12px; font-weight:bold; font-size:16px; cursor:pointer; width:150px;">SPIN NOW 🚀</button>
     </div>
 
-    <!-- 💼 لاپەڕەی Wallet (Profile پێشوو گۆڕدرا بۆ والێت) -->
+    <!-- 💼 لاپەڕەی Wallet -->
     <div id="wallet-page" class="dynamic-page">
         <h2 class="page-title">Connect Wallet</h2>
         <p class="page-desc">Connect your TON wallet to secure your future airdrop allocation.</p>
@@ -222,7 +222,7 @@
         <div class="custom-card" style="border-color:#ffd666;"><span>Current Status</span><span style="color:#ffd666; font-weight:bold;">Pending</span></div>
     </div>
 
-    <!-- مینیۆ باری خوارەوە (ناوی دوگمەکان گۆڕدرا بۆ Tasks, Friends, Home, Game, Wallet) -->
+    <!-- 🗺️ مینیۆ باری خوارەوە (ڕێک بەو پێنج دانەی خۆت ویستت) -->
     <div class="bottom-nav">
         <div class="nav-link" onclick="switchPage('tasks', this)">
             <span class="nav-icon">📋</span><span>Tasks</span>
@@ -232,3 +232,5 @@
         </div>
         <div class="nav-link active" id="default-nav" onclick="switchPage('home', this)">
             <span class="nav-icon">🏠</span><span>Home</span>
+        </div>
+        <div class="nav-link" onclick="switchPage('game', this)">
