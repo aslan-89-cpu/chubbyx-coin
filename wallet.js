@@ -2,16 +2,21 @@
     const walletPage = document.getElementById('wallet-page');
     if (!walletPage) return;
 
-    // Rendering the English layout with a custom interactive button
+    // لێرەدا تەواوی ڕووکارە ڕەسەنەکەت لەگەڵ دوگمەی گەڕانەوە وەک خۆی دانراوەتەوە
     walletPage.innerHTML = `
         <h2 class="page-title">Connect Wallet</h2>
         <div class="page-content" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
             <p id="wallet-status-text" style="color: #ccc; margin-bottom: 30px; max-width: 280px; font-size: 15px; line-height: 1.4;">
                 Connect your TON wallet to participate in the future airdrop distribution.
             </p>
-            <button id="custom-ton-click-btn" style="background: #0098ea; color: white; border: none; padding: 14px 24px; border-radius: 12px; font-weight: bold; cursor: pointer;">
+            <button id="custom-ton-click-btn" style="background: #0098ea; color: white; border: none; padding: 14px 24px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-bottom: 20px;">
                 💎 Connect TON Wallet
             </button>
+            
+            <button class="btn-top" onclick="if(typeof switchPage === 'function'){switchPage('home')}else{window.location.reload()}" style="width: 100%; max-width: 280px;">
+                Back to Home
+            </button>
+
             <div id="wallet-details-box" style="display: none; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; width: 100%; max-width: 280px; margin-top: 20px;">
                 <span style="color: #eeb308; font-weight: bold; display: block; margin-bottom: 5px;">Connected Address:</span>
                 <span id="wallet-address-string" style="color: #fff; font-size: 13px; word-break: break-all;"></span>
@@ -74,13 +79,12 @@
                         if (tonconnectInstance.connected) {
                             await tonconnectInstance.disconnect();
                         } else {
-                            // دروستکردنی بەستەری ڕاستەوخۆ بۆ کردنەوەی ئەپی Tonkeeper
-                            const connectLink = tonconnectInstance.connect({
+                            // لێرەدا await زیادکراوە بۆ ئەوەی بەستەرەکە بە دروستی دروست ببێت پێش کردنەوەی
+                            const connectLink = await tonconnectInstance.connect({
                                 universalLink: 'https://tonkeeper.com',
                                 bridgeUrl: 'https://tonapi.io'
                             });
 
-                            // کردنەوەی واڵێت لە ناو مۆبایل لە ڕێگەی تێلێگرامەوە
                             if (connectLink) {
                                 const tg = window.Telegram?.WebApp;
                                 if (tg && typeof tg.openLink === 'function') {
@@ -91,7 +95,7 @@
                             }
                         }
                     } catch (err) {
-                        console.error("Direct connection failed, falling back:", err);
+                        console.error("Direct connection failed:", err);
                     }
                 }
             };
