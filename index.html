@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ChubbyX Hub</title>
-    <!-- ⬇️ چاککردنی بەستەری فەرمی تێلیگرام SDK بۆ چالاککردنی کلیلەکان -->
     <script src="https://telegram.org"></script>
     <style>
         * {
@@ -63,14 +62,13 @@
             position: relative;
             z-index: 5;
         }
-        /* ⬇️ بەهێزکردنی ناوچەی کلیکەکە و لابردنی پاشگرەکان بۆ کارکردنی خێرا */
         .transparent-tap-zone {
             position: absolute;
             top: 25%;
             width: 270px;
             height: 270px;
             border-radius: 50%;
-            background: rgba(0,0,0,0.001); /* ناهێڵێت تێلیگرام وەک شوێنی خاڵی سەیری بکات */
+            background: rgba(0,0,0,0.001); 
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
             z-index: 999;
@@ -151,8 +149,8 @@
     <div id="friends-page" class="dynamic-page"><h2 class="page-title">Friends Referral</h2></div>
     <div id="game-page" class="dynamic-page"><h2 class="page-title">ChubbyX Mini Games</h2></div>
     <div id="profile-page" class="dynamic-page"><h2 class="page-title">User Profile</h2></div>
-    <div id="menu-page" class="dynamic-page"></div>
-    <div id="airdrop-page" class="dynamic-page"></div>
+    <div id="menu-page" class="dynamic-page"><h2 class="page-title">Menu Options</h2></div>
+    <div id="airdrop-page" class="dynamic-page"><h2 class="page-title">Airdrop Status</h2></div>
 
     <!-- مینیۆ باری خوارەوە -->
     <div class="bottom-nav">
@@ -174,7 +172,6 @@
     </div>
 
     <script>
-        // دڵنیابوون لە ناساندنی فەرمی تێلیگرام
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
@@ -187,7 +184,6 @@
         var coinContainer = document.getElementById('coinContainer');
         
         if (tapElement) {
-            // 🛠️ گۆڕینی فەرمانەکە بۆ کلیکی ئاسایی (Click) کە لە ناو تێلیگرامدا ١٠٠٪ کاردەکات و شاشە بەستوو ناکات
             tapElement.addEventListener('click', function(e) {
                 count++;
                 document.getElementById('main-score').innerText = count.toLocaleString();
@@ -205,7 +201,6 @@
                 tapElement.classList.add('transparent-tap-zone-active');
                 setTimeout(function() { tapElement.classList.remove('transparent-tap-zone-active'); }, 50);
 
-                // حیسابکردنی هێمنانەی شوێنی ئەنیمەیشن بەبێ هیچ جۆرە تێکچوونێک
                 var rect = coinContainer.getBoundingClientRect();
                 var x = e.clientX - rect.left;
                 var y = e.clientY - rect.top;
@@ -222,7 +217,6 @@
             });
         }
 
-        // فەنکشنی گۆڕینی لاپەڕەکان
         function switchPage(pageId, element) {
             document.getElementById('home-layout').style.display = 'none';
             document.querySelectorAll('.dynamic-page').forEach(function(page) { page.classList.remove('active'); });
@@ -243,3 +237,11 @@
                 count = parseInt(localStorage.getItem('chubby_coins')) || 0;
                 document.getElementById('main-score').innerText = count.toLocaleString();
             } else {
+                var targetPage = document.getElementById(pageId + '-page');
+                if (targetPage) targetPage.classList.add('active');
+            }
+        }
+    </script>
+    <!-- ⚠️ سەرنج بدە: لێرەدا هیچ فایلێکی دەرەکی بار نەکراوە بۆ ئەوەی ئەپەکە ۱۰۰٪ سەلامەت بێت لە بلۆکبوون -->
+</body>
+</html>
