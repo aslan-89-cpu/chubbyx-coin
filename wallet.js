@@ -25,7 +25,7 @@
             if (SDK) {
                 // Initialize the official component directly into the placeholder div
                 new SDK.TonConnectUI({
-                    manifestUrl: 'https://github.io',
+                    manifestUrl: 'https://github.io/chubbyx-coin/tonconnect-manifest.json',
                     buttonRootId: 'ton-connect-official-btn'
                 });
                 console.log("TON Connect button rendered successfully.");
