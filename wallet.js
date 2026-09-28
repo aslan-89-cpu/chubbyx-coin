@@ -2,7 +2,7 @@
     const walletPage = document.getElementById('wallet-page');
     if (!walletPage) return;
 
-    // لێرەدا تەواوی ڕووکارە ڕەسەنەکەت لەگەڵ دوگمەی گەڕانەوە وەک خۆی دانراوەتەوە
+    // ڕووکاری لاپەڕەکە لەگەڵ دوگمەی گەڕانەوە و بەستنەوە
     walletPage.innerHTML = `
         <h2 class="page-title">Connect Wallet</h2>
         <div class="page-content" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
@@ -34,6 +34,9 @@
                 tonconnectInstance = new SDK.TonConnectUI({
                     manifestUrl: manifestLink
                 });
+
+                // بەستنەوەی ڕاستەوخۆی فەنکشنی کلیک لەگەڵ ئامادەبوونی لۆجیکەکە
+                setupButtonAction();
 
                 tonconnectInstance.onStatusChange(wallet => {
                     const statusLabel = document.getElementById('wallet-status-text');
@@ -70,38 +73,39 @@
         }
     }
 
-    function attachbuttonEvent() {
+    function setupButtonAction() {
         const targetBtn = document.getElementById('custom-ton-click-btn');
-        if (targetBtn) {
-            targetBtn.onclick = async function () {
-                if (tonconnectInstance) {
-                    try {
-                        if (tonconnectInstance.connected) {
-                            await tonconnectInstance.disconnect();
-                        } else {
-                            // لێرەدا await زیادکراوە بۆ ئەوەی بەستەرەکە بە دروستی دروست ببێت پێش کردنەوەی
-                            const connectLink = await tonconnectInstance.connect({
-                                universalLink: 'https://tonkeeper.com',
-                                bridgeUrl: 'https://tonapi.io'
-                            });
+        if (!targetBtn) return;
 
-                            if (connectLink) {
-                                const tg = window.Telegram?.WebApp;
-                                if (tg && typeof tg.openLink === 'function') {
-                                    tg.openLink(connectLink);
-                                } else {
-                                    window.location.href = connectLink;
-                                }
-                            }
+        targetBtn.onclick = async function () {
+            if (!tonconnectInstance) {
+                alert("TON Connect SDK is still loading, please wait a moment.");
+                return;
+            }
+
+            try {
+                if (tonconnectInstance.connected) {
+                    await tonconnectInstance.disconnect();
+                } else {
+                    // دروستکردنی بەستەری فەرمی بۆ کردنەوەی ڕاستەوخۆی ئەپی Tonkeeper
+                    const connectLink = await tonconnectInstance.connect({
+                        universalLink: 'https://tonkeeper.com',
+                        bridgeUrl: 'https://tonapi.io'
+                    });
+
+                    if (connectLink) {
+                        const tg = window.Telegram?.WebApp;
+                        if (tg && typeof tg.openLink === 'function') {
+                            tg.openLink(connectLink);
+                        } else {
+                            window.location.href = connectLink;
                         }
-                    } catch (err) {
-                        console.error("Direct connection failed:", err);
                     }
                 }
-            };
-        } else {
-            setTimeout(attachbuttonEvent, 300);
-        }
+            } catch (err) {
+                console.error("Direct connection failed:", err);
+            }
+        };
     }
 
     function saveWalletToFirebase(address) {
@@ -115,5 +119,4 @@
     }
 
     initTonSdk();
-    attachbuttonEvent();
 })();
