@@ -1,86 +1,12 @@
-// Initialize Telegram Web App SDK
-const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand(); // Forces the app to open in full screen inside Telegram
+const gamesPage = document.getElementById('games-page');
 
-// Navigation System (Tab Switching) + Telegram Back Button Logic
-function showTab(tabId, element) {
-    // Hide all tab contents
-    const contents = document.querySelectorAll('.tab-content');
-    contents.forEach(content => content.classList.remove('active'));
-    
-    // Show the selected tab
-    document.getElementById(tabId).classList.add('active');
-    
-    // Update active state in bottom navbar
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => item.classList.remove('active'));
-    
-    if(element) {
-        element.classList.add('active');
-    } else {
-        // If triggered from top buttons (like Airdrop)
-        const targetNav = document.getElementById(nav-${tabId});
-        if(targetNav) targetNav.classList.add('active');
-    }
-
-    // --- TELEGRAM OFFICIAL BACK BUTTON LOGIC ---
-    if (tabId === 'home') {
-        tg.BackButton.hide(); // Hide button on main screen
-    } else {
-        tg.BackButton.show(); // Show button on other tabs
-    }
-}
-
-// Function for the HTML "Back to Home" button inside tabs
-function returnToHome() {
-    showTab('home', document.getElementById('nav-home'));
-}
-
-// When user clicks the Telegram native Back Button, return to Home Screen
-tg.BackButton.onClick(() => {
-    returnToHome();
-});
-
-// Tap Tap Clicker and Score System
-let score = parseInt(localStorage.getItem('chubby_score')) || 0;
-if (document.getElementById('score')) {
-    document.getElementById('score').innerText = score;
-}
-
-const tapZone = document.getElementById('tap-zone');
-if (tapZone) {
-    tapZone.addEventListener('click', (e) => {
-        score += 1; // Increase coin per tap
-        document.getElementById('score').innerText = score;
-        localStorage.setItem('chubby_score', score); // Save balance locally
-        
-        // Trigger floating text effect (+1)
-        createTapEffect(e);
-    });
-}
-
-// Floating +1 Text Effect
-function createTapEffect(e) {
-    const text = document.createElement('div');
-    text.innerText = '+1';
-    text.style.position = 'absolute';
-    text.style.left = ${e.clientX - 10}px;
-    text.style.top = ${e.clientY - 20}px;
-    text.style.color = '#0066ff';
-    text.style.fontWeight = 'bold';
-    text.style.fontSize = '26px';
-    text.style.pointerEvents = 'none';
-    text.style.zIndex = '9999';
-    text.style.transition = 'transform 0.4s ease-out, opacity 0.4s ease-out';
-    document.body.appendChild(text);
-    
-    setTimeout(() => {
-        text.style.transform = 'translateY(-60px) scale(1.2)';
-        text.style.opacity = '0';
-    }, 10);
-    
-    setTimeout(() => {
-        text.remove();
-    }, 400);
+if (gamesPage) {
+    gamesPage.innerHTML = `
+        <h2 class="page-title">Mini Games</h2>
+        <div class="page-content" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <p style="color: #ccc; font-size: 15px;">New arcade mini games are under development.</p>
+            <span style="font-size: 40px; margin-top: 15px;">🚧</span>
+        </div>
+        <button class="btn-top" onclick="switchPage('home')" style="width: 100%; max-width: 200px; margin-top: 20px; padding: 12px;">Back to Home</button>
+    `;
 }
