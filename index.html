@@ -142,12 +142,13 @@
 </head>
 <body>
 
+    <!-- دوگمەکانی سەرەوە -->
     <div class="header-bar">
         <button class="btn-top" onclick="switchPage('menu')">☰ Menu</button>
         <button class="btn-top" onclick="switchPage('airdrop')">🎁 Airdrop</button>
     </div>
 
-    <!-- 🏠 لاپەڕەی Home -->
+    <!-- 🏠 لاپەڕەی سەرەکی Home -->
     <div class="main-layout" id="home-layout" style="display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%;">
         <div class="header">
             <div>CHUBBYX BALANCE</div>
@@ -159,7 +160,7 @@
         </div>
     </div>
 
-    <!-- 📋 لاپەڕەی Tasks -->
+    <!-- لاپەڕە داینامیکییەکان -->
     <div id="tasks-page" class="dynamic-page">
         <h2 class="page-title">Tasks List</h2>
         <p class="page-desc">Complete social tasks to earn extra ChubbyX coins.</p>
@@ -173,7 +174,6 @@
         </div>
     </div>
 
-    <!-- 👥 لاپەڕەی Invites -->
     <div id="invites-page" class="dynamic-page">
         <h2 class="page-title">Friends Referral</h2>
         <p class="page-desc">Invite friends and earn tiered progressive rewards!</p>
@@ -186,7 +186,6 @@
         </button>
     </div>
 
-    <!-- 🎮 لاپەڕەی Games -->
     <div id="games-page" class="dynamic-page">
         <h2 class="page-title">ChubbyX Mini Games</h2>
         <p class="page-desc">Spin the lucky wheel daily to win mystery prizes!</p>
@@ -196,7 +195,6 @@
         <button id="spin-btn" style="background:#ffd666; color:#000; border:none; padding:12px; border-radius:12px; font-weight:bold; font-size:16px; cursor:pointer; width:150px;">SPIN NOW 🚀</button>
     </div>
 
-    <!-- 💼 لاپەڕەی Wallet -->
     <div id="wallet-page" class="dynamic-page">
         <h2 class="page-title">Connect Wallet</h2>
         <p class="page-desc">Connect your TON wallet to secure your future airdrop allocation.</p>
@@ -205,21 +203,19 @@
         </div>
     </div>
 
-    <!-- ☰ لاپەڕەی Menu -->
     <div id="menu-page" class="dynamic-page">
         <h2 class="page-title">Menu Options</h2>
         <p class="page-desc">Configure your system preferences.</p>
         <div class="custom-card" onclick="alert('Music toggled!')"><span>🎵 Game Sounds</span><span style="color:#a0e670; font-weight:bold;">ON</span></div>
     </div>
 
-    <!-- 🎁 لاپەڕەی Airdrop -->
     <div id="airdrop-page" class="dynamic-page">
         <h2 class="page-title">Airdrop Status</h2>
         <p class="page-desc">Token snapshot distribution details.</p>
         <div class="custom-card" style="border-color:#ffd666;"><span>Current Status</span><span style="color:#ffd666; font-weight:bold;">Pending</span></div>
     </div>
 
-    <!-- 🗺️ مینیۆ باری خوارەوە بەو ناوانەی خۆت ویستت (Tasks, Invites, Home, Games, Wallet) -->
+    <!-- 🗺️ مینیۆ باری خوارەوە (هەر ٥ دوگمەکە بە بێ هیچ کێشەیەک ڕیزکراونەتەوە لێرە) -->
     <div class="bottom-nav">
         <div class="nav-link" onclick="switchPage('tasks', this)">
             <span class="nav-icon">📋</span><span>Tasks</span>
@@ -234,3 +230,8 @@
             <span class="nav-icon">🎮</span><span>Games</span>
         </div>
         <div class="nav-link" onclick="switchPage('wallet', this)">
+            <span class="nav-icon">💼</span><span>Wallet</span>
+        </div>
+    </div>
+
+    <script>
