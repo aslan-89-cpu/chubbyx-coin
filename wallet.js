@@ -1,35 +1,18 @@
-// ChubbyX Wallet Dynamic Logic
-document.addEventListener("DOMContentLoaded", () => {
-    const walletActionBtn = document.getElementById("wallet-action-btn");
-    
-    if (walletActionBtn) {
-        // پشکنین ئەگەر پێشتر جزدان بەسترابێت
-        const savedWallet = localStorage.getItem('user_wallet_address');
-        if (savedWallet) {
-            walletActionBtn.innerText = ✅ Connected: ${savedWallet};
-            walletActionBtn.style.background = "#a0e670";
-        }
+const walletPage = document.getElementById('wallet-page');
 
-        walletActionBtn.addEventListener("click", () => {
-            const currentWallet = localStorage.getItem('user_wallet_address');
-            
-            if (currentWallet) {
-                if (confirm("Do you want to disconnect your wallet?")) {
-                    localStorage.removeItem('user_wallet_address');
-                    walletActionBtn.innerText = "💎 Connect TON Wallet";
-                    walletActionBtn.style.background = "white";
-                    alert("Wallet disconnected.");
-                }
-                return;
-            }
+if (walletPage) {
+    walletPage.innerHTML = `
+        <h2 class="page-title">Connect Wallet</h2>
+        <div class="page-content" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <p style="color: #ccc; margin-bottom: 30px; max-width: 280px; font-size: 15px; line-height: 1.4;">Connect your TON wallet to participate in the future airdrop distribution.</p>
+            <button id="connect-wallet-btn" style="background: #0098ea; color: white; border: none; padding: 14px 28px; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0, 152, 234, 0.3);">
+                💎 Connect TON Wallet
+            </button>
+        </div>
+        <button class="btn-top" onclick="switchPage('home')" style="width: 100%; max-width: 200px; margin-top: 20px; padding: 12px;">Back to Home</button>
+    `;
 
-            // دروستکردنی ناونیشانی جزدانی تاقیکاری
-            const mockAddress = "EQA1k8O_vX..." + Math.floor(1000 + Math.random() * 9000);
-            localStorage.setItem('user_wallet_address', mockAddress);
-            
-            walletActionBtn.innerText = ✅ Connected: ${mockAddress};
-            walletActionBtn.style.background = "#a0e670";
-            alert("Wallet connected successfully! 🚀");
-        });
-    }
-});
+    document.getElementById('connect-wallet-btn').addEventListener('click', () => {
+        alert('TonConnect integration coming soon!');
+    });
+}
