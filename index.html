@@ -93,6 +93,7 @@
             100% { opacity: 0; transform: translateY(-120px) scale(1.1); }
         }
 
+        /* ستایلی نایاب بۆ کارتی ناو لاپەڕەکان ڕێک وەک ئەپە فەرمییەکان */
         .dynamic-page {
             display: none;
             position: fixed;
@@ -105,9 +106,25 @@
             padding: 80px 20px 40px 20px;
             flex-direction: column;
             align-items: center;
+            overflow-y: auto;
         }
         .dynamic-page.active { display: flex; }
-        .page-title { font-size: 26px; font-weight: bold; margin-bottom: 25px; color: #eab308; }
+        .page-title { font-size: 26px; font-weight: bold; margin-bottom: 8px; color: #eab308; text-align: center; }
+        .page-desc { font-size: 14px; color: #aaa; margin-bottom: 25px; text-align: center; max-width: 300px; }
+        
+        .custom-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 20px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 360px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
 
         .bottom-nav {
             width: 100%;
@@ -126,13 +143,12 @@
 </head>
 <body>
 
-    <!-- دوگمەکانی سەرەوە -->
     <div class="header-bar">
         <button class="btn-top" onclick="switchPage('menu')">☰ Menu</button>
         <button class="btn-top" onclick="switchPage('airdrop')">🎁 Airdrop</button>
     </div>
 
-    <!-- 🏠 لاپەڕەی سەرەکی Home -->
+    <!-- 🏠 لاپەڕەی Home -->
     <div class="main-layout" id="home-layout" style="display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%;">
         <div class="header">
             <div>CHUBBYX BALANCE</div>
@@ -144,15 +160,69 @@
         </div>
     </div>
 
-    <!-- لاپەڕە داینامیکییەکان -->
-    <div id="tasks-page" class="dynamic-page"><h2 class="page-title">Tasks List</h2></div>
-    <div id="friends-page" class="dynamic-page"><h2 class="page-title">Friends Referral</h2></div>
-    <div id="game-page" class="dynamic-page"><h2 class="page-title">ChubbyX Mini Games</h2></div>
-    <div id="profile-page" class="dynamic-page"><h2 class="page-title">User Profile</h2></div>
-    <div id="menu-page" class="dynamic-page"><h2 class="page-title">Menu Options</h2></div>
-    <div id="airdrop-page" class="dynamic-page"><h2 class="page-title">Airdrop Status</h2></div>
+    <!-- 📋 لاپەڕەی Tasks -->
+    <div id="tasks-page" class="dynamic-page">
+        <h2 class="page-title">Tasks List</h2>
+        <p class="page-desc">Complete social tasks to earn extra ChubbyX coins.</p>
+        <div class="custom-card" id="task-tg">
+            <span>Join Telegram Channel</span>
+            <span style="color:#ffd666; font-weight:bold;">+5,000</span>
+        </div>
+        <div class="custom-card" id="task-x">
+            <span>Follow X (Twitter)</span>
+            <span style="color:#ffd666; font-weight:bold;">+5,000</span>
+        </div>
+    </div>
 
-    <!-- مینیۆ باری خوارەوە -->
+    <!-- 👥 لاپەڕەی Friends -->
+    <div id="friends-page" class="dynamic-page">
+        <h2 class="page-title">Friends Referral</h2>
+        <p class="page-desc">Invite friends and earn tiered progressive rewards!</p>
+        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; width:100%; max-width:360px; text-align:center; margin-bottom:20px;">
+            <div style="font-size:13px; color:#aaa;">Your Invites</div>
+            <div style="font-size:24px; font-weight:bold; color:#ffd666;" id="invite-count-txt">0</div>
+        </div>
+        <button id="invite-btn" style="background:#0088cc; color:white; border:none; padding:14px 28px; border-radius:15px; font-weight:bold; font-size:16px; cursor:pointer; width:100%; max-width:360px;">
+            🔗 Copy Invite Link
+        </button>
+    </div>
+
+    <!-- 🎮 لاپەڕەی Game -->
+    <div id="game-page" class="dynamic-page">
+        <h2 class="page-title">ChubbyX Mini Games</h2>
+        <p class="page-desc">Spin the lucky wheel daily to win mystery prizes!</p>
+        
+        <div id="wheel-container" style="position:relative; width:180px; height:180px; border-radius:50%; border:6px solid #ffd666; background:conic-gradient(#8800cc 0deg 60deg, #0088cc 60deg 120deg, #22aa55 120deg 180deg, #ff3366 180deg 240deg, #ff9900 240deg 300deg, #ffd666 300deg 360deg); transition: transform 4s cubic-bezier(0.17, 0.67, 0.1, 1); margin-bottom: 20px;">
+            <div style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-top:16px solid #fff; z-index:100;"></div>
+        </div>
+        <button id="spin-btn" style="background:#ffd666; color:#000; border:none; padding:12px; border-radius:12px; font-weight:bold; font-size:16px; cursor:pointer; width:150px;">SPIN NOW 🚀</button>
+    </div>
+
+    <!-- 💼 لاپەڕەی Wallet (Profile پێشوو گۆڕدرا بۆ والێت) -->
+    <div id="wallet-page" class="dynamic-page">
+        <h2 class="page-title">Connect Wallet</h2>
+        <p class="page-desc">Connect your TON wallet to secure your future airdrop allocation.</p>
+        <div id="wallet-btn" style="background:white; color:black; padding:15px 30px; border-radius:12px; cursor:pointer; font-weight:bold; font-size:16px; text-align:center; width:100%; max-width:360px;">
+            💎 Connect TON Wallet
+        </div>
+    </div>
+
+    <!-- ☰ لاپەڕەی Menu -->
+    <div id="menu-page" class="dynamic-page">
+        <h2 class="page-title">Menu Options</h2>
+        <p class="page-desc">Configure your system preferences.</p>
+        <div class="custom-card" onclick="alert('Music toggled!')"><span>🎵 Game Sounds</span><span style="color:#a0e670; font-weight:bold;">ON</span></div>
+        <div class="custom-card" onclick="alert('Advanced stats available soon!')"><span>🛠️ Miner Specs</span><span style="color:#ccc;">Soon</span></div>
+    </div>
+
+    <!-- 🎁 لاپەڕەی Airdrop -->
+    <div id="airdrop-page" class="dynamic-page">
+        <h2 class="page-title">Airdrop Status</h2>
+        <p class="page-desc">Token snapshot distribution details.</p>
+        <div class="custom-card" style="border-color:#ffd666;"><span>Current Status</span><span style="color:#ffd666; font-weight:bold;">Pending</span></div>
+    </div>
+
+    <!-- مینیۆ باری خوارەوە (ناوی دوگمەکان گۆڕدرا بۆ Tasks, Friends, Home, Game, Wallet) -->
     <div class="bottom-nav">
         <div class="nav-link" onclick="switchPage('tasks', this)">
             <span class="nav-icon">📋</span><span>Tasks</span>
@@ -162,86 +232,3 @@
         </div>
         <div class="nav-link active" id="default-nav" onclick="switchPage('home', this)">
             <span class="nav-icon">🏠</span><span>Home</span>
-        </div>
-        <div class="nav-link" onclick="switchPage('game', this)">
-            <span class="nav-icon">🎮</span><span>Game</span>
-        </div>
-        <div class="nav-link" onclick="switchPage('profile', this)">
-            <span class="nav-icon">👤</span><span>Profile</span>
-        </div>
-    </div>
-
-    <script>
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
-        }
-
-        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        document.getElementById('main-score').innerText = count.toLocaleString();
-
-        var tapElement = document.getElementById('clickCoin');
-        var coinContainer = document.getElementById('coinContainer');
-        
-        if (tapElement) {
-            tapElement.addEventListener('click', function(e) {
-                count++;
-                document.getElementById('main-score').innerText = count.toLocaleString();
-                localStorage.setItem('chubby_coins', count);
-
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    var utterance = new SpeechSynthesisUtterance('Chub');
-                    utterance.lang = 'en-US';
-                    utterance.pitch = 1.4;
-                    utterance.rate = 1.6;
-                    window.speechSynthesis.speak(utterance);
-                }
-
-                tapElement.classList.add('transparent-tap-zone-active');
-                setTimeout(function() { tapElement.classList.remove('transparent-tap-zone-active'); }, 50);
-
-                var rect = coinContainer.getBoundingClientRect();
-                var x = e.clientX - rect.left;
-                var y = e.clientY - rect.top;
-                
-                if (!x || x < 0) { x = 135; y = 135; }
-
-                var textNode = document.createElement('div');
-                textNode.className = 'floating-text';
-                textNode.innerText = '+1';
-                textNode.style.left = (x - 15) + 'px';
-                textNode.style.top = (y - 30) + 'px';
-                coinContainer.appendChild(textNode);
-                setTimeout(function() { textNode.remove(); }, 600);
-            });
-        }
-
-        function switchPage(pageId, element) {
-            document.getElementById('home-layout').style.display = 'none';
-            document.querySelectorAll('.dynamic-page').forEach(function(page) { page.classList.remove('active'); });
-            
-            if (element && element.classList.contains('nav-link')) {
-                document.querySelectorAll('.nav-link').forEach(function(link) { link.classList.remove('active'); });
-                element.classList.add('active');
-            } else if (pageId === 'home') {
-                document.querySelectorAll('.nav-link').forEach(function(link) { link.classList.remove('active'); });
-                var defNav = document.getElementById('default-nav');
-                if (defNav) defNav.classList.add('active');
-            } else {
-                document.querySelectorAll('.nav-link').forEach(function(link) { link.classList.remove('active'); });
-            }
-
-            if (pageId === 'home') {
-                document.getElementById('home-layout').style.display = 'flex';
-                count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-                document.getElementById('main-score').innerText = count.toLocaleString();
-            } else {
-                var targetPage = document.getElementById(pageId + '-page');
-                if (targetPage) targetPage.classList.add('active');
-            }
-        }
-    </script>
-    <!-- ⚠️ سەرنج بدە: لێرەدا هیچ فایلێکی دەرەکی بار نەکراوە بۆ ئەوەی ئەپەکە ۱۰۰٪ سەلامەت بێت لە بلۆکبوون -->
-</body>
-</html>
