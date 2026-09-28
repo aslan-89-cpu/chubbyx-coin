@@ -142,13 +142,12 @@
 </head>
 <body>
 
-    <!-- دوگمەکانی سەرەوە -->
     <div class="header-bar">
         <button class="btn-top" onclick="switchPage('menu')">☰ Menu</button>
         <button class="btn-top" onclick="switchPage('airdrop')">🎁 Airdrop</button>
     </div>
 
-    <!-- 🏠 لاپەڕەی سەرەکی Home -->
+    <!-- 🏠 لاپەڕەی Home -->
     <div class="main-layout" id="home-layout" style="display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%;">
         <div class="header">
             <div>CHUBBYX BALANCE</div>
@@ -174,8 +173,8 @@
         </div>
     </div>
 
-    <!-- 👥 لاپەڕەی Friends -->
-    <div id="friends-page" class="dynamic-page">
+    <!-- 👥 لاپەڕەی Invites -->
+    <div id="invites-page" class="dynamic-page">
         <h2 class="page-title">Friends Referral</h2>
         <p class="page-desc">Invite friends and earn tiered progressive rewards!</p>
         <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; width:100%; max-width:360px; text-align:center; margin-bottom:20px;">
@@ -187,11 +186,10 @@
         </button>
     </div>
 
-    <!-- 🎮 لاپەڕەی Game -->
-    <div id="game-page" class="dynamic-page">
+    <!-- 🎮 لاپەڕەی Games -->
+    <div id="games-page" class="dynamic-page">
         <h2 class="page-title">ChubbyX Mini Games</h2>
         <p class="page-desc">Spin the lucky wheel daily to win mystery prizes!</p>
-        
         <div id="wheel-container" style="position:relative; width:180px; height:180px; border-radius:50%; border:6px solid #ffd666; background:conic-gradient(#8800cc 0deg 60deg, #0088cc 60deg 120deg, #22aa55 120deg 180deg, #ff3366 180deg 240deg, #ff9900 240deg 300deg, #ffd666 300deg 360deg); transition: transform 4s cubic-bezier(0.17, 0.67, 0.1, 1); margin-bottom: 20px;">
             <div style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-top:16px solid #fff; z-index:100;"></div>
         </div>
@@ -212,7 +210,6 @@
         <h2 class="page-title">Menu Options</h2>
         <p class="page-desc">Configure your system preferences.</p>
         <div class="custom-card" onclick="alert('Music toggled!')"><span>🎵 Game Sounds</span><span style="color:#a0e670; font-weight:bold;">ON</span></div>
-        <div class="custom-card" onclick="alert('Advanced stats available soon!')"><span>🛠️ Miner Specs</span><span style="color:#ccc;">Soon</span></div>
     </div>
 
     <!-- 🎁 لاپەڕەی Airdrop -->
@@ -222,15 +219,18 @@
         <div class="custom-card" style="border-color:#ffd666;"><span>Current Status</span><span style="color:#ffd666; font-weight:bold;">Pending</span></div>
     </div>
 
-    <!-- 🗺️ مینیۆ باری خوارەوە (ڕێک بەو پێنج دانەی خۆت ویستت) -->
+    <!-- 🗺️ مینیۆ باری خوارەوە بەو ناوانەی خۆت ویستت (Tasks, Invites, Home, Games, Wallet) -->
     <div class="bottom-nav">
         <div class="nav-link" onclick="switchPage('tasks', this)">
             <span class="nav-icon">📋</span><span>Tasks</span>
         </div>
-        <div class="nav-link" onclick="switchPage('friends', this)">
-            <span class="nav-icon">👥</span><span>Friends</span>
+        <div class="nav-link" onclick="switchPage('invites', this)">
+            <span class="nav-icon">👥</span><span>Invites</span>
         </div>
         <div class="nav-link active" id="default-nav" onclick="switchPage('home', this)">
             <span class="nav-icon">🏠</span><span>Home</span>
         </div>
-        <div class="nav-link" onclick="switchPage('game', this)">
+        <div class="nav-link" onclick="switchPage('games', this)">
+            <span class="nav-icon">🎮</span><span>Games</span>
+        </div>
+        <div class="nav-link" onclick="switchPage('wallet', this)">
