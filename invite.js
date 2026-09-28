@@ -51,7 +51,7 @@ function shareInviteLink() {
 
     invitesPage.innerHTML = `
         <h2 class="page-title">Invite Friends</h2>
-        <div class="page-content" style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+        <div class="page-content" style="text-align: center; display: flex; flex-direction: column; align-items: center; max-height: calc(100vh - 220px); overflow-y: auto;">
             <div style="background: rgba(255,255,255,0.05); border-radius: 16px; padding: 15px 0; width: 100%; max-width: 300px; margin-bottom: 20px;">
                 <div style="font-size: 14px; color: #aaa; margin-bottom: 5px;">Total Invited Friends</div>
                 <div style="font-size: 34px; font-weight: bold; color: #eeb308;" id="ref-count-text">0</div>
@@ -69,6 +69,8 @@ function shareInviteLink() {
             <button id="claim-ref-btn" disabled style="background: #444; color: #888; border: none; padding: 14px 24px; border-radius: 12px; font-weight: bold; font-size: 16px; width: 100%; max-width: 260px; cursor: not-allowed; margin-bottom: 12px;">Claim Reward</button>
             <button onclick="shareInviteLink()" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 12px 20px; border-radius: 12px; font-weight: bold; font-size: 15px; width: 100%; max-width: 260px; cursor: pointer;">🔗 Invite a Friend</button>
         </div>
-        <button class="btn-top" onclick="switchPage('home')" style="width: 100%; max-width: 240px; margin-top: auto; padding: 12px; margin-bottom: 100px;">Back to Home</button>
+        
+        <!-- لێرەدا فەزای ١٢٠ پیکسڵ لە خوارەوە جێدەهێڵین تا دوگمەکە لە ناڤباری خوارەوە دووربکەوێتەوە و بە تەواوی دیار بێت -->
+        <button class="btn-top" onclick="switchPage('home')" style="width: 100%; max-width: 240px; margin-top: 15px; padding: 12px; margin-bottom: 120px; z-index: 2000; position: relative;">Back to Home</button>
     `;
 })();
