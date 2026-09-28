@@ -13,7 +13,6 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         body {
-            /* ⬇️ گەڕانەوە بۆ وێنە ئەسڵییەکەی خۆت و جێگیرکردنی لە ناوەڕاستی شاشەدا */
             background: #1c1437 url('background.jpg') no-repeat center top -120px fixed;
             background-size: cover;
             color: #ffffff;
@@ -63,16 +62,15 @@
             position: relative;
         }
 
-        .assets-title { font-size: 11px; color: #bbb; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 10px; }
-        .balance-display { font-size: 34px; font-weight: 800; color: #fff; margin: 5px 0 15px 0; }
-        .balance-display span { color: #eab308; font-size: 20px; font-weight: 600; }
+        .assets-title { font-size: 14px; color: #bbb; letter-spacing: 1px; margin-top: 10px; opacity: 0.8; }
+        .balance-display { font-size: 32px; font-weight: bold; color: #fff; margin: 5px 0 15px 0; }
 
         .pool-box {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 13px;
+            border-radius: 20px;
+            font-size: 14px;
             color: #aaa;
             margin-bottom: 20px;
             backdrop-filter: blur(5px);
@@ -83,46 +81,48 @@
             font-size: 36px;
             font-weight: bold;
             color: #22c55e;
-            text-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
             margin-bottom: 25px;
         }
 
-        /* ⬇️ گۆڕینی بازنە زێڕینەکە بۆ ناوچەی کلیکی شەفاف ڕێک لەسەر بووکەڵە مۆرەکەت */
         .coin-wrapper {
             position: relative;
-            width: 280px;
-            height: 280px;
+            width: 300px;
+            height: 300px;
             margin-bottom: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
+        /* گەڕانەوەی تەواوی ناوچەی کلیکی تاپ-تاپی ئەسڵی لەسەر بووکەڵەکەت */
         .transparent-tap-zone {
-            width: 100%;
-            height: 100%;
+            width: 260px;
+            height: 260px;
             border-radius: 50%;
             background: transparent;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
+            z-index: 999;
+            touch-action: manipulation;
             transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .transparent-tap-zone:active { 
+        .transparent-tap-zone-active { 
             transform: scale(0.93) !important; 
         }
 
         .floating-text {
             position: absolute;
-            color: #22c55e;
+            color: #eab308;
             font-weight: bold;
-            font-size: 24px;
+            font-size: 26px;
             pointer-events: none;
             z-index: 1000;
             animation: floatUp 0.6s ease-out forwards;
-            text-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+            text-shadow: 0 0 8px rgba(234, 179, 8, 0.7);
         }
         @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-100px); }
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-130px) scale(1.2); }
         }
 
         .claim-btn {
@@ -150,8 +150,8 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: calc(100vh - 75px);
-            background: #090611;
+            height: calc(100vh - 85px);
+            background: #0d081b;
             z-index: 1500;
             padding: 40px 20px;
             flex-direction: column;
@@ -167,17 +167,16 @@
             display: flex;
             position: fixed;
             bottom: 0;
-            padding: 12px 10px calc(12px + env(safe-area-inset-bottom));
+            padding: 15px 15px calc(25px + env(safe-area-inset-bottom));
             z-index: 2000;
         }
-        .nav-link { flex: 1; text-align: center; font-size: 12px; color: #666; text-decoration: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: 500; }
+        .nav-link { flex: 1; text-align: center; font-size: 13px; color: #666; text-decoration: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: 500; }
         .nav-link.active { color: #eab308; font-weight: bold; }
         .nav-icon { font-size: 20px; }
     </style>
 </head>
 <body>
 
-    <!-- بەشی سەرەوەی ناسنامە (ناونیشانی جزدانەکە لابرا) -->
     <div class="header-status">
         <div class="user-badge">
             <span class="user-name">ChubbyX Miner</span>
@@ -187,14 +186,14 @@
 
     <!-- 🏠 ڕوونمای سەرەکی ماینینگ -->
     <div class="main-layout" id="mine-layout">
-        <span class="assets-title">Assets</span>
-        <div class="balance-display"><span id="main-balance">0</span> <span>ChubbyX</span></div>
+        <span class="assets-title">CHUBBYX BALANCE</span>
+        <div class="balance-display" id="main-score">0</div>
         
-        <div class="pool-box">POOL WALLET: <span id="pool-balance">0.0000</span></div>
+        <div class="pool-box">POOL WALLET: <span id="pool-score">0.0000</span></div>
         
         <div class="mining-profit" id="mining-live">+0.0000</div>
 
-        <!-- ناوچەی کلیکی شەفاف ڕێک لەسەر بووکەڵە ئەسڵییەکەت -->
+        <!-- ناوچەی کلیکی گەشەسەندوو لەسەر بووکەڵەکەت -->
         <div class="coin-wrapper" id="coinContainer">
             <div class="transparent-tap-zone" id="clickCoin"></div>
         </div>
@@ -232,39 +231,41 @@
             window.Telegram.WebApp.expand();
         }
 
-        let mainBalance = parseFloat(localStorage.getItem('cx_main_balance')) || 0;
-        let poolBalance = parseFloat(localStorage.getItem('cx_pool_balance')) || 0;
+        // ڕێکخستنی یەکجاری متغیرەکان بەو شێوازەی لە کۆدە ئەسڵییەکەتدا بێ کێشە کار دەکات
+        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
+        var poolBalance = parseFloat(localStorage.getItem('cx_pool_balance')) || 0;
         
-        document.getElementById('main-balance').innerText = mainBalance.toFixed(4);
-        document.getElementById('pool-balance').innerText = poolBalance.toFixed(4);
+        document.getElementById('main-score').innerText = count.toLocaleString();
+        document.getElementById('pool-score').innerText = poolBalance.toFixed(4);
 
-        // ماینینگی ئۆتۆماتیکی
-        setInterval(() => {
-            let pendingProfit = Math.random() * 0.0005; 
+        // پرۆسەی ماینینگی کاتی
+        setInterval(function() {
+            var pendingProfit = Math.random() * 0.0005; 
             poolBalance += pendingProfit;
             
             document.getElementById('mining-live').innerText = "+" + pendingProfit.toFixed(4);
-            document.getElementById('pool-balance').innerText = poolBalance.toFixed(4);
+            document.getElementById('pool-score').innerText = poolBalance.toFixed(4);
             
             localStorage.setItem('cx_pool_balance', poolBalance);
         }, 1500);
 
         // دوگمەی CLAIM
-        document.getElementById('claimAction').addEventListener('click', () => {
+        document.getElementById('claimAction').addEventListener('click', function() {
             if (poolBalance > 0) {
-                mainBalance += poolBalance;
-                alert(Successfully Claimed +${poolBalance.toFixed(4)} ChubbyX! 🚀);
+                count += Math.floor(poolBalance * 100); // گۆڕینی داتای پاشەکەوت بۆ کۆینی تەواو
+                alert("Successfully Claimed ChubbyX Coins! 🚀");
                 poolBalance = 0;
                 
-                document.getElementById('main-balance').innerText = mainBalance.toFixed(4);
-                document.getElementById('pool-balance').innerText = poolBalance.toFixed(4);
+                document.getElementById('main-score').innerText = count.toLocaleString();
+                document.getElementById('pool-score').innerText = poolBalance.toFixed(4);
                 
-                localStorage.setItem('cx_main_balance', mainBalance);
+                localStorage.setItem('chubby_coins', count);
                 localStorage.setItem('cx_pool_balance', poolBalance);
             } else {
                 alert("No balance available to claim!");
             }
         });
 
-        // لێدانی تاپ-تاپ لەسەر بووکەڵەکە
-        const coinBtn = document.getElementById('clickCoin');
+        // چالاککردنی لێدانی تاپ-تاپ و بەرکەوتنی فرە-پەنجە (Multi-touch) ڕێک وەک هۆکەکەی خۆت
+        var tapElement = document.getElementById('clickCoin');
+        var coinContainer = document.getElementById('coinContainer');
