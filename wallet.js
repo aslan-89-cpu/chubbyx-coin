@@ -21,11 +21,14 @@
         <button class="btn-top" onclick="switchPage('home')" style="width: 100%; max-width: 240px; margin-top: 15px; padding: 12px; margin-bottom: 120px; z-index: 2000; position: relative;">Back to Home</button>
     `;
 
-    const customBtn = document.getElementById('custom-ton-connect-btn');
-    if (customBtn) {
-        customBtn.addEventListener('click', function() {
-            const event = new CustomEvent('triggerTonConnect');
-            window.dispatchEvent(event);
-        });
-    }
+    // بەستنەوەی دوگمەکە بە نێوەندگیرەکەوە بە شێوازێکی جێگیرتر
+    setTimeout(() => {
+        const customBtn = document.getElementById('custom-ton-connect-btn');
+        if (customBtn) {
+            customBtn.onclick = function() {
+                // ناردنی سیگناڵ بۆ ناو فایلی سەرەکی پڕۆژەکە
+                window.dispatchEvent(new CustomEvent('triggerTonConnect'));
+            };
+        }
+    }, 200);
 })();
