@@ -94,7 +94,7 @@
             position: relative;
             z-index: 5;
         }
-        /* دڵنیابوون لەوەی ناوچەی تاپ-تاپەکە بە تەواوی لەسەر بووکەڵە مۆرەکەیە */
+        /* ناوچەی تاپ-تاپی شەفاف ڕێک لەسەر بووکەڵە مۆرەکەت */
         .transparent-tap-zone {
             position: absolute;
             top: 25%;
@@ -186,7 +186,7 @@
         </div>
     </div>
 
-    <!-- 🏠 ڕوونمای سەرەکی ماینینگ -->
+    <!-- 🏠 لاپەڕەی Mine -->
     <div class="main-layout" id="mine-layout">
         <span class="assets-title">CHUBBYX BALANCE</span>
         <div class="balance-display" id="main-score">0</div>
@@ -238,7 +238,7 @@
         document.getElementById('main-score').innerText = count.toLocaleString();
         document.getElementById('pool-score').innerText = poolBalance.toFixed(4);
 
-        // پرۆسەی ماینینگی کاتی
+        // پرۆسەی ماینینگی خۆکار
         setInterval(function() {
             var pendingProfit = Math.random() * 0.0005; 
             poolBalance += pendingProfit;
@@ -249,7 +249,7 @@
             localStorage.setItem('cx_pool_balance', poolBalance);
         }, 1500);
 
-        // دوگمەی CLAIM
+        // لۆجیکی دوگمەی CLAIM
         document.getElementById('claimAction').addEventListener('click', function() {
             if (poolBalance > 0) {
                 count += Math.floor(poolBalance * 100); 
@@ -266,7 +266,7 @@
             }
         });
 
-        // 🛠️ ڕاستکردنەوەی فەرمی کۆدی تاپ-تاپ و حیسابکردنی پەنجە
+        // 🛠️ لۆجیکی ڕاستکراوەی تاپ-تاپ و حیسابکردنی شوێنی پەنجە بەبێ هەڵە
         var tapElement = document.getElementById('clickCoin');
         var coinContainer = document.getElementById('coinContainer');
         
