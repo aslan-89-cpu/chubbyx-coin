@@ -2,7 +2,7 @@
     const walletPage = document.getElementById('wallet-page');
     if (!walletPage) return;
 
-    // دروستکردنی شاشەی سەرەکی جزدان
+    // دروستکردنی شاشەی جزدان
     walletPage.innerHTML = `
         <h2 class="page-title">Connect Wallet</h2>
         <div class="page-content" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
@@ -21,46 +21,39 @@
         <button class="btn-top" onclick="switchPage('home')" style="width: 100%; max-width: 240px; margin-top: 15px; padding: 12px; margin-bottom: 120px; z-index: 2000; position: relative;">Back to Home</button>
     `;
 
-    let tonConnectUI = null;
-
-    // کردارێک بۆ دروستکردنی ئۆتۆماتیکی دوگمەکە کاتێک بەکارهێنەر دێتە سەر ئەم لاپەڕەیە
-    function initTonConnect() {
-        if (tonConnectUI) return; // ئەگەر پێشتر دروست ببوو، دووبارەی ناکاتەوە
-
+    // دروستکردنی ڕاستەوخۆی دوگمەی TonConnect بەبێ وەستان لەسەر چالاکبوونی لاپەڕە
+    setTimeout(function() {
         try {
-            tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                manifestUrl: 'tonconnect-manifest.json',
-                buttonRootId: 'ton-connect-btn-holder'
-            });
+            if (window.TON_CONNECT_UI && window.TON_CONNECT_UI.TonConnectUI) {
+                const tonConnectUI = new window.TON_CONNECT_UI.TonConnectUI({
+                    manifestUrl: 'tonconnect-manifest.json',
+                    buttonRootId: 'ton-connect-btn-holder'
+                });
 
-            tonConnectUI.onStatusChange(wallet => {
-                const statusLabel = document.getElementById('wallet-status-text');
-                const detailsBox = document.getElementById('wallet-details-box');
-                const addressString = document.getElementById('wallet-address-string');
+                tonConnectUI.onStatusChange(wallet => {
+                    const statusLabel = document.getElementById('wallet-status-text');
+                    const detailsBox = document.getElementById('wallet-details-box');
+                    const addressString = document.getElementById('wallet-address-string');
 
-                if (!statusLabel) return;
+                    if (!statusLabel) return;
 
-                if (wallet) {
-                    statusLabel.innerText = "Your TON wallet is successfully connected!";
-                    if (detailsBox && addressString) {
-                        detailsBox.style.display = 'block';
-                        const rawAddress = wallet.account.address;
-                        addressString.innerText = rawAddress.substring(0, 6) + "..." + rawAddress.substring(rawAddress.length - 6);
+                    if (wallet) {
+                        statusLabel.innerText = "Your TON wallet is successfully connected!";
+                        if (detailsBox && addressString) {
+                            detailsBox.style.display = 'block';
+                            const rawAddress = wallet.account.address;
+                            addressString.innerText = rawAddress.substring(0, 6) + "..." + rawAddress.substring(rawAddress.length - 6);
+                        }
+                    } else {
+                        statusLabel.innerText = "Connect your TON wallet to participate in the future airdrop distribution.";
+                        if (detailsBox) detailsBox.style.display = 'none';
                     }
-                } else {
-                    statusLabel.innerText = "Connect your TON wallet to participate in the future airdrop distribution.";
-                    if (detailsBox) detailsBox.style.display = 'none';
-                }
-            });
+                });
+            } else {
+                console.error("TonConnect UI library not found on window.");
+            }
         } catch (error) {
-            console.error("TON Connect failed to load:", error);
+            console.error("TON Connect initiation failed:", error);
         }
-    }
-
-    // بەکارهێنانی setInterval بۆ پشکنینی ئەوەی کەی لاپەڕەکە چالاک (Active) دەبێت بۆ ئەوەی دوگمەکە لۆد بێت
-    setInterval(() => {
-        if (walletPage.classList.contains('active')) {
-            initTonConnect();
-        }
-    }, 300);
+    }, 200);
 })();
