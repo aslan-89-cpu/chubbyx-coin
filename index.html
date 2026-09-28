@@ -94,7 +94,6 @@
             position: relative;
             z-index: 5;
         }
-        /* ناوچەی تاپ-تاپی شەفاف ڕێک لەسەر بووکەڵە مۆرەکەت */
         .transparent-tap-zone {
             position: absolute;
             top: 25%;
@@ -145,7 +144,6 @@
         }
         .claim-btn:active { transform: scale(0.98); }
 
-        /* لاپەڕە داینامیکییەکان */
         .dynamic-page {
             display: none;
             position: fixed;
@@ -186,7 +184,6 @@
         </div>
     </div>
 
-    <!-- 🏠 لاپەڕەی Mine -->
     <div class="main-layout" id="mine-layout">
         <span class="assets-title">CHUBBYX BALANCE</span>
         <div class="balance-display" id="main-score">0</div>
@@ -202,7 +199,6 @@
         <button class="claim-btn" id="claimAction">Claim</button>
     </div>
 
-    <!-- لاپەڕە داینامیکییەکانی تر -->
     <div id="tasks-page" class="dynamic-page"><h2 class="page-title">Tasks List</h2></div>
     <div id="miners-page" class="dynamic-page"><h2 class="page-title">Miners Upgrade</h2></div>
     <div id="friends-page" class="dynamic-page"><h2 class="page-title">Friends Referral</h2></div>
@@ -238,7 +234,6 @@
         document.getElementById('main-score').innerText = count.toLocaleString();
         document.getElementById('pool-score').innerText = poolBalance.toFixed(4);
 
-        // پرۆسەی ماینینگی خۆکار
         setInterval(function() {
             var pendingProfit = Math.random() * 0.0005; 
             poolBalance += pendingProfit;
@@ -249,7 +244,6 @@
             localStorage.setItem('cx_pool_balance', poolBalance);
         }, 1500);
 
-        // لۆجیکی دوگمەی CLAIM
         document.getElementById('claimAction').addEventListener('click', function() {
             if (poolBalance > 0) {
                 count += Math.floor(poolBalance * 100); 
@@ -266,7 +260,6 @@
             }
         });
 
-        // 🛠️ لۆجیکی ڕاستکراوەی تاپ-تاپ و حیسابکردنی شوێنی پەنجە بەبێ هەڵە
         var tapElement = document.getElementById('clickCoin');
         var coinContainer = document.getElementById('coinContainer');
         
@@ -275,3 +268,9 @@
                 e.preventDefault();
                 count++;
                 poolBalance += 0.01;
+                
+                document.getElementById('main-score').innerText = count.toLocaleString();
+                document.getElementById('pool-score').innerText = poolBalance.toFixed(4);
+                localStorage.setItem('chubby_coins', count);
+
+                if ('speechSynthesis' in window) {
