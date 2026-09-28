@@ -1,4 +1,4 @@
-// یەکەمجار ڕاستەوخۆ دەق و دوگمەکە دروست دەکەین بۆ ئەوەی مەحاڵ بێت شاشەکە بەتاڵ بمێنێتەوە
+// دروستکردنی شاشەی جزدان بە شێوەیەکی جێگیر
 const walletPage = document.getElementById('wallet-page');
 
 if (walletPage) {
@@ -9,10 +9,13 @@ if (walletPage) {
                 Connect your TON wallet to participate in the future airdrop distribution.
             </p>
             
-            <!-- دوگمەیەکی جێگیر کە هەمیشە دیار دەبێت -->
+            <!-- دوگمە شینە سەرکەوتووەکەت -->
             <button id="custom-ton-connect-btn" style="background: #0098ea; color: white; border: none; padding: 14px 24px; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0, 152, 234, 0.3);">
                 💎 Connect TON Wallet
             </button>
+            
+            <!-- هۆڵدەرێکی بچووکی شاراوە بۆ جێگیرکردنی لۆژیکی TON Connect -->
+            <div id="hidden-ton-btn" style="display: none;"></div>
             
             <div id="wallet-details-box" style="display: none; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; width: 100%; max-width: 260px; word-break: break-all; font-size: 13px; color: #aaa; margin-top: 20px;">
                 <span style="color: #eeb308; font-weight: bold; display: block; margin-bottom: 5px;">Connected Address:</span>
@@ -23,18 +26,17 @@ if (walletPage) {
     `;
 }
 
-// پاشان لە پشت شاشەوە بە هێمنی پەیوەندی بە کتێبخانەی TON Connect دەکەین بەبێ ئەوەی شاشەکە ڕەش بکات
+// بەڕێکردنی لۆژیکی بەستنەوە لە پشت شاشەوە بە شێوازی سەلامەت
 setTimeout(function() {
     try {
-        // پشکنینی ئەوەی ئایا کتێبخانەکە لەسەر شاشە هەیە
-        const tonUI = window.TON_CONNECT_UI || (window.Telegram && window.Telegram.WebApp ? window.parent.TON_CONNECT_UI : null);
-        
-        if (tonUI && tonUI.TonConnectUI) {
-            const tonConnectUI = new tonUI.TonConnectUI({
-                manifestUrl: 'tonconnect-manifest.json'
+        if (window.TON_CONNECT_UI && window.TON_CONNECT_UI.TonConnectUI) {
+            // دروستکردنی ئۆبجێکتی فەرمی بەستراو بە هۆڵدەرە شاراوەکەوە
+            const tonConnectUI = new window.TON_CONNECT_UI.TonConnectUI({
+                manifestUrl: 'tonconnect-manifest.json',
+                buttonRootId: 'hidden-ton-btn'
             });
 
-            // گوێگرتن لە گۆڕانکاری دۆخی جزدان
+            // گوێگرتن لە دۆخی جزدان بۆ نوێکردنەوەی شاشە شینەکە
             tonConnectUI.onStatusChange(wallet => {
                 const statusLabel = document.getElementById('wallet-status-text');
                 const detailsBox = document.getElementById('wallet-details-box');
@@ -45,7 +47,7 @@ setTimeout(function() {
                     if (statusLabel) statusLabel.innerText = "Your TON wallet is successfully connected!";
                     if (customBtn) {
                         customBtn.innerText = "Disconnect Wallet";
-                        customBtn.style.background = "#ff4a4a";
+                        customBtn.style.background = "#ff4a4a"; // سوور بۆ دیسکۆنێکت
                     }
                     if (detailsBox && addressString) {
                         detailsBox.style.display = 'block';
@@ -62,27 +64,24 @@ setTimeout(function() {
                 }
             });
 
-            // بەستنەوەی کردار بە دوگمەکەوە
+            // کاتێک کلیک لە دوگمە شینەکە دەکرێت، مۆداڵی فەرمی TON دەکرێتەوە
             const customBtn = document.getElementById('custom-ton-connect-btn');
             if (customBtn) {
                 customBtn.onclick = async function() {
-                    if (tonConnectUI.connected) {
-                        await tonConnectUI.disconnect();
-                    } else {
-                        await tonConnectUI.openModal();
+                    try {
+                        if (tonConnectUI.connected) {
+                            await tonConnectUI.disconnect();
+                        } else {
+                            // کردنەوەی مۆداڵ بۆ هەڵبژاردنی جزدان
+                            await tonConnectUI.openModal();
+                        }
+                    } catch (btnErr) {
+                        console.error("Modal interaction error:", btnErr);
                     }
-                };
-            }
-        } else {
-            // ئەگەر کتێبخانەکە هێشتا لۆد نەببوو، کاتێک کلیک لە دوگمەکە دەکرێت ئاگاداری دەدات نەک شاشەکە بشارێتەوە
-            const customBtn = document.getElementById('custom-ton-connect-btn');
-            if (customBtn) {
-                customBtn.onclick = function() {
-                    alert("TON SDK is initializing... Please try again in a few seconds.");
                 };
             }
         }
     } catch (error) {
-        console.error("Backstage TON integration bypassed:", error);
+        console.error("TON SDK initialization bypassed:", error);
     }
-}, 500);
+}, 400);
