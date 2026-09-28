@@ -13,8 +13,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         body {
-            background: #1c1437 url('background.jpg') no-repeat center top -120px fixed;
-            background-size: cover;
+            background: #130f26; /* Fixed background color for all screens */
             color: #ffffff;
             display: flex;
             flex-direction: column;
@@ -24,6 +23,16 @@
             user-select: none;
             -webkit-user-select: none;
             touch-action: none;
+        }
+        /* Background image is only applied to the Home layout now */
+        #home-layout {
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 100%; 
+            height: 100%;
+            background: url('background.jpg') no-repeat center top -120px;
+            background-size: cover;
         }
         .header-bar {
             width: 100%;
@@ -99,7 +108,7 @@
             top: 0; left: 0;
             width: 100vw; height: calc(100vh - 85px);
             z-index: 1500;
-            background: #0e0s1b;
+            background: #130f26; /* Dark clean background for other pages */
             padding: 80px 20px 40px 20px;
             flex-direction: column;
             align-items: center;
@@ -125,13 +134,12 @@
 </head>
 <body>
 
-    <div class="header-bar">
-        <button class="btn-top" onclick="switchPage('menu')">≡ Menu</button>
-        <button class="btn-top" onclick="switchPage('airdrop')">🎁 Airdrop</button>
-    </div>
-
-    <!-- Home Layout -->
-    <div id="home-layout" style="display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%;">
+    <!-- Home Layout (Now holds the background image safely) -->
+    <div id="home-layout">
+        <div class="header-bar">
+            <button class="btn-top" onclick="switchPage('menu')">≡ Menu</button>
+            <button class="btn-top" onclick="switchPage('airdrop')">🎁 Airdrop</button>
+        </div>
         <div class="header">
             <div>CHUBBYX BALANCE</div>
             <h1 id="main-score">0</h1>
