@@ -2,14 +2,14 @@
     const walletPage = document.getElementById('wallet-page');
     if (!walletPage) return;
 
-    // Building the clean UI layout in English
+    // Rendering the English layout with a custom interactive button
     walletPage.innerHTML = `
         <h2 class="page-title">Connect Wallet</h2>
         <div class="page-content" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
             <p id="wallet-status-text" style="color: #ccc; margin-bottom: 30px; max-width: 280px; font-size: 15px; line-height: 1.4;">
                 Connect your TON wallet to participate in the future airdrop distribution.
             </p>
-            <button id="custom-ton-click-btn" style="background: #0098ea; color: white; border: none; padding: 14px 24px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 16px; min-width: 200px; justify-content: center;">
+            <button id="custom-ton-click-btn" style="background: #0098ea; color: white; border: none; padding: 14px 24px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 16px;">
                 💎 Connect TON Wallet
             </button>
             <div id="wallet-details-box" style="display: none; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; width: 100%; max-width: 240px; margin-top: 25px; text-align: left;">
@@ -26,14 +26,12 @@
         try {
             const SDK = window.TonConnectUI || window.TON_CONNECT_UI;
             if (SDK) {
-                // Using the exact stable dynamic route we built
                 const manifestLink = window.location.origin + window.location.pathname.replace('index.html', '') + 'tonconnect-manifest.json';
                 
                 tonConnectInstance = new SDK.TonConnectUI({
                     manifestUrl: manifestLink
                 });
 
-                // Listening for updates
                 tonConnectInstance.onStatusChange(wallet => {
                     const statusLabel = document.getElementById('wallet-status-text');
                     const detailsBox = document.getElementById('wallet-details-box');
@@ -62,7 +60,6 @@
                     }
                 });
 
-                // Attach click controller directly after SDK loads to bypass app blockages
                 setTimeout(attachButtonEvent, 300);
             } else {
                 setTimeout(initTonSDK, 200);
@@ -81,21 +78,23 @@
                         if (tonConnectInstance.connected) {
                             await tonConnectInstance.disconnect();
                         } else {
-                            // First try to open inside the app
-                            await tonConnectInstance.openModal();
+                            // Generating connection link dynamically
+                            const connectLink = await tonConnectInstance.connect({
+                                jsBridgeKey: 'tonkeeper',
+                                returnStrategy: 'tg'
+                            });
                             
-                            // FORCE PROTOCOL: If the app blocks the internal window after 500ms, redirect to system deep-link directly
-                            setTimeout(() => {
-                                const modalContainer = document.querySelector('tc-root') || document.getElementById('tc-modal-root');
-                                if (!modalContainer && !tonConnectInstance.connected) {
-                                    console.log("Internal window blocked, forcing system deep-link.");
-                                    // Bypasses Telegram browser blockages by opening the universal TON connection link directly
-                                    window.open("https://tonkeeper.com", "_blank");
-                                }
-                            }, 500);
+                            // If direct bridge provides a link, fire it to trigger Tonkeeper app
+                            if (connectLink) {
+                                window.location.href = connectLink;
+                            } else {
+                                await tonConnectInstance.openModal();
+                            }
                         }
                     } catch (err) {
-                        console.error("Wallet modal execution failed:", err);
+                        console.error("Direct connection failed, falling back:", err);
+                        // Fallback mechanism to trigger the universal deep link protocol
+                        window.location.href = "https://tonkeeper.com";
                     }
                 }
             };
