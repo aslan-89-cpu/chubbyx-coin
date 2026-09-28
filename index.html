@@ -62,16 +62,18 @@
             position: relative;
             z-index: 5;
         }
+        /* ⬇️ چاککردنی ستایلی ناوچەی کلیکەکە بۆ ئەوەی تێلیگرام بلۆکی نەکات */
         .transparent-tap-zone {
             position: absolute;
             top: 25%;
             width: 270px;
             height: 270px;
             border-radius: 50%;
-            background: rgba(0,0,0,0.001); 
+            background: rgba(0,0,0,0.01); /* ڕەنگێکی زۆر کەم بۆ ناسینەوەی لەلایەن تێلیگرامەوە */
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
             z-index: 999;
+            touch-action: manipulation;
             transition: transform 0.05s ease;
         }
         .transparent-tap-zone-active { 
@@ -142,7 +144,6 @@
 </head>
 <body>
 
-    <!-- دوگمەکانی سەرەوە -->
     <div class="header-bar">
         <button class="btn-top" onclick="switchPage('menu')">☰ Menu</button>
         <button class="btn-top" onclick="switchPage('airdrop')">🎁 Airdrop</button>
@@ -215,7 +216,7 @@
         <div class="custom-card" style="border-color:#ffd666;"><span>Current Status</span><span style="color:#ffd666; font-weight:bold;">Pending</span></div>
     </div>
 
-    <!-- 🗺️ مینیۆ باری خوارەوە (هەر ٥ دوگمەکە بە بێ هیچ کێشەیەک ڕیزکراونەتەوە لێرە) -->
+    <!-- مینیۆ باری خوارەوە -->
     <div class="bottom-nav">
         <div class="nav-link" onclick="switchPage('tasks', this)">
             <span class="nav-icon">📋</span><span>Tasks</span>
@@ -231,7 +232,3 @@
         </div>
         <div class="nav-link" onclick="switchPage('wallet', this)">
             <span class="nav-icon">💼</span><span>Wallet</span>
-        </div>
-    </div>
-
-    <script>
