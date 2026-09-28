@@ -38,11 +38,17 @@ function updateInviteUI() {
     }
 }
 
+// چاککردنی لۆژیکی ناردنی بەستەر بۆ ناو تێلێگرام
 function shareInviteLink() {
-    let botUrl = "https://t.me"; 
-    let shareUrl = "https://t.me" + encodeURIComponent(botUrl) + "&text=" + encodeURIComponent("Join ChubbyX and tap to earn together!");
-    if (window.Telegram && window.Telegram.WebApp) window.Telegram.WebApp.openTelegramLink(shareUrl);
-    else window.open(shareUrl, '_blank');
+    let text = encodeURIComponent("Join ChubbyX Hub and earn \$CHUBBYX together! 🚀");
+    // بەکارهێنانی سیستەمی فەرمی تێلێگرام بۆ هاوبەشکردنی نامە
+    let shareUrl = "https://t.me" + text;
+    
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.openTelegramLink(shareUrl);
+    } else {
+        window.open(shareUrl, '_blank');
+    }
 }
 
 (function() {
@@ -69,8 +75,6 @@ function shareInviteLink() {
             <button id="claim-ref-btn" disabled style="background: #444; color: #888; border: none; padding: 14px 24px; border-radius: 12px; font-weight: bold; font-size: 16px; width: 100%; max-width: 260px; cursor: not-allowed; margin-bottom: 12px;">Claim Reward</button>
             <button onclick="shareInviteLink()" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 12px 20px; border-radius: 12px; font-weight: bold; font-size: 15px; width: 100%; max-width: 260px; cursor: pointer;">🔗 Invite a Friend</button>
         </div>
-        
-        <!-- لێرەدا فەزای ١٢٠ پیکسڵ لە خوارەوە جێدەهێڵین تا دوگمەکە لە ناڤباری خوارەوە دووربکەوێتەوە و بە تەواوی دیار بێت -->
         <button class="btn-top" onclick="switchPage('home')" style="width: 100%; max-width: 240px; margin-top: 15px; padding: 12px; margin-bottom: 120px; z-index: 2000; position: relative;">Back to Home</button>
     `;
 })();
