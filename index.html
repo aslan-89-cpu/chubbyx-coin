@@ -13,7 +13,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         body {
-            background: #130f26; /* Fixed background color for all screens */
+            background: #130f26;
             color: #ffffff;
             display: flex;
             flex-direction: column;
@@ -24,7 +24,6 @@
             -webkit-user-select: none;
             touch-action: none;
         }
-        /* Background image is only applied to the Home layout now */
         #home-layout {
             display: flex; 
             flex-direction: column; 
@@ -105,17 +104,31 @@
         .dynamic-page {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: calc(100vh - 85px);
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             z-index: 1500;
-            background: #130f26; /* Dark clean background for other pages */
-            padding: 80px 20px 40px 20px;
+            background: #130f26;
+            padding: 40px 20px 40px 20px;
             flex-direction: column;
             align-items: center;
+            box-sizing: border-box;
         }
-        .dynamic-page.active { display: flex; }
-        .page-title { font-size: 26px; font-weight: bold; margin-bottom: 25px; color: #eeb308; }
-        .page-content { width: 100%; flex: 1; overflow-y: auto; }
+        .dynamic-page.active {
+            display: flex;
+        }
+        .page-title {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            color: #eeb308;
+        }
+        .page-content {
+            width: 100%;
+            flex: 1;
+            overflow-y: auto;
+        }
 
         .bottom-nav {
             width: 100%;
@@ -134,7 +147,7 @@
 </head>
 <body>
 
-    <!-- Home Layout (Now holds the background image safely) -->
+    <!-- Home Layout -->
     <div id="home-layout">
         <div class="header-bar">
             <button class="btn-top" onclick="switchPage('menu')">≡ Menu</button>
@@ -220,11 +233,9 @@
 
         // Global Page Switching System (Routing)
         function switchPage(pageId, element) {
-            // Hide Home Layout and all Dynamic Pages
             document.getElementById('home-layout').style.display = 'none';
             document.querySelectorAll('.dynamic-page').forEach(page => page.classList.remove('active'));
 
-            // Reset navigation active status
             if (element) {
                 document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
                 element.classList.add('active');
@@ -233,7 +244,6 @@
                 if (pageId === 'home') document.getElementById('default-nav').classList.add('active');
             }
 
-            // Show target page
             if (pageId === 'home') {
                 document.getElementById('home-layout').style.display = 'flex';
             } else {
