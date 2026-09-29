@@ -1,43 +1,115 @@
-(function () {
+(function() {
     const walletPage = document.getElementById('wallet-page');
     if (!walletPage) return;
 
-    // لێرەدا شوێنی دوگمە فەرمییەکەی TON دابین کراوە بە ناسنامەی (ton-connect-button)
+    // Rendering the English layout with a custom interactive button
     walletPage.innerHTML = `
         <h2 class="page-title">Connect Wallet</h2>
         <div class="page-content" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
-            <p style="color: #ccc; margin-bottom: 30px; max-width: 280px; font-size: 15px; line-height: 1.4;">
+            <p id="wallet-status-text" style="color: #ccc; margin-bottom: 30px; max-width: 280px; font-size: 15px; line-height: 1.4;">
                 Connect your TON wallet to participate in the future airdrop distribution.
             </p>
-            
-            <!-- دوگمە فەرمییەکە لێرەدا خۆی دروست دەبێت -->
-            <div id="ton-connect-button" style="margin-bottom: 25px;"></div>
-            
-            <button class="btn-top" onclick="if(typeof switchPage === 'function'){switchPage('home')}else{window.location.reload()}" style="width: 100%; max-width: 280px;">
-                Back to Home
+            <button id="custom-ton-click-btn" style="background: #0098ea; color: white; border: none; padding: 14px 24px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 16px;">
+                💎 Connect TON Wallet
             </button>
+            <div id="wallet-details-box" style="display: none; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; width: 100%; max-width: 240px; margin-top: 25px; text-align: left;">
+                <span style="color: #eeb308; font-weight: bold; display: block; margin-bottom: 5px;">Connected Address:</span>
+                <span id="wallet-address-string" style="color: #fff; font-size: 13px; word-break: break-all;"></span>
+            </div>
+            <button class="btn-top" onclick="if(typeof switchPage === 'function'){switchPage('home')}else{window.location.reload()}" style="width: 100%; max-width: 240px; margin-top: 35px; padding: 12px; z-index: 10;">Back to Home</button>
         </div>
     `;
 
-    function initTonSdk() {
+    let tonConnectInstance = null;
+
+    function initTonSDK() {
         try {
             const SDK = window.TonConnectUI || window.TON_CONNECT_UI;
             if (SDK) {
-                // دروستکردنی بەستەری دروستی مانیفێست بە شێوەیەکی گشتگیر
-                const manifestLink = window.location.origin + "/tonconnect-manifest.json";
-
-                // ڕاستەوخۆ بەستنی دوگمە فەرمییەکە بە لۆجیکەکەوە
-                new SDK.TonConnectUI({
-                    manifestUrl: manifestLink,
-                    buttonRootId: 'ton-connect-button' // ئەوە هێمای دروستبوونی دوگمەکەیە
+                const manifestLink = window.location.origin + window.location.pathname.replace('index.html', '') + 'tonconnect-manifest.json';
+                
+                tonConnectInstance = new SDK.TonConnectUI({
+                    manifestUrl: manifestLink
                 });
+
+                tonConnectInstance.onStatusChange(wallet => {
+                    const statusLabel = document.getElementById('wallet-status-text');
+                    const detailsBox = document.getElementById('wallet-details-box');
+                    const addressString = document.getElementById('wallet-address-string');
+                    const customBtn = document.getElementById('custom-ton-click-btn');
+
+                    if (wallet) {
+                        if (statusLabel) statusLabel.innerText = "Your TON wallet is successfully connected!";
+                        if (customBtn) {
+                            customBtn.innerText = "Disconnect Wallet";
+                            customBtn.style.background = "#ff4a4a";
+                        }
+                        if (detailsBox && addressString) {
+                            detailsBox.style.display = 'block';
+                            const rawAddress = wallet.account.address;
+                            addressString.innerText = rawAddress.substring(0, 6) + "..." + rawAddress.substring(rawAddress.length - 6);
+                        }
+                        saveWalletToFirebase(wallet.account.address);
+                    } else {
+                        if (statusLabel) statusLabel.innerText = "Connect your TON wallet to participate in the future airdrop distribution.";
+                        if (customBtn) {
+                            customBtn.innerText = "💎 Connect TON Wallet";
+                            customBtn.style.background = "#0098ea";
+                        }
+                        if (detailsBox) detailsBox.style.display = 'none';
+                    }
+                });
+
+                setTimeout(attachButtonEvent, 300);
             } else {
-                setTimeout(initTonSdk, 200);
+                setTimeout(initTonSDK, 200);
             }
         } catch (e) {
-            console.error("SDK Initialization failed:", e);
+            console.error("SDK bootstrap failed:", e);
         }
     }
 
-    initTonSdk();
+    function attachButtonEvent() {
+        const targetBtn = document.getElementById('custom-ton-click-btn');
+        if (targetBtn) {
+            targetBtn.onclick = async function() {
+                if (tonConnectInstance) {
+                    try {
+                        if (tonConnectInstance.connected) {
+                            await tonConnectInstance.disconnect();
+                        } else {
+                            // Generating connection link dynamically
+                            const connectLink = await tonConnectInstance.connect({
+                                jsBridgeKey: 'tonkeeper',
+                                returnStrategy: 'tg'
+                            });
+                            
+                            // If direct bridge provides a link, fire it to trigger Tonkeeper app
+                            if (connectLink) {
+                                window.location.href = connectLink;
+                            } else {
+                                await tonConnectInstance.openModal();
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Direct connection failed, falling back:", err);
+                        // Fallback mechanism to trigger the universal deep link protocol
+                        window.location.href = "https://tonkeeper.com";
+                    }
+                }
+            };
+        }
+    }
+
+    initTonSDK();
 })();
+
+function saveWalletToFirebase(address) {
+    const tg = window.Telegram?.WebApp;
+    const userId = tg?.initDataUnsafe?.user?.id;
+    if (userId && typeof db !== 'undefined') {
+        db.collection("users").doc(userId.toString()).set({
+            walletAddress: address
+        }, { merge: true });
+    }
+}
