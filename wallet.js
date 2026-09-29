@@ -76,22 +76,16 @@
         targetBtn.onclick = async function() {
             if (tonConnectInstance) {
                 try {
-                    // 🔥 ناچارکردنی تێلیگرام بۆ کردنەوەی ڕاستەوخۆی ئەپی Tonkeeper
-                    const walletConnectionSource = {
-                        universalLink: 'https://tonkeeper.com',
-                        bridgeUrl: 'https://tonapi.io'
-                    };
-                    
-                    await tonConnectInstance.connect(walletConnectionSource);
-
+                    // 🔥 Open the official TON Connect modal
+                    await tonConnectInstance.openModal();
                 } catch (err) {
-                    console.error("نەتوانرا ئەپی تۆنکیپەر بکرێتەوە:", err);
-                    window.location.href = 'https://tonkeeper.com';
+                    console.error("Error opening TON modal:", err);
                 }
             }
         };
     }
 }
+
 
 
     initTonSDK();
