@@ -2,7 +2,6 @@ function initWalletPage() {
     const walletPage = document.getElementById('wallet-page');
     if (!walletPage) return;
 
-    // دروستکردنی ڕووکاری ناو لاپەڕەی جزدان
     walletPage.innerHTML = `
         <h2 class="page-title">Connect Wallet</h2>
         <div class="page-content" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
@@ -19,28 +18,23 @@ function initWalletPage() {
     try {
         const SDK = window.TonConnectUI || (window.TonConnectSDK ? window.TonConnectSDK.TonConnectUI : null);
         if (SDK) {
-            // ✅ دۆزینەوەی بەستەری ڕەها بۆ فایلی مانیفێست بە بێ بەکارهێنانی split
-            const baseUrl = window.location.origin + window.location.pathname;
-            let dirUrl = baseUrl.substring(0, baseUrl.lastIndexOf('/'));
-            if (!dirUrl.endsWith('/')) dirUrl += '/';
+            // ✅ دروستکردنی ناونیشانی داینامیکی بە بێ نووسینی هیچ جۆرە بەستەرێک
+            const fld = "chubbyx-coin";
+            const mnf = "tonconnect-manifest.json";
+            const fullLink = window.location.origin + "/" + fld + "/" + mnf;
             
-            const manifestLink = dirUrl + 'tonconnect-manifest.json';
-            console.log("Manifest absolute link:", manifestLink);
+            console.log("Loading from:", fullLink);
 
-            // دروستکردنی ئۆجێکتی فەرمی TON Connect
             new SDK({
-                manifestUrl: manifestLink,
+                manifestUrl: fullLink,
                 buttonRootId: 'ton-connect-button'
             });
-        } else {
-            console.error("TON Connect SDK is not loaded on window.");
         }
     } catch (e) {
-        console.error("TON SDK initialization failed:", e);
+        console.error("TON SDK failed:", e);
     }
 }
 
-// کارپێکردنی ئۆتۆماتیکی کاتێک پەیجەکە ئامادە دەبێت
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initWalletPage);
 } else {
