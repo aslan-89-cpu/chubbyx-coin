@@ -70,36 +70,29 @@
     }
 
     function attachButtonEvent() {
-        const targetBtn = document.getElementById('custom-ton-click-btn');
-        if (targetBtn) {
-            targetBtn.onclick = async function() {
-                if (tonConnectInstance) {
-                    try {
-                        if (tonConnectInstance.connected) {
-                            await tonConnectInstance.disconnect();
-                        } else {
-                            // Generating connection link dynamically
-                            const connectLink = await tonConnectInstance.connect({
-                                jsBridgeKey: 'tonkeeper',
-                                returnStrategy: 'tg'
-                            });
-                            
-                            // If direct bridge provides a link, fire it to trigger Tonkeeper app
-                            if (connectLink) {
-                                window.location.href = connectLink;
-                            } else {
-                                await tonConnectInstance.openModal();
-                            }
-                        }
-                    } catch (err) {
-                        console.error("Direct connection failed, falling back:", err);
-                        // Fallback mechanism to trigger the universal deep link protocol
-                        window.location.href = "https://tonkeeper.com";
-                    }
+    const targetBtn = document.getElementById("custom-ton-click-btn"); 
+    
+    if (targetBtn) {
+        targetBtn.onclick = async function() {
+            if (tonConnectInstance) {
+                try {
+                    // 🔥 ناچارکردنی تێلیگرام بۆ کردنەوەی ڕاستەوخۆی ئەپی Tonkeeper
+                    const walletConnectionSource = {
+                        universalLink: 'https://tonkeeper.com',
+                        bridgeUrl: 'https://tonapi.io'
+                    };
+                    
+                    await tonConnectInstance.connect(walletConnectionSource);
+
+                } catch (err) {
+                    console.error("نەتوانرا ئەپی تۆنکیپەر بکرێتەوە:", err);
+                    window.location.href = 'https://tonkeeper.com';
                 }
-            };
-        }
+            }
+        };
     }
+}
+
 
     initTonSDK();
 })();
