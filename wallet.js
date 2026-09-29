@@ -1,8 +1,12 @@
-(function() {
+// ==========================================
+// CHUBBYX WALLET MODULE (FULL SOURCE CODE)
+// ==========================================
+
+function initWalletPage() {
     const walletPage = document.getElementById('wallet-page');
     if (!walletPage) return;
 
-    // Rendering the English layout with a custom interactive button
+    // 1. Rendering the official Wallet UI layout
     walletPage.innerHTML = `
         <h2 class="page-title">Connect Wallet</h2>
         <div class="page-content" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
@@ -22,81 +26,111 @@
 
     let tonConnectInstance = null;
 
+    // 2. Initializing TON Connect SDK and Event Handlers
     function initTonSDK() {
         try {
             const SDK = window.TonConnectUI || window.TON_CONNECT_UI;
-            if (SDK) {
-                const manifestLink = window.location.origin + window.location.pathname.replace('index.html', '') + 'tonconnect-manifest.json';
-                
-                tonConnectInstance = new SDK.TonConnectUI({
-                    manifestUrl: manifestLink
-                });
-
-                tonConnectInstance.onStatusChange(wallet => {
-                    const statusLabel = document.getElementById('wallet-status-text');
-                    const detailsBox = document.getElementById('wallet-details-box');
-                    const addressString = document.getElementById('wallet-address-string');
-                    const customBtn = document.getElementById('custom-ton-click-btn');
-
-                    if (wallet) {
-                        if (statusLabel) statusLabel.innerText = "Your TON wallet is successfully connected!";
-                        if (customBtn) {
-                            customBtn.innerText = "Disconnect Wallet";
-                            customBtn.style.background = "#ff4a4a";
-                        }
-                        if (detailsBox && addressString) {
-                            detailsBox.style.display = 'block';
-                            const rawAddress = wallet.account.address;
-                            addressString.innerText = rawAddress.substring(0, 6) + "..." + rawAddress.substring(rawAddress.length - 6);
-                        }
-                        saveWalletToFirebase(wallet.account.address);
-                    } else {
-                        if (statusLabel) statusLabel.innerText = "Connect your TON wallet to participate in the future airdrop distribution.";
-                        if (customBtn) {
-                            customBtn.innerText = "💎 Connect TON Wallet";
-                            customBtn.style.background = "#0098ea";
-                        }
-                        if (detailsBox) detailsBox.style.display = 'none';
-                    }
-                });
-
-                setTimeout(attachButtonEvent, 300);
-            } else {
-                setTimeout(initTonSDK, 200);
+            if (!SDK) {
+                console.error("TON Connect SDK library not found in window object.");
+                return;
             }
-        } catch (e) {
-            console.error("SDK bootstrap failed:", e);
+
+            // Dynamically generate manifest link matching your repository structure
+            const manifestLink = window.location.origin + window.location.pathname.replace('index.html', '') + 'tonconnect-manifest.json';
+            
+            tonConnectInstance = new SDK.TonConnectUI({
+                manifestUrl: manifestLink
+            });
+
+            // Monitor real-time status changes from Tonkeeper
+            tonConnectInstance.onStatusChange(wallet => {
+                const statusLabel = document.getElementById('wallet-status-text');
+                const detailsBox = document.getElementById('wallet-details-box');
+                const addressString = document.getElementById('wallet-address-string');
+                const customBtn = document.getElementById('custom-ton-click-btn');
+
+                if (wallet) {
+                    if (statusLabel) statusLabel.innerText = "Your TON wallet is successfully connected!";
+                    if (detailsBox) detailsBox.style.display = "block";
+                    if (addressString) addressString.innerText = wallet.account.address;
+                    if (customBtn) {
+                        customBtn.innerText = "Disconnect Wallet";
+                        customBtn.style.background = "#ff4a4a";
+                    }
+                    
+                    // Directly execute saving the address to your Firestore DB
+                    saveWalletToFirebase(wallet.account.address);
+                } else {
+                    if (statusLabel) statusLabel.innerText = "Connect your TON wallet to participate in the future airdrop distribution.";
+                    if (detailsBox) detailsBox.style.display = "none";
+                    if (customBtn) {
+                        customBtn.innerText = "💎 Connect TON Wallet";
+                        customBtn.style.background = "#0098ea";
+                    }
+                }
+            });
+
+            // 3. Attach click event to trigger the wallet connection modal directly
+            const targetBtn = document.getElementById("custom-ton-click-btn");
+            if (targetBtn) {
+                targetBtn.onclick = async function() {
+                    if (tonConnectInstance) {
+                        try {
+                            if (tonConnectInstance.connected) {
+                                await tonConnectInstance.disconnect();
+                            } else {
+                                await tonConnectInstance.openModal();
+                            }
+                        } catch (err) {
+                            console.error("Error invoking TON Modal:", err);
+                        }
+                    }
+                };
+            }
+
+        } catch (error) {
+            console.error("Failed to boot TON Connect Framework:", error);
         }
     }
 
-    function attachButtonEvent() {
-    const targetBtn = document.getElementById("custom-ton-click-btn"); 
-    
-    if (targetBtn) {
-        targetBtn.onclick = async function() {
-            if (tonConnectInstance) {
-                try {
-                    // 🔥 Open the official TON Connect modal
-                    await tonConnectInstance.openModal();
-                } catch (err) {
-                    console.error("Error opening TON modal:", err);
-                }
-            }
-        };
-    }
-}
-
-
-
     initTonSDK();
-})();
+}
 
-function saveWalletToFirebase(address) {
-    const tg = window.Telegram?.WebApp;
-    const userId = tg?.initDataUnsafe?.user?.id;
-    if (userId && typeof db !== 'undefined') {
-        db.collection("users").doc(userId.toString()).set({
-            walletAddress: address
-        }, { merge: true });
+// 4. Securely storing the verified wallet address in Firebase Firestore DB
+function saveWalletToFirebase(walletAddress) {
+    try {
+        // Retrieve current Telegram User ID from webapp initialization context
+        let telegramUserId = "unknown_user";
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+            telegramUserId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
+        }
+
+        if (telegramUserId === "unknown_user") {
+            console.warn("Could not extract Telegram User ID. Retrying outside Telegram frame context.");
+        }
+
+        // Verify that Firebase App and Firestore Instance exist on window scope
+        if (window.db) {
+            // Update or create the document inside the 'users' collection
+            const userDocRef = window.db.collection("users").doc(telegramUserId);
+            
+            userDocRef.set({
+                walletAddress: walletAddress,
+                walletConnectedAt: new Date().toISOString()
+            }, { merge: true })
+            .then(() => {
+                console.log(`✅ Success: Wallet address for user [${telegramUserId}] synced to Firestore.`);
+            })
+            .catch((error) => {
+                console.error("❌ Error writing wallet record to Firebase Firestore:", error);
+            });
+        } else {
+            console.error("❌ Database Error: Firebase/Firestore (window.db) instance is unavailable.");
+        }
+    } catch (globalErr) {
+        console.error("Global database synchronization failure:", globalErr);
     }
 }
+
+// Automatically mount and run the setup
+initWalletPage();
