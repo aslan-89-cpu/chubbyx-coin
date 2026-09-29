@@ -1,4 +1,5 @@
-(function () {
+// دروستکردنی فەنکشنێکی تایبەت بۆ ئەوەی تەنها کاتێک کلیک لەسەر جزدان کرا، لاپەڕەکە دروست ببێت
+function initWalletPage() {
     const walletPage = document.getElementById('wallet-page');
     if (!walletPage) return;
 
@@ -21,9 +22,10 @@
 
     function initTonSdk() {
         try {
-            const SDK = window.TonConnectUI || window.TON_CONNECT_UI;
+            // پشکنینی هەردوو شێوازی وەرگرتنی SDK لە شاشەی گشتی
+            const SDK = window.TonConnectUI || (window.TonConnectSDK ? window.TonConnectSDK.TonConnectUI : null);
+            
             if (SDK) {
-                // چاککردنی split بۆ ئەوەی خەتا نەدات و تەنها دەقی پێش نیشانەی پرسیارەکە بگرێت
                 let currentPath = window.location.href.split('?')[0];
                 if (currentPath.endsWith('index.html')) {
                     currentPath = currentPath.replace('index.html', '');
@@ -36,11 +38,12 @@
                 console.log("Loading manifest from:", manifestLink);
 
                 // دروستکردنی دوگمە فەرمییەکەی TON Connect
-                new SDK.TonConnectUI({
+                new SDK({
                     manifestUrl: manifestLink,
                     buttonRootId: 'ton-connect-button'
                 });
             } else {
+                // ئەگەر سکریپتەکە هێشتا لۆد نەبووبوو، ٢٠٠ میلی چرکە چاوەڕێ دەکات
                 setTimeout(initTonSdk, 200);
             }
         } catch (e) {
@@ -49,4 +52,9 @@
     }
 
     initTonSdk();
-})();
+}
+
+// کارپێکردنی فەنکشنەکە کاتێک کە تەواوی لاپەڕەی HTML خوێندرایەوە
+document.addEventListener("DOMContentLoaded", function() {
+    initWalletPage();
+});
