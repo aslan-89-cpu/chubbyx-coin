@@ -25,12 +25,21 @@
         try {
             const SDK = window.TonConnectSDK ? window.TonConnectSDK.TonConnectUI : (window.TON_CONNECT_UI ? window.TON_CONNECT_UI.TonConnectUI : null);
             if (SDK) {
-                const p1 = "https://";
-                const p2 = "aslan-89-cpu";
-                const p3 = ".github.io/";
-                const p4 = "chubbyx-coin/";
-                const p5 = "tonconnect-manifest.json";
-                const manifestLink = p1 + p2 + p3 + p4 + p5;
+                // دروستکردنی ناونیشانی درێژ بە شێوازی پارچەپارچە تاوەکو مۆبایلەکەت کورتی نەکاتەوە
+                const s1 = "https://";
+                const s2 = "aslan-89-cpu";
+                const s3 = ".github.io/";
+                const s4 = "chubbyx-coin/";
+                
+                const fullUrl = s1 + s2 + s3 + s4;
+
+                const manifestObject = {
+                    "url": fullUrl,
+                    "name": "Chubbyx Coin",
+                    "iconUrl": fullUrl + "background.jpg"
+                };
+                
+                const manifestLink = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(manifestObject));
                 
                 tonConnectInstance = new SDK({
                     manifestUrl: manifestLink
