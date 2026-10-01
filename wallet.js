@@ -1,72 +1,106 @@
-function loadWalletUI() {
+(function() {
     const walletPage = document.getElementById('wallet-page');
     if (!walletPage) return;
 
     walletPage.innerHTML = `
         <h2 class="page-title">Connect Wallet</h2>
         <div class="page-content" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
-            <p style="color: #ccc; margin-bottom: 30px; max-width: 288px; font-size: 15px; line-height: 1.4;">
+            <p id="wallet-status-text" style="color: #ccc; margin-bottom: 30px; max-width: 280px; font-size: 15px; line-height: 1.4;">
                 Connect your TON wallet to participate in the future airdrop distribution.
             </p>
-            <div id="ton-connect-button" style="margin-bottom: 25px;"></div>
-            <button class="btn-top" onclick="switchPage('home')" style="width: 100%; max-width: 288px;">
-                Back to Home
+            <button id="custom-ton-click-btn" style="background: #0098ea; color: white; border: none; padding: 14px 24px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 16px;">
+                💎 Connect TON Wallet
             </button>
+            <div id="wallet-details-box" style="display: none; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; width: 100%; max-width: 240px; margin-top: 25px; text-align: left;">
+                <span style="color: #eeb308; font-weight: bold; display: block; margin-bottom: 5px;">Connected Address:</span>
+                <span id="wallet-address-string" style="color: #fff; font-size: 13px; word-break: break-all;"></span>
+            </div>
+            <button class="btn-top" onclick="if(typeof switchPage === 'function'){switchPage('home')}else{window.location.reload()}" style="width: 100%; max-width: 240px; margin-top: 35px; padding: 12px; z-index: 10;">Back to Home</button>
         </div>
     `;
 
-    setTimeout(setupTonConnect, 100);
-}
+    let tonConnectInstance = null;
 
-function setupTonConnect() {
-    try {
-        const SDK = window.TonConnectSDK ? window.TonConnectSDK.TonConnectUI : null;
-        
-        if (SDK) {
-            // بەم شێوازە ناونیشانەکە بە پارچەیی دەکەین تا کێبۆردەکەت کورت نەکاتەوە
-            const start = "https://";
-            const user = "aslan-89-cpu";
-            const host = ".github.io/";
-            const repo = "chubbyx-coin/";
-            const file = "tonconnect-manifest.json";
-            
-            const fulllink = start + user + host + repo + file;
-            
-            console.log("Loading manifest from:", fulllink);
-            
-            const tonConnectUI = new SDK({
-                manifestUrl: fulllink,
-                buttonRootId: 'ton-connect-button'
-            });
+    function initTonSDK() {
+        try {
+            const SDK = window.TonConnectSDK ? window.TonConnectSDK.TonConnectUI : (window.TON_CONNECT_UI ? window.TON_CONNECT_UI.TonConnectUI : null);
+            if (SDK) {
+                const p1 = "https://";
+                const p2 = "aslan-89-cpu";
+                const p3 = ".github.io/";
+                const p4 = "chubbyx-coin/";
+                const p5 = "tonconnect-manifest.json";
+                const manifestLink = p1 + p2 + p3 + p4 + p5;
+                
+                tonConnectInstance = new SDK({
+                    manifestUrl: manifestLink
+                });
 
-            tonConnectUI.onStatusChange(wallet => {
-                if (wallet) {
-                    const userAddress = wallet.account.address;
-                    console.log("Wallet connected:", userAddress);
-                    localStorage.setItem('user_wallet_address', userAddress);
-                } else {
-                    localStorage.removeItem('user_wallet_address');
-                }
-            });
+                tonConnectInstance.onStatusChange(wallet => {
+                    const statusLabel = document.getElementById('wallet-status-text');
+                    const detailsBox = document.getElementById('wallet-details-box');
+                    const addressString = document.getElementById('wallet-address-string');
+                    const customBtn = document.getElementById('custom-ton-click-btn');
+
+                    if (wallet) {
+                        if (statusLabel) statusLabel.innerText = "Your TON wallet is successfully connected!";
+                        if (customBtn) {
+                            customBtn.innerText = "Disconnect Wallet";
+                            customBtn.style.background = "#ff4a4a";
+                        }
+                        if (detailsBox && addressString) {
+                            detailsBox.style.display = 'block';
+                            const rawAddress = wallet.account.address;
+                            addressString.innerText = rawAddress.substring(0, 6) + "..." + rawAddress.substring(rawAddress.length - 6);
+                        }
+                        saveWalletToFirebase(wallet.account.address);
+                    } else {
+                        if (statusLabel) statusLabel.innerText = "Connect your TON wallet to participate in the future airdrop distribution.";
+                        if (customBtn) {
+                            customBtn.innerText = "💎 Connect TON Wallet";
+                            customBtn.style.background = "#0098ea";
+                        }
+                        if (detailsBox) detailsBox.style.display = 'none';
+                    }
+                });
+
+                setTimeout(attachButtonEvent, 300);
+            } else {
+                setTimeout(initTonSDK, 200);
+            }
+        } catch (e) {
+            console.error("SDK bootstrap failed:", e);
         }
-    } catch (e) {
-        console.error("TON SDK Error: ", e);
     }
-}
 
-const originalSwitchPage = window.switchPage;
-window.switchPage = function(pageId, element) {
-    if (typeof originalSwitchPage === 'function') {
-        originalSwitchPage(pageId, element);
+    function attachButtonEvent() {
+        const targetBtn = document.getElementById('custom-ton-click-btn');
+        if (targetBtn) {
+            targetBtn.onclick = async function() {
+                if (tonConnectInstance) {
+                    try {
+                        if (tonConnectInstance.connected) {
+                            await tonConnectInstance.disconnect();
+                        } else {
+                            await tonConnectInstance.openModal();
+                        }
+                    } catch (err) {
+                        console.error("Connection flow failed:", err);
+                    }
+                }
+            };
+        }
     }
-    
-    if (pageId === 'wallet') {
-        loadWalletUI();
-    }
-};
 
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", loadWalletUI);
-} else {
-    loadWalletUI();
+    initTonSDK();
+})();
+
+function saveWalletToFirebase(address) {
+    const tg = window.Telegram?.WebApp;
+    const userId = tg?.initDataUnsafe?.user?.id;
+    if (userId && typeof db !== 'undefined') {
+        db.collection("users").doc(userId.toString()).set({
+            walletAddress: address
+        }, { merge: true });
+    }
 }
