@@ -1,17 +1,4 @@
-if (!window.TonConnectSDK) {
-    const script = document.createElement('script');
-    // لێرەدا بەستەری ڕاست و دروستی فەرمی TON Connect UI جێگیر کراوە و هەرگیز دەستکاری مەکە
-    script.src = "https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js";
-    document.head.appendChild(script);
-    
-    script.onload = () => {
-        initWalletPage();
-    };
-} else {
-    initWalletPage();
-}
-
-function initWalletPage() {
+function loadWalletUI() {
     const walletPage = document.getElementById('wallet-page');
     if (!walletPage) return;
 
@@ -28,7 +15,7 @@ function initWalletPage() {
         </div>
     `;
 
-    setupTonConnect();
+    setTimeout(setupTonConnect, 100);
 }
 
 function setupTonConnect() {
@@ -36,11 +23,8 @@ function setupTonConnect() {
         const SDK = window.TonConnectSDK ? window.TonConnectSDK.TonConnectUI : null;
         
         if (SDK) {
-            const mnf = "tonconnect-manifest.json";
-            const fld = "chubbyx-coin";
-            const fulllink = window.location.origin + "/" + fld + "/" + mnf;
-            
-            console.log("Loading from:", fulllink);
+            // لێرەدا بەستەری تەواو و دروستی مانیفێستەکەی تۆم جێگیر کردووەتەوە
+            const fulllink = "https://aslan-89-cpu.github.io/chubbyx-coin/tonconnect-manifest.json";
             
             const tonConnectUI = new SDK({
                 manifestUrl: fulllink,
@@ -49,18 +33,28 @@ function setupTonConnect() {
 
             tonConnectUI.onStatusChange(wallet => {
                 if (wallet) {
-                    const userAddress = wallet.account.address;
-                    console.log("Wallet connected:", userAddress);
-                    
-                    if (typeof window.saveUserWallet === 'function') {
-                        window.saveUserWallet(userAddress);
-                    }
-                } else {
-                    console.log("Wallet disconnected");
+                    console.log("Wallet connected:", wallet.account.address);
                 }
             });
         }
     } catch (e) {
-        console.error("TON SDK Failed: ", e);
+        console.error("TON SDK Error: ", e);
     }
+}
+
+const originalSwitchPage = window.switchPage;
+window.switchPage = function(pageId, element) {
+    if (typeof originalSwitchPage === 'function') {
+        originalSwitchPage(pageId, element);
+    }
+    
+    if (pageId === 'wallet') {
+        loadWalletUI();
+    }
+};
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadWalletUI);
+} else {
+    loadWalletUI();
 }
