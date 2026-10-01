@@ -1,13 +1,14 @@
 if (!window.TonConnectSDK) {
     const script = document.createElement('script');
+    // لێرەدا بەستەری ڕاست و دروستی فەرمی TON Connect UI جێگیر کراوە و هەرگیز دەستکاری مەکە
     script.src = "https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js";
     document.head.appendChild(script);
     
     script.onload = () => {
-        setupTonConnect();
+        initWalletPage();
     };
 } else {
-    setupTonConnect();
+    initWalletPage();
 }
 
 function initWalletPage() {
@@ -26,6 +27,8 @@ function initWalletPage() {
             </button>
         </div>
     `;
+
+    setupTonConnect();
 }
 
 function setupTonConnect() {
@@ -60,10 +63,4 @@ function setupTonConnect() {
     } catch (e) {
         console.error("TON SDK Failed: ", e);
     }
-}
-
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initWalletPage);
-} else {
-    initWalletPage();
 }
