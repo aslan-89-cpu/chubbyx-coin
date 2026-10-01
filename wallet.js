@@ -23,8 +23,16 @@ function setupTonConnect() {
         const SDK = window.TonConnectSDK ? window.TonConnectSDK.TonConnectUI : null;
         
         if (SDK) {
-            // لێرەدا بەستەری تەواو و دروستی مانیفێستەکەی تۆم جێگیر کردووەتەوە
-            const fulllink = "https://aslan-89-cpu.github.io/chubbyx-coin/tonconnect-manifest.json";
+            // بەم شێوازە ناونیشانەکە بە پارچەیی دەکەین تا کێبۆردەکەت کورت نەکاتەوە
+            const start = "https://";
+            const user = "aslan-89-cpu";
+            const host = ".github.io/";
+            const repo = "chubbyx-coin/";
+            const file = "tonconnect-manifest.json";
+            
+            const fulllink = start + user + host + repo + file;
+            
+            console.log("Loading manifest from:", fulllink);
             
             const tonConnectUI = new SDK({
                 manifestUrl: fulllink,
@@ -33,7 +41,11 @@ function setupTonConnect() {
 
             tonConnectUI.onStatusChange(wallet => {
                 if (wallet) {
-                    console.log("Wallet connected:", wallet.account.address);
+                    const userAddress = wallet.account.address;
+                    console.log("Wallet connected:", userAddress);
+                    localStorage.setItem('user_wallet_address', userAddress);
+                } else {
+                    localStorage.removeItem('user_wallet_address');
                 }
             });
         }
