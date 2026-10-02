@@ -12,8 +12,7 @@ function loadWalletUI() {
         walletPage.innerHTML = `
             <h2 class="page-title">Connect Wallet</h2>
 
-            <div
-                class="page-content"
+            <div class="page-content"
                 style="
                     display:flex;
                     flex-direction:column;
@@ -24,8 +23,7 @@ function loadWalletUI() {
                 "
             >
 
-                <p
-                    id="wallet-status-text"
+                <p id="wallet-status-text"
                     style="
                         color:#ccc;
                         margin-bottom:25px;
@@ -36,8 +34,7 @@ function loadWalletUI() {
                     Connect your TON wallet
                 </p>
 
-                <div
-                    id="ton-connect-button"
+                <div id="ton-connect-button"
                     style="
                         min-height:50px;
                         display:flex;
@@ -46,8 +43,7 @@ function loadWalletUI() {
                     "
                 ></div>
 
-                <div
-                    id="wallet-details-box"
+                <div id="wallet-details-box"
                     style="
                         display:none;
                         margin-top:25px;
@@ -66,8 +62,7 @@ function loadWalletUI() {
                         Connected Wallet
                     </div>
 
-                    <div
-                        id="wallet-address-string"
+                    <div id="wallet-address-string"
                         style="
                             color:white;
                             font-size:13px;
@@ -75,6 +70,25 @@ function loadWalletUI() {
                         "
                     ></div>
                 </div>
+
+                <button
+                    onclick="switchPage('home')"
+                    style="
+                        margin-top:30px;
+                        width:100%;
+                        max-width:240px;
+                        padding:12px;
+                        border:1px solid rgba(255,255,255,0.2);
+                        border-radius:20px;
+                        background:rgba(255,255,255,0.1);
+                        color:white;
+                        font-size:14px;
+                        font-weight:bold;
+                        cursor:pointer;
+                    "
+                >
+                    ← Back to Home
+                </button>
 
             </div>
         `;
@@ -86,6 +100,7 @@ function loadWalletUI() {
 }
 
 function startTonConnect() {
+
     if (tonConnectUI) {
         updateWalletStatus(tonConnectUI.wallet);
         return;
@@ -96,11 +111,16 @@ function startTonConnect() {
         !window.TON_CONNECT_UI.TonConnectUI
     ) {
         setWalletMessage("Loading wallet...");
-        setTimeout(startTonConnect, 500);
+
+        setTimeout(function() {
+            startTonConnect();
+        }, 500);
+
         return;
     }
 
     try {
+
         tonConnectUI =
             new window.TON_CONNECT_UI.TonConnectUI({
                 manifestUrl: MANIFEST_URL,
@@ -114,34 +134,53 @@ function startTonConnect() {
         updateWalletStatus(tonConnectUI.wallet);
 
     } catch (error) {
-        console.error("TonConnect error:", error);
-        setWalletMessage("Wallet connection error.");
+
+        console.error(
+            "TonConnect error:",
+            error
+        );
+
+        setWalletMessage(
+            "Wallet connection error."
+        );
     }
 }
 
 function updateWalletStatus(wallet) {
+
     const status =
-        document.getElementById("wallet-status-text");
+        document.getElementById(
+            "wallet-status-text"
+        );
 
     const box =
-        document.getElementById("wallet-details-box");
+        document.getElementById(
+            "wallet-details-box"
+        );
 
     const addressElement =
-        document.getElementById("wallet-address-string");
+        document.getElementById(
+            "wallet-address-string"
+        );
 
     if (
         wallet &&
         wallet.account &&
         wallet.account.address
     ) {
-        const address = wallet.account.address;
+
+        const address =
+            wallet.account.address;
 
         if (status) {
-            status.innerText = "Wallet connected successfully!";
+            status.innerText =
+                "Wallet connected successfully!";
         }
 
         if (box && addressElement) {
+
             box.style.display = "block";
+
             addressElement.innerText =
                 shortenAddress(address);
         }
@@ -152,6 +191,7 @@ function updateWalletStatus(wallet) {
         );
 
     } else {
+
         if (status) {
             status.innerText =
                 "Connect your TON wallet";
@@ -164,6 +204,7 @@ function updateWalletStatus(wallet) {
 }
 
 function shortenAddress(address) {
+
     if (!address) return "";
 
     if (address.length <= 14) {
@@ -173,38 +214,64 @@ function shortenAddress(address) {
     return (
         address.substring(0, 7) +
         "..." +
-        address.substring(address.length - 7)
+        address.substring(
+            address.length - 7
+        )
     );
 }
 
 function setWalletMessage(message) {
+
     const status =
-        document.getElementById("wallet-status-text");
+        document.getElementById(
+            "wallet-status-text"
+        );
 
     if (status) {
         status.innerText = message;
     }
 }
 
-/* Wallet page */
-const oldSwitchPage = window.switchPage;
+/* ==============================
+   CONNECT WALLET PAGE
+   ============================== */
 
-window.switchPage = function(pageId, element) {
+const originalSwitchPage =
+    window.switchPage;
 
-    oldSwitchPage(pageId, element);
+window.switchPage =
+    function(pageId, element) {
 
-    if (pageId === "wallet") {
-        setTimeout(function() {
-            loadWalletUI();
-        }, 100);
-    }
-};
+        originalSwitchPage(
+            pageId,
+            element
+        );
 
-/* First load */
+        if (pageId === "wallet") {
+
+            setTimeout(
+                function() {
+                    loadWalletUI();
+                },
+                100
+            );
+        }
+    };
+
+/* ==============================
+   FIRST LOAD
+   ============================== */
+
 document.addEventListener(
     "DOMContentLoaded",
     function() {
-        if (document.getElementById("wallet-page")) {
+
+        if (
+            document.getElementById(
+                "wallet-page"
+            )
+        ) {
+
             loadWalletUI();
         }
     }
