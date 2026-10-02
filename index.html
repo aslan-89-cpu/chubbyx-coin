@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>chubbyx hub</title>
+    <title>ChubbyX Hub</title>
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Official TonConnect UI SDK -->
+    <!-- TonConnect UI SDK -->
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         * {
@@ -28,10 +28,10 @@
             touch-action: none;
         }
         #home-layout {
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            width: 100%; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
             height: 100%;
             background: url('background.jpg') no-repeat center top -120px;
             background-size: cover;
@@ -41,13 +41,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 20px 0px 20px;
+            padding: 20px 20px 0;
             z-index: 2500;
         }
         .btn-top {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255,255,255,0.2);
             color: white;
             padding: 8px 16px;
             border-radius: 20px;
@@ -61,9 +61,16 @@
             z-index: 10;
             pointer-events: none;
         }
-        .header div { font-size: 14px; opacity: 0.8; letter-spacing: 1px; }
-        .header h1 { font-size: 38px; font-weight: bold; margin-top: 5px; }
-        
+        .header div {
+            font-size: 14px;
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+        .header h1 {
+            font-size: 38px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
         .coin-container {
             flex: 1;
             display: flex;
@@ -97,13 +104,18 @@
             pointer-events: none;
             z-index: 1000;
             animation: FloatUp 0.6s ease-out forwards;
-            text-shadow: 0 5px 10px rgba(234, 179, 8, 0.3);
+            text-shadow: 0 5px 10px rgba(234,179,8,0.3);
         }
         @keyframes FloatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-120px) scale(1.3); }
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-120px) scale(1.3);
+            }
         }
-
         .dynamic-page {
             display: none;
             position: fixed;
@@ -113,10 +125,9 @@
             height: calc(100vh - 85px);
             z-index: 1500;
             background: #130f26;
-            padding: 40px 20px 20px 20px;
+            padding: 40px 20px 20px;
             flex-direction: column;
             align-items: center;
-            box-sizing: border-box;
         }
         .dynamic-page.active {
             display: flex;
@@ -133,10 +144,9 @@
             flex: 1;
             overflow-y: auto;
         }
-
         .bottom-nav {
             width: 100%;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255,255,255,0.1);
             background: #05030a;
             display: flex;
             position: fixed;
@@ -144,10 +154,25 @@
             padding: 15px 15px calc(15px + env(safe-area-inset-bottom));
             z-index: 2000;
         }
-        .nav-link { flex: 1; text-align: center; font-size: 13px; color: #666; text-decoration: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
-        .nav-link.active { color: #eeb308; font-weight: bold; }
-        .nav-icon { font-size: 20px; margin-bottom: 4px; }
-        
+        .nav-link {
+            flex: 1;
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+            text-decoration: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .nav-link.active {
+            color: #eeb308;
+            font-weight: bold;
+        }
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
         .task-card {
             background: rgba(255,255,255,0.06);
             padding: 16px;
@@ -169,12 +194,15 @@
     </style>
 </head>
 <body>
-
-    <!-- Home Layout -->
+    <!-- HOME -->
     <div id="home-layout">
         <div class="header-bar">
-            <button class="btn-top" onclick="switchPage('menu')">≡ Menu</button>
-            <button class="btn-top" onclick="switchPage('airdrop')">🎁 Airdrop</button>
+            <button class="btn-top" onclick="switchPage('menu')">
+                ≡ Menu
+            </button>
+            <button class="btn-top" onclick="switchPage('airdrop')">
+                🎁 Airdrop
+            </button>
         </div>
         <div class="header">
             <div>CHUBBYX BALANCE</div>
@@ -184,88 +212,154 @@
             <div class="transparent-tap-zone" id="clickcoin"></div>
         </div>
     </div>
-
-    <!-- Dynamic Containers for External JS -->
+    <!-- PAGES -->
     <div id="tasks-page" class="dynamic-page"></div>
     <div id="invites-page" class="dynamic-page"></div>
     <div id="games-page" class="dynamic-page"></div>
     <div id="wallet-page" class="dynamic-page"></div>
     <div id="menu-page" class="dynamic-page"></div>
     <div id="airdrop-page" class="dynamic-page"></div>
-
-    <!-- Bottom Navigation -->
+    <!-- BOTTOM NAV -->
     <div class="bottom-nav">
-        <div class="nav-link" onclick="switchPage('tasks', this)"><span class="nav-icon">📋</span>Tasks</div>
-        <div class="nav-link" onclick="switchPage('invites', this)"><span class="nav-icon">👥</span>Invites</div>
-        <div class="nav-link active" id="default-nav" onclick="switchPage('home', this)"><span class="nav-icon">🏠</span>Home</div>
-        <div class="nav-link" onclick="switchPage('games', this)"><span class="nav-icon">🎮</span>Games</div>
-        <div class="nav-link" onclick="switchPage('wallet', this)"><span class="nav-icon">💎</span>Wallet</div>
+        <div class="nav-link"
+             onclick="switchPage('tasks', this)">
+            <span class="nav-icon">📋</span>
+            Tasks
+        </div>
+        <div class="nav-link"
+             onclick="switchPage('invites', this)">
+            <span class="nav-icon">👥</span>
+            Invites
+        </div>
+        <div class="nav-link active"
+             id="default-nav"
+             onclick="switchPage('home', this)">
+            <span class="nav-icon">🏠</span>
+            Home
+        </div>
+        <div class="nav-link"
+             onclick="switchPage('games', this)">
+            <span class="nav-icon">🎮</span>
+            Games
+        </div>
+        <div class="nav-link"
+             onclick="switchPage('wallet', this)">
+            <span class="nav-icon">💎</span>
+            Wallet
+        </div>
     </div>
-
-    <!-- Core App Router and Main State -->
+    <!-- MAIN APP -->
     <script>
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
         }
-
-        var count = parseInt(localStorage.getItem('chubby_coins')) || 0;
-        document.getElementById('main-score').innerText = count.toLocaleString();
-
-        var tapElement = document.getElementById('clickcoin');
-        var coinContainer = document.getElementById('coincontainer');
-
+        let count =
+            parseInt(localStorage.getItem('chubby_coins')) || 0;
+        document.getElementById('main-score').innerText =
+            count.toLocaleString();
+        const tapElement =
+            document.getElementById('clickcoin');
+        const coinContainer =
+            document.getElementById('coincontainer');
         if (tapElement) {
-            tapElement.addEventListener('pointerdown', function(e) {
-                e.preventDefault();
-                count++;
-                document.getElementById('main-score').innerText = count.toLocaleString();
-                localStorage.setItem('chubby_coins', count);
-
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    var utterance = new SpeechSynthesisUtterance('Chub');
-                    utterance.lang = 'en-US'; utterance.pitch = 1.4; utterance.rate = 1.6;
-                    window.speechSynthesis.speak(utterance);
+            tapElement.addEventListener(
+                'pointerdown',
+                function(e) {
+                    e.preventDefault();
+                    count++;
+                    document.getElementById(
+                        'main-score'
+                    ).innerText =
+                        count.toLocaleString();
+                    localStorage.setItem(
+                        'chubby_coins',
+                        count
+                    );
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const utterance =
+                            new SpeechSynthesisUtterance('Chub');
+                        utterance.lang = 'en-US';
+                        utterance.pitch = 1.4;
+                        utterance.rate = 1.6;
+                        window.speechSynthesis.speak(
+                            utterance
+                        );
+                    }
+                    const textNode =
+                        document.createElement('div');
+                    textNode.className =
+                        'floating-text';
+                    textNode.innerText = '+1';
+                    const rect =
+                        coinContainer.getBoundingClientRect();
+                    textNode.style.left =
+                        (e.clientX - rect.left - 15) + 'px';
+                    textNode.style.top =
+                        (e.clientY - rect.top - 30) + 'px';
+                    coinContainer.appendChild(textNode);
+                    setTimeout(function() {
+                        textNode.remove();
+                    }, 600);
                 }
-
-                var textNode = document.createElement('div');
-                textNode.className = 'floating-text'; textNode.innerText = '+1';
-                var rect = coinContainer.getBoundingClientRect();
-                textNode.style.left = (e.clientX - rect.left - 15) + 'px';
-                textNode.style.top = (e.clientY - rect.top - 30) + 'px';
-                coinContainer.appendChild(textNode);
-                setTimeout(function() { textNode.remove(); }, 600);
-            });
+            );
         }
-
         function switchPage(pageId, element) {
-            document.getElementById('home-layout').style.display = 'none';
-            document.querySelectorAll('.dynamic-page').forEach(page => page.classList.remove('active'));
-
+            document.getElementById(
+                'home-layout'
+            ).style.display = 'none';
+            document.querySelectorAll(
+                '.dynamic-page'
+            ).forEach(function(page) {
+                page.classList.remove('active');
+            });
             if (element) {
-                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                document.querySelectorAll(
+                    '.nav-link'
+                ).forEach(function(link) {
+                    link.classList.remove('active');
+                });
                 element.classList.add('active');
             } else {
-                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-                if (pageId === 'home') document.getElementById('default-nav').classList.add('active');
+                document.querySelectorAll(
+                    '.nav-link'
+                ).forEach(function(link) {
+                    link.classList.remove('active');
+                });
+                if (pageId === 'home') {
+                    document.getElementById(
+                        'default-nav'
+                    ).classList.add('active');
+                }
             }
-
             if (pageId === 'home') {
-                document.getElementById('home-layout').style.display = 'flex';
+                document.getElementById(
+                    'home-layout'
+                ).style.display = 'flex';
             } else {
-                var targetPage = document.getElementById(pageId + '-page');
+                const targetPage =
+                    document.getElementById(
+                        pageId + '-page'
+                    );
                 if (targetPage) {
                     targetPage.classList.add('active');
-                    if(pageId === 'invites' && typeof updateInviteUI === 'function') updateInviteUI();
+                    if (
+                        pageId === 'invites' &&
+                        typeof updateInviteUI === 'function'
+                    ) {
+                        updateInviteUI();
+                    }
                 }
             }
         }
     </script>
-
-    <!-- Load external features modules safely -->
+    <!-- OTHER FEATURES -->
     <script src="game.js"></script>
     <script src="tasks.js"></script>
     <script src="invite.js"></script>
+    <!-- WALLET -->
     <script src="wallet.js"></script>
     <script src="menu.js"></script>
+</body>
+</html>
