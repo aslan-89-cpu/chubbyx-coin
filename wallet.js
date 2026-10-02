@@ -15,6 +15,10 @@ function loadWalletUI() {
 
     if (!walletPage) return;
 
+    /* FIX MOBILE / TELEGRAM TOUCH */
+    document.body.style.touchAction = "auto";
+    document.documentElement.style.touchAction = "auto";
+
     if (!walletPageLoaded) {
 
         walletPage.innerHTML = `
@@ -31,6 +35,7 @@ function loadWalletUI() {
                     align-items:center;
                     text-align:center;
                     width:100%;
+                    touch-action:manipulation;
                 "
             >
 
@@ -53,6 +58,10 @@ function loadWalletUI() {
                         display:flex;
                         justify-content:center;
                         align-items:center;
+                        position:relative;
+                        z-index:99999;
+                        pointer-events:auto;
+                        touch-action:manipulation;
                     "
                 ></div>
 
@@ -139,7 +148,9 @@ function startTonConnect() {
 
     if (tonConnectUI) {
 
-        updateWalletStatus(tonConnectUI.wallet);
+        updateWalletStatus(
+            tonConnectUI.wallet
+        );
 
         return;
     }
@@ -157,8 +168,10 @@ function startTonConnect() {
                     "chubbyx-ton-connect",
 
                 uiOptions: {
+
                     twaReturnUrl:
                         TWA_RETURN_URL
+
                 }
 
             });
@@ -166,7 +179,9 @@ function startTonConnect() {
 
         tonConnectUI.onStatusChange(
             function(wallet) {
+
                 updateWalletStatus(wallet);
+
             }
         );
 
@@ -177,11 +192,7 @@ function startTonConnect() {
 
 
         /*
-         * TEST:
-         * If the TON Connect button itself
-         * does not receive the click,
-         * this invisible click layer gives
-         * us a direct way to open the modal.
+         * MOBILE CLICK FIX
          */
 
         setTimeout(function() {
@@ -194,11 +205,16 @@ function startTonConnect() {
             if (!root) return;
 
 
+            root.style.pointerEvents = "auto";
+            root.style.touchAction = "manipulation";
+            root.style.position = "relative";
+            root.style.zIndex = "99999";
+
+
             root.addEventListener(
-                "click",
+                "pointerdown",
                 function(event) {
 
-                    event.preventDefault();
                     event.stopPropagation();
 
                     if (tonConnectUI) {
@@ -211,7 +227,24 @@ function startTonConnect() {
                 true
             );
 
-        }, 500);
+
+            root.addEventListener(
+                "click",
+                function(event) {
+
+                    event.stopPropagation();
+
+                    if (tonConnectUI) {
+
+                        tonConnectUI.openModal();
+
+                    }
+
+                },
+                true
+            );
+
+        }, 800);
 
 
     } catch (error) {
@@ -224,6 +257,7 @@ function startTonConnect() {
         setWalletMessage(
             "Wallet connection error."
         );
+
     }
 }
 
@@ -307,7 +341,9 @@ function shortenAddress(address) {
     if (!address) return "";
 
     if (address.length <= 14) {
+
         return address;
+
     }
 
     return (
@@ -328,7 +364,10 @@ function setWalletMessage(message) {
         );
 
     if (status) {
-        status.innerText = message;
+
+        status.innerText =
+            message;
+
     }
 }
 
@@ -350,7 +389,9 @@ window.switchPage =
 
             setTimeout(
                 function() {
+
                     loadWalletUI();
+
                 },
                 100
             );
