@@ -4,6 +4,9 @@ let walletPageLoaded = false;
 const MANIFEST_URL =
     "https://aslan-89-cpu.github.io/chubbyx-coin/tonconnect-manifest.json";
 
+const TWA_RETURN_URL =
+    "https://t.me/ChubbyX_Coin_bot/chubbyx";
+
 
 /* ==============================
    WALLET PAGE
@@ -46,7 +49,9 @@ function loadWalletUI() {
                     Connect your TON wallet
                 </p>
 
+
                 <!-- TON CONNECT BUTTON -->
+
                 <div
                     id="chubbyx-ton-connect"
                     style="
@@ -58,7 +63,9 @@ function loadWalletUI() {
                     "
                 ></div>
 
+
                 <!-- WALLET DETAILS -->
+
                 <div id="wallet-details-box"
                     style="
                         display:none;
@@ -89,7 +96,9 @@ function loadWalletUI() {
 
                 </div>
 
+
                 <!-- BACK BUTTON -->
+
                 <button
                     type="button"
                     onclick="switchPage('home')"
@@ -104,6 +113,7 @@ function loadWalletUI() {
                         color:white;
                         font-size:14px;
                         font-weight:bold;
+                        cursor:pointer;
                     "
                 >
                     ← Back to Home
@@ -126,24 +136,35 @@ function loadWalletUI() {
 function startTonConnect() {
 
     const connectRoot =
-        document.getElementById("chubbyx-ton-connect");
+        document.getElementById(
+            "chubbyx-ton-connect"
+        );
 
     if (!connectRoot) return;
+
+
+    /* TON CONNECT LIBRARY LOADING */
 
     if (
         !window.TON_CONNECT_UI ||
         !window.TON_CONNECT_UI.TonConnectUI
     ) {
 
-        setWalletMessage("Loading wallet...");
+        setWalletMessage(
+            "Loading wallet..."
+        );
 
-        setTimeout(startTonConnect, 500);
+        setTimeout(
+            startTonConnect,
+            500
+        );
 
         return;
     }
 
 
-    /* Already initialized */
+    /* ALREADY INITIALIZED */
+
     if (tonConnectUI) {
 
         updateWalletStatus(
@@ -154,6 +175,8 @@ function startTonConnect() {
     }
 
 
+    /* INITIALIZE TON CONNECT */
+
     try {
 
         tonConnectUI =
@@ -163,19 +186,32 @@ function startTonConnect() {
                     MANIFEST_URL,
 
                 buttonRootId:
-                    "chubbyx-ton-connect"
+                    "chubbyx-ton-connect",
+
+                uiOptions: {
+
+                    twaReturnUrl:
+                        TWA_RETURN_URL
+
+                }
 
             });
 
 
+        /* WALLET STATUS */
+
         tonConnectUI.onStatusChange(
             function(wallet) {
 
-                updateWalletStatus(wallet);
+                updateWalletStatus(
+                    wallet
+                );
 
             }
         );
 
+
+        /* CURRENT WALLET */
 
         updateWalletStatus(
             tonConnectUI.wallet
@@ -243,7 +279,9 @@ function updateWalletStatus(wallet) {
                 "block";
 
             addressElement.innerText =
-                shortenAddress(address);
+                shortenAddress(
+                    address
+                );
 
         }
 
@@ -284,7 +322,9 @@ function shortenAddress(address) {
     if (!address) return "";
 
     if (address.length <= 14) {
+
         return address;
+
     }
 
     return (
@@ -309,7 +349,10 @@ function setWalletMessage(message) {
         );
 
     if (status) {
-        status.innerText = message;
+
+        status.innerText =
+            message;
+
     }
 }
 
@@ -335,7 +378,9 @@ window.switchPage =
 
             setTimeout(
                 function() {
+
                     loadWalletUI();
+
                 },
                 100
             );
