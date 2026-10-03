@@ -713,16 +713,25 @@ window.switchPage =
    PAGE LOAD
    ========================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
+backButton.addEventListener(
+    "click",
+    function(event) {
 
-        if (
-            document.getElementById(
-                "wallet-page"
-            )
-        ) {
-            loadWalletUI();
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        if (tonConnectUI) {
+            try {
+                tonConnectUI.closeModal();
+            } catch (e) {
+                console.log(
+                    "TON modal already closed"
+                );
+            }
         }
+
+        setTimeout(function() {
+            switchPage("home");
+        }, 100);
     }
 );
