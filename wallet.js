@@ -119,7 +119,6 @@ function loadWalletUI() {
                         Connected Wallet
                     </div>
 
-
                     <div
                         id="wallet-address-string"
                         style="
@@ -264,15 +263,13 @@ function loadWalletUI() {
 
 
                     /*
-                     * Close TON modal only if
-                     * it is currently open.
+                     * Close modal if open.
                      */
 
                     if (
                         tonConnectUI &&
-                        tonConnectUI.modalState &&
-                        tonConnectUI.modalState.status ===
-                        "opened"
+                        typeof tonConnectUI.closeModal ===
+                        "function"
                     ) {
 
                         try {
@@ -282,15 +279,14 @@ function loadWalletUI() {
                         } catch (error) {
 
                             console.log(
-                                "TON modal close error:",
-                                error
+                                "TON modal already closed."
                             );
                         }
                     }
 
 
                     /*
-                     * Always go directly Home.
+                     * Go directly Home.
                      */
 
                     switchPage("home");
@@ -311,8 +307,7 @@ function loadWalletUI() {
 async function startTonConnect() {
 
     /*
-     * Wait until TON Connect UI library
-     * is available.
+     * Wait for TON Connect library.
      */
 
     if (
@@ -356,14 +351,15 @@ async function startTonConnect() {
         );
 
 
+        /*
+         * Create TON Connect.
+         */
+
         tonConnectUI =
             new window.TON_CONNECT_UI.TonConnectUI({
 
                 manifestUrl:
-                    MANIFEST_URL,
-
-                buttonRootId:
-                    null
+                    MANIFEST_URL
             });
 
 
@@ -379,7 +375,7 @@ async function startTonConnect() {
 
 
         /*
-         * Wallet connection status.
+         * Wallet status listener.
          */
 
         tonConnectUI.onStatusChange(
@@ -399,7 +395,7 @@ async function startTonConnect() {
 
 
         /*
-         * Modal state.
+         * Modal listener.
          */
 
         if (
@@ -420,7 +416,7 @@ async function startTonConnect() {
 
 
         /*
-         * Existing connection.
+         * Check existing wallet.
          */
 
         updateWalletStatus(
@@ -458,8 +454,7 @@ async function startTonConnect() {
 async function openChubbyXWallet() {
 
     /*
-     * Prevent double-click from opening
-     * multiple wallet modals.
+     * Prevent double click.
      */
 
     if (walletOpening) {
@@ -480,7 +475,7 @@ async function openChubbyXWallet() {
     try {
 
         /*
-         * Make sure TON Connect is ready.
+         * Make sure TON Connect exists.
          */
 
         if (!tonConnectUI) {
@@ -506,8 +501,7 @@ async function openChubbyXWallet() {
 
 
         /*
-         * If already connected, don't open
-         * the wallet picker again.
+         * Already connected.
          */
 
         if (
@@ -529,7 +523,8 @@ async function openChubbyXWallet() {
             button.innerText =
                 "Opening Wallet...";
 
-            button.disabled = true;
+            button.disabled =
+                true;
 
             button.style.opacity =
                 "0.7";
@@ -542,8 +537,7 @@ async function openChubbyXWallet() {
 
 
         /*
-         * THIS opens the official
-         * TON Connect wallet picker.
+         * OPEN WALLET LIST
          */
 
         await tonConnectUI.openModal();
@@ -557,7 +551,7 @@ async function openChubbyXWallet() {
     } catch (error) {
 
         console.error(
-            "ChubbyX open wallet error:",
+            "ChubbyX openModal error:",
             error
         );
 
@@ -663,13 +657,8 @@ function updateWalletStatus(wallet) {
         /*
          * IMPORTANT:
          *
-         * We do NOT call openModal()
-         * here.
-         *
-         * We also do NOT reopen the
-         * wallet list after connection.
+         * Do NOT open wallet modal here.
          */
-
 
     } else {
 
