@@ -1,3 +1,7 @@
+/* =========================================
+   CHUBBYX — TON CONNECT WALLET
+   ========================================= */
+
 let tonConnectUI = null;
 let walletPageLoaded = false;
 
@@ -7,6 +11,10 @@ const MANIFEST_URL =
 const TWA_RETURN_URL =
     "https://t.me/ChubbyX_Coin_bot/chubbyx";
 
+
+/* =========================================
+   LOAD WALLET PAGE
+   ========================================= */
 
 function loadWalletUI() {
 
@@ -28,18 +36,16 @@ function loadWalletUI() {
                 Connect Wallet
             </h2>
 
-            <div
-                style="
-                    width:100%;
-                    flex:1;
-                    display:flex;
-                    flex-direction:column;
-                    justify-content:center;
-                    align-items:center;
-                    text-align:center;
-                    touch-action:auto;
-                "
-            >
+            <div style="
+                width:100%;
+                flex:1;
+                display:flex;
+                flex-direction:column;
+                justify-content:center;
+                align-items:center;
+                text-align:center;
+                touch-action:auto;
+            ">
 
                 <p
                     id="wallet-status-text"
@@ -52,7 +58,6 @@ function loadWalletUI() {
                 >
                     Connect your TON wallet
                 </p>
-
 
                 <button
                     id="chubbyx-connect-button"
@@ -74,7 +79,6 @@ function loadWalletUI() {
                         font-weight:bold;
 
                         cursor:pointer;
-
                         pointer-events:auto;
                         touch-action:manipulation;
 
@@ -83,8 +87,8 @@ function loadWalletUI() {
                         -webkit-tap-highlight-color:transparent;
 
                         box-shadow:
-                            0 5px 18px
-                            rgba(0,152,234,0.30);
+                        0 5px 18px
+                        rgba(0,152,234,0.30);
                     "
                 >
                     Connect Wallet
@@ -104,13 +108,11 @@ function loadWalletUI() {
                     "
                 >
 
-                    <div
-                        style="
-                            color:#eeb308;
-                            font-weight:bold;
-                            margin-bottom:7px;
-                        "
-                    >
+                    <div style="
+                        color:#eeb308;
+                        font-weight:bold;
+                        margin-bottom:7px;
+                    ">
                         Connected Wallet
                     </div>
 
@@ -122,6 +124,25 @@ function loadWalletUI() {
                             word-break:break-all;
                         "
                     ></div>
+
+                    <button
+                        id="chubbyx-disconnect-button"
+                        type="button"
+                        style="
+                            margin-top:15px;
+                            width:100%;
+                            padding:10px;
+                            border:none;
+                            border-radius:10px;
+                            background:#e74c3c;
+                            color:white;
+                            font-weight:bold;
+                            cursor:pointer;
+                            touch-action:manipulation;
+                        "
+                    >
+                        Disconnect
+                    </button>
 
                 </div>
 
@@ -136,12 +157,12 @@ function loadWalletUI() {
                         padding:12px;
 
                         border:1px solid
-                            rgba(255,255,255,0.2);
+                        rgba(255,255,255,0.2);
 
                         border-radius:20px;
 
                         background:
-                            rgba(255,255,255,0.1);
+                        rgba(255,255,255,0.1);
 
                         color:white;
 
@@ -161,38 +182,69 @@ function loadWalletUI() {
         walletPageLoaded = true;
 
 
+        /* CONNECT */
+
         const connectButton =
             document.getElementById(
                 "chubbyx-connect-button"
             );
 
-
         if (connectButton) {
 
-            connectButton.onclick =
+            connectButton.addEventListener(
+                "click",
                 function(event) {
 
                     event.preventDefault();
                     event.stopPropagation();
 
                     openChubbyXWallet();
-                };
+                }
+            );
         }
 
+
+        /* DISCONNECT */
+
+        const disconnectButton =
+            document.getElementById(
+                "chubbyx-disconnect-button"
+            );
+
+        if (disconnectButton) {
+
+            disconnectButton.addEventListener(
+                "click",
+                async function(event) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    await disconnectChubbyXWallet();
+                }
+            );
+        }
+
+
+        /* BACK */
 
         const backButton =
             document.getElementById(
                 "chubbyx-back-button"
             );
 
-
         if (backButton) {
 
-            backButton.onclick =
-                function() {
+            backButton.addEventListener(
+                "click",
+                function(event) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
 
                     switchPage("home");
-                };
+                }
+            );
         }
     }
 
@@ -201,11 +253,11 @@ function loadWalletUI() {
 }
 
 
-/* =========================
+/* =========================================
    START TON CONNECT
-   ========================= */
+   ========================================= */
 
-function startTonConnect() {
+async function startTonConnect() {
 
     if (
         !window.TON_CONNECT_UI ||
@@ -225,6 +277,8 @@ function startTonConnect() {
     }
 
 
+    /* Already initialized */
+
     if (tonConnectUI) {
 
         updateWalletStatus(
@@ -237,13 +291,25 @@ function startTonConnect() {
 
     try {
 
+        console.log(
+            "ChubbyX: Initializing TON Connect..."
+        );
+
+
         tonConnectUI =
             new window.TON_CONNECT_UI.TonConnectUI({
 
                 manifestUrl:
-                    MANIFEST_URL
+                    MANIFEST_URL,
+
+                buttonRootId:
+                    null
             });
 
+
+        /*
+         * Telegram Mini App return URL
+         */
 
         tonConnectUI.uiOptions = {
 
@@ -252,8 +318,17 @@ function startTonConnect() {
         };
 
 
+        /*
+         * Wallet status listener
+         */
+
         tonConnectUI.onStatusChange(
             function(wallet) {
+
+                console.log(
+                    "ChubbyX wallet status:",
+                    wallet
+                );
 
                 updateWalletStatus(
                     wallet
@@ -262,8 +337,13 @@ function startTonConnect() {
         );
 
 
+        /*
+         * Modal listener
+         */
+
         if (
-            tonConnectUI.onModalStateChange
+            typeof tonConnectUI.onModalStateChange ===
+            "function"
         ) {
 
             tonConnectUI.onModalStateChange(
@@ -278,28 +358,37 @@ function startTonConnect() {
         }
 
 
+        /*
+         * Check existing connection
+         */
+
         updateWalletStatus(
             tonConnectUI.wallet
+        );
+
+
+        console.log(
+            "ChubbyX: TON Connect initialized"
         );
 
 
     } catch (error) {
 
         console.error(
-            "TON Connect initialization error:",
+            "ChubbyX TON initialization error:",
             error
         );
 
         setWalletMessage(
-            "Wallet connection error."
+            "Wallet initialization error."
         );
     }
 }
 
 
-/* =========================
-   OPEN WALLET MODAL
-   ========================= */
+/* =========================================
+   OPEN WALLET
+   ========================================= */
 
 async function openChubbyXWallet() {
 
@@ -315,7 +404,46 @@ async function openChubbyXWallet() {
             "Loading wallet..."
         );
 
-        startTonConnect();
+        await startTonConnect();
+
+        /*
+         * Give TON Connect a moment
+         */
+
+        await new Promise(
+            function(resolve) {
+
+                setTimeout(
+                    resolve,
+                    300
+                );
+            }
+        );
+    }
+
+
+    if (!tonConnectUI) {
+
+        setWalletMessage(
+            "Wallet is not ready."
+        );
+
+        return;
+    }
+
+
+    /*
+     * Already connected
+     */
+
+    if (
+        tonConnectUI.wallet &&
+        tonConnectUI.wallet.account
+    ) {
+
+        updateWalletStatus(
+            tonConnectUI.wallet
+        );
 
         return;
     }
@@ -327,13 +455,14 @@ async function openChubbyXWallet() {
             "Opening Wallet...";
 
         button.disabled = true;
+        button.style.opacity = "0.7";
     }
 
 
     try {
 
         console.log(
-            "ChubbyX: opening TON wallet modal"
+            "ChubbyX: Opening TON Connect modal..."
         );
 
 
@@ -341,20 +470,19 @@ async function openChubbyXWallet() {
 
 
         console.log(
-            "ChubbyX: TON modal opened"
+            "ChubbyX: TON modal opened."
         );
 
 
     } catch (error) {
 
         console.error(
-            "ChubbyX TON modal error:",
+            "ChubbyX openModal error:",
             error
         );
 
-
         setWalletMessage(
-            "Wallet picker error."
+            "Could not open wallet."
         );
 
     } finally {
@@ -365,14 +493,15 @@ async function openChubbyXWallet() {
                 "Connect Wallet";
 
             button.disabled = false;
+            button.style.opacity = "1";
         }
     }
 }
 
 
-/* =========================
+/* =========================================
    WALLET STATUS
-   ========================= */
+   ========================================= */
 
 function updateWalletStatus(wallet) {
 
@@ -402,6 +531,12 @@ function updateWalletStatus(wallet) {
             wallet.account.address;
 
 
+        console.log(
+            "ChubbyX CONNECTED:",
+            address
+        );
+
+
         if (status) {
 
             status.innerText =
@@ -409,10 +544,14 @@ function updateWalletStatus(wallet) {
         }
 
 
-        if (box && addressElement) {
+        if (box) {
 
             box.style.display =
                 "block";
+        }
+
+
+        if (addressElement) {
 
             addressElement.innerText =
                 shortenAddress(
@@ -429,6 +568,11 @@ function updateWalletStatus(wallet) {
 
     } else {
 
+        console.log(
+            "ChubbyX: Wallet not connected"
+        );
+
+
         if (status) {
 
             status.innerText =
@@ -441,13 +585,56 @@ function updateWalletStatus(wallet) {
             box.style.display =
                 "none";
         }
+
+
+        localStorage.removeItem(
+            "user_wallet"
+        );
     }
 }
 
 
-/* =========================
+/* =========================================
+   DISCONNECT
+   ========================================= */
+
+async function disconnectChubbyXWallet() {
+
+    if (!tonConnectUI) return;
+
+
+    try {
+
+        await tonConnectUI.disconnect();
+
+        localStorage.removeItem(
+            "user_wallet"
+        );
+
+
+        updateWalletStatus(
+            null
+        );
+
+
+        setWalletMessage(
+            "Wallet disconnected."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "ChubbyX disconnect error:",
+            error
+        );
+    }
+}
+
+
+/* =========================================
    SHORT ADDRESS
-   ========================= */
+   ========================================= */
 
 function shortenAddress(address) {
 
@@ -457,6 +644,7 @@ function shortenAddress(address) {
 
         return address;
     }
+
 
     return (
         address.substring(0, 7) +
@@ -468,9 +656,9 @@ function shortenAddress(address) {
 }
 
 
-/* =========================
-   MESSAGE
-   ========================= */
+/* =========================================
+   WALLET MESSAGE
+   ========================================= */
 
 function setWalletMessage(message) {
 
@@ -487,9 +675,9 @@ function setWalletMessage(message) {
 }
 
 
-/* =========================
+/* =========================================
    PAGE SWITCH
-   ========================= */
+   ========================================= */
 
 const originalSwitchPage =
     window.switchPage;
@@ -498,10 +686,16 @@ const originalSwitchPage =
 window.switchPage =
     function(pageId, element) {
 
-        originalSwitchPage(
-            pageId,
-            element
-        );
+        if (
+            typeof originalSwitchPage ===
+            "function"
+        ) {
+
+            originalSwitchPage(
+                pageId,
+                element
+            );
+        }
 
 
         if (pageId === "wallet") {
@@ -518,9 +712,9 @@ window.switchPage =
     };
 
 
-/* =========================
+/* =========================================
    PAGE LOAD
-   ========================= */
+   ========================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -531,6 +725,11 @@ document.addEventListener(
                 "wallet-page"
             )
         ) {
+
+            /*
+             * Don't force wallet modal.
+             * Only prepare wallet page.
+             */
 
             loadWalletUI();
         }
