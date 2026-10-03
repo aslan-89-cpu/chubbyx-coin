@@ -722,7 +722,6 @@ document.addEventListener(
                 "wallet-page"
             )
         ) {
-
             loadWalletUI();
         }
     }
