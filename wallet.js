@@ -59,6 +59,7 @@ function loadWalletUI() {
                     Connect your TON wallet
                 </p>
 
+
                 <button
                     id="chubbyx-connect-button"
                     type="button"
@@ -116,6 +117,7 @@ function loadWalletUI() {
                         Connected Wallet
                     </div>
 
+
                     <div
                         id="wallet-address-string"
                         style="
@@ -125,6 +127,7 @@ function loadWalletUI() {
                         "
                     ></div>
 
+
                     <button
                         id="chubbyx-disconnect-button"
                         type="button"
@@ -132,10 +135,13 @@ function loadWalletUI() {
                             margin-top:15px;
                             width:100%;
                             padding:10px;
+
                             border:none;
                             border-radius:10px;
+
                             background:#e74c3c;
                             color:white;
+
                             font-weight:bold;
                             cursor:pointer;
                             touch-action:manipulation;
@@ -152,8 +158,10 @@ function loadWalletUI() {
                     type="button"
                     style="
                         margin-top:30px;
+
                         width:100%;
                         max-width:240px;
+
                         padding:12px;
 
                         border:1px solid
@@ -182,7 +190,9 @@ function loadWalletUI() {
         walletPageLoaded = true;
 
 
-        /* CONNECT */
+        /* =====================================
+           CONNECT BUTTON
+           ===================================== */
 
         const connectButton =
             document.getElementById(
@@ -204,7 +214,9 @@ function loadWalletUI() {
         }
 
 
-        /* DISCONNECT */
+        /* =====================================
+           DISCONNECT BUTTON
+           ===================================== */
 
         const disconnectButton =
             document.getElementById(
@@ -226,7 +238,9 @@ function loadWalletUI() {
         }
 
 
-        /* BACK */
+        /* =====================================
+           BACK TO HOME
+           ===================================== */
 
         const backButton =
             document.getElementById(
@@ -242,7 +256,42 @@ function loadWalletUI() {
                     event.preventDefault();
                     event.stopImmediatePropagation();
 
-                    switchPage("home");
+                    /*
+                     * If TON Connect modal is open,
+                     * close it first.
+                     */
+
+                    if (
+                        tonConnectUI &&
+                        typeof tonConnectUI.closeModal ===
+                        "function"
+                    ) {
+
+                        try {
+
+                            tonConnectUI.closeModal();
+
+                        } catch (error) {
+
+                            console.log(
+                                "TON modal already closed."
+                            );
+                        }
+                    }
+
+
+                    /*
+                     * Then go directly Home.
+                     */
+
+                    setTimeout(
+                        function() {
+
+                            switchPage("home");
+
+                        },
+                        100
+                    );
                 }
             );
         }
@@ -307,9 +356,7 @@ async function startTonConnect() {
             });
 
 
-        /*
-         * Telegram Mini App return URL
-         */
+        /* Telegram Mini App return URL */
 
         tonConnectUI.uiOptions = {
 
@@ -318,9 +365,7 @@ async function startTonConnect() {
         };
 
 
-        /*
-         * Wallet status listener
-         */
+        /* Wallet status listener */
 
         tonConnectUI.onStatusChange(
             function(wallet) {
@@ -337,9 +382,7 @@ async function startTonConnect() {
         );
 
 
-        /*
-         * Modal listener
-         */
+        /* Modal listener */
 
         if (
             typeof tonConnectUI.onModalStateChange ===
@@ -358,9 +401,7 @@ async function startTonConnect() {
         }
 
 
-        /*
-         * Check existing connection
-         */
+        /* Existing connection */
 
         updateWalletStatus(
             tonConnectUI.wallet
@@ -429,9 +470,7 @@ async function openChubbyXWallet() {
     }
 
 
-    /*
-     * Already connected
-     */
+    /* Already connected */
 
     if (
         tonConnectUI.wallet &&
@@ -534,6 +573,33 @@ function updateWalletStatus(wallet) {
         );
 
 
+        /*
+         * IMPORTANT:
+         * Connection succeeded.
+         * Close TON Connect modal so that
+         * Back goes to Home instead of
+         * reopening wallet list.
+         */
+
+        if (
+            tonConnectUI &&
+            typeof tonConnectUI.closeModal ===
+            "function"
+        ) {
+
+            try {
+
+                tonConnectUI.closeModal();
+
+            } catch (error) {
+
+                console.log(
+                    "TON modal already closed."
+                );
+            }
+        }
+
+
         if (status) {
 
             status.innerText =
@@ -604,6 +670,7 @@ async function disconnectChubbyXWallet() {
 
         await tonConnectUI.disconnect();
 
+
         localStorage.removeItem(
             "user_wallet"
         );
@@ -637,6 +704,7 @@ function shortenAddress(address) {
 
     if (!address) return "";
 
+
     if (address.length <= 14) {
 
         return address;
@@ -663,6 +731,7 @@ function setWalletMessage(message) {
         document.getElementById(
             "wallet-status-text"
         );
+
 
     if (status) {
 
@@ -707,31 +776,3 @@ window.switchPage =
             );
         }
     };
-
-
-/* =========================================
-   PAGE LOAD
-   ========================================= */
-
-backButton.addEventListener(
-    "click",
-    function(event) {
-
-        event.preventDefault();
-        event.stopImmediatePropagation();
-
-        if (tonConnectUI) {
-            try {
-                tonConnectUI.closeModal();
-            } catch (e) {
-                console.log(
-                    "TON modal already closed"
-                );
-            }
-        }
-
-        setTimeout(function() {
-            switchPage("home");
-        }, 100);
-    }
-);
