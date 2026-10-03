@@ -4,6 +4,7 @@
 
 let tonConnectUI = null;
 let walletPageLoaded = false;
+let walletOpening = false;
 
 const MANIFEST_URL =
     "https://aslan-89-cpu.github.io/chubbyx-coin/tonconnect-manifest.json";
@@ -22,6 +23,7 @@ function loadWalletUI() {
         document.getElementById("wallet-page");
 
     if (!walletPage) return;
+
 
     walletPage.style.zIndex = "99999";
     walletPage.style.pointerEvents = "auto";
@@ -187,6 +189,7 @@ function loadWalletUI() {
             </div>
         `;
 
+
         walletPageLoaded = true;
 
 
@@ -199,16 +202,17 @@ function loadWalletUI() {
                 "chubbyx-connect-button"
             );
 
+
         if (connectButton) {
 
             connectButton.addEventListener(
                 "click",
-                function(event) {
+                async function(event) {
 
                     event.preventDefault();
                     event.stopPropagation();
 
-                    openChubbyXWallet();
+                    await openChubbyXWallet();
                 }
             );
         }
@@ -222,6 +226,7 @@ function loadWalletUI() {
             document.getElementById(
                 "chubbyx-disconnect-button"
             );
+
 
         if (disconnectButton) {
 
@@ -247,6 +252,7 @@ function loadWalletUI() {
                 "chubbyx-back-button"
             );
 
+
         if (backButton) {
 
             backButton.addEventListener(
@@ -256,15 +262,17 @@ function loadWalletUI() {
                     event.preventDefault();
                     event.stopImmediatePropagation();
 
+
                     /*
-                     * If TON Connect modal is open,
-                     * close it first.
+                     * Close TON modal only if
+                     * it is currently open.
                      */
 
                     if (
                         tonConnectUI &&
-                        typeof tonConnectUI.closeModal ===
-                        "function"
+                        tonConnectUI.modalState &&
+                        tonConnectUI.modalState.status ===
+                        "opened"
                     ) {
 
                         try {
@@ -274,24 +282,18 @@ function loadWalletUI() {
                         } catch (error) {
 
                             console.log(
-                                "TON modal already closed."
+                                "TON modal close error:",
+                                error
                             );
                         }
                     }
 
 
                     /*
-                     * Then go directly Home.
+                     * Always go directly Home.
                      */
 
-                    setTimeout(
-                        function() {
-
-                            switchPage("home");
-
-                        },
-                        100
-                    );
+                    switchPage("home");
                 }
             );
         }
@@ -308,6 +310,11 @@ function loadWalletUI() {
 
 async function startTonConnect() {
 
+    /*
+     * Wait until TON Connect UI library
+     * is available.
+     */
+
     if (
         !window.TON_CONNECT_UI ||
         !window.TON_CONNECT_UI.TonConnectUI
@@ -317,16 +324,20 @@ async function startTonConnect() {
             "Loading wallet..."
         );
 
+
         setTimeout(
             startTonConnect,
             500
         );
 
+
         return;
     }
 
 
-    /* Already initialized */
+    /*
+     * Already initialized.
+     */
 
     if (tonConnectUI) {
 
@@ -356,7 +367,9 @@ async function startTonConnect() {
             });
 
 
-        /* Telegram Mini App return URL */
+        /*
+         * Telegram Mini App return URL.
+         */
 
         tonConnectUI.uiOptions = {
 
@@ -365,7 +378,9 @@ async function startTonConnect() {
         };
 
 
-        /* Wallet status listener */
+        /*
+         * Wallet connection status.
+         */
 
         tonConnectUI.onStatusChange(
             function(wallet) {
@@ -375,6 +390,7 @@ async function startTonConnect() {
                     wallet
                 );
 
+
                 updateWalletStatus(
                     wallet
                 );
@@ -382,7 +398,9 @@ async function startTonConnect() {
         );
 
 
-        /* Modal listener */
+        /*
+         * Modal state.
+         */
 
         if (
             typeof tonConnectUI.onModalStateChange ===
@@ -401,7 +419,9 @@ async function startTonConnect() {
         }
 
 
-        /* Existing connection */
+        /*
+         * Existing connection.
+         */
 
         updateWalletStatus(
             tonConnectUI.wallet
@@ -409,7 +429,7 @@ async function startTonConnect() {
 
 
         console.log(
-            "ChubbyX: TON Connect initialized"
+            "ChubbyX: TON Connect initialized."
         );
 
 
@@ -420,6 +440,10 @@ async function startTonConnect() {
             error
         );
 
+
+        tonConnectUI = null;
+
+
         setWalletMessage(
             "Wallet initialization error."
         );
@@ -428,10 +452,24 @@ async function startTonConnect() {
 
 
 /* =========================================
-   OPEN WALLET
+   OPEN WALLET LIST
    ========================================= */
 
 async function openChubbyXWallet() {
+
+    /*
+     * Prevent double-click from opening
+     * multiple wallet modals.
+     */
+
+    if (walletOpening) {
+
+        return;
+    }
+
+
+    walletOpening = true;
+
 
     const button =
         document.getElementById(
@@ -439,97 +477,111 @@ async function openChubbyXWallet() {
         );
 
 
-    if (!tonConnectUI) {
-
-        setWalletMessage(
-            "Loading wallet..."
-        );
-
-        await startTonConnect();
-
-
-        await new Promise(
-            function(resolve) {
-
-                setTimeout(
-                    resolve,
-                    300
-                );
-            }
-        );
-    }
-
-
-    if (!tonConnectUI) {
-
-        setWalletMessage(
-            "Wallet is not ready."
-        );
-
-        return;
-    }
-
-
-    /* Already connected */
-
-    if (
-        tonConnectUI.wallet &&
-        tonConnectUI.wallet.account
-    ) {
-
-        updateWalletStatus(
-            tonConnectUI.wallet
-        );
-
-        return;
-    }
-
-
-    if (button) {
-
-        button.innerText =
-            "Opening Wallet...";
-
-        button.disabled = true;
-        button.style.opacity = "0.7";
-    }
-
-
     try {
 
+        /*
+         * Make sure TON Connect is ready.
+         */
+
+        if (!tonConnectUI) {
+
+            setWalletMessage(
+                "Loading wallet..."
+            );
+
+
+            await startTonConnect();
+        }
+
+
+        if (!tonConnectUI) {
+
+            setWalletMessage(
+                "Wallet is not ready."
+            );
+
+
+            return;
+        }
+
+
+        /*
+         * If already connected, don't open
+         * the wallet picker again.
+         */
+
+        if (
+            tonConnectUI.wallet &&
+            tonConnectUI.wallet.account
+        ) {
+
+            updateWalletStatus(
+                tonConnectUI.wallet
+            );
+
+
+            return;
+        }
+
+
+        if (button) {
+
+            button.innerText =
+                "Opening Wallet...";
+
+            button.disabled = true;
+
+            button.style.opacity =
+                "0.7";
+        }
+
+
         console.log(
-            "ChubbyX: Opening TON Connect modal..."
+            "ChubbyX: Opening wallet list..."
         );
 
+
+        /*
+         * THIS opens the official
+         * TON Connect wallet picker.
+         */
 
         await tonConnectUI.openModal();
 
 
         console.log(
-            "ChubbyX: TON modal opened."
+            "ChubbyX: Wallet list opened."
         );
 
 
     } catch (error) {
 
         console.error(
-            "ChubbyX openModal error:",
+            "ChubbyX open wallet error:",
             error
         );
+
 
         setWalletMessage(
             "Could not open wallet."
         );
 
+
     } finally {
+
+        walletOpening = false;
+
 
         if (button) {
 
             button.innerText =
                 "Connect Wallet";
 
-            button.disabled = false;
-            button.style.opacity = "1";
+            button.disabled =
+                false;
+
+            button.style.opacity =
+                "1";
         }
     }
 }
@@ -546,16 +598,22 @@ function updateWalletStatus(wallet) {
             "wallet-status-text"
         );
 
+
     const box =
         document.getElementById(
             "wallet-details-box"
         );
+
 
     const addressElement =
         document.getElementById(
             "wallet-address-string"
         );
 
+
+    /*
+     * CONNECTED
+     */
 
     if (
         wallet &&
@@ -571,33 +629,6 @@ function updateWalletStatus(wallet) {
             "ChubbyX CONNECTED:",
             address
         );
-
-
-        /*
-         * IMPORTANT:
-         * Connection succeeded.
-         * Close TON Connect modal so that
-         * Back goes to Home instead of
-         * reopening wallet list.
-         */
-
-        if (
-            tonConnectUI &&
-            typeof tonConnectUI.closeModal ===
-            "function"
-        ) {
-
-            try {
-
-                tonConnectUI.closeModal();
-
-            } catch (error) {
-
-                console.log(
-                    "TON modal already closed."
-                );
-            }
-        }
 
 
         if (status) {
@@ -629,7 +660,22 @@ function updateWalletStatus(wallet) {
         );
 
 
+        /*
+         * IMPORTANT:
+         *
+         * We do NOT call openModal()
+         * here.
+         *
+         * We also do NOT reopen the
+         * wallet list after connection.
+         */
+
+
     } else {
+
+        /*
+         * NOT CONNECTED
+         */
 
         console.log(
             "ChubbyX: Wallet not connected"
@@ -663,7 +709,10 @@ function updateWalletStatus(wallet) {
 
 async function disconnectChubbyXWallet() {
 
-    if (!tonConnectUI) return;
+    if (!tonConnectUI) {
+
+        return;
+    }
 
 
     try {
@@ -702,7 +751,10 @@ async function disconnectChubbyXWallet() {
 
 function shortenAddress(address) {
 
-    if (!address) return "";
+    if (!address) {
+
+        return "";
+    }
 
 
     if (address.length <= 14) {
@@ -776,3 +828,23 @@ window.switchPage =
             );
         }
     };
+
+
+/* =========================================
+   PAGE LOAD
+   ========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        if (
+            document.getElementById(
+                "wallet-page"
+            )
+        ) {
+
+            loadWalletUI();
+        }
+    }
+);
