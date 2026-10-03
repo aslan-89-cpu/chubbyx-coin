@@ -240,7 +240,7 @@ function loadWalletUI() {
                 function(event) {
 
                     event.preventDefault();
-                    event.stopPropagation();
+                    event.stopImmediatePropagation();
 
                     switchPage("home");
                 }
@@ -406,9 +406,6 @@ async function openChubbyXWallet() {
 
         await startTonConnect();
 
-        /*
-         * Give TON Connect a moment
-         */
 
         await new Promise(
             function(resolve) {
@@ -725,11 +722,6 @@ document.addEventListener(
                 "wallet-page"
             )
         ) {
-
-            /*
-             * Don't force wallet modal.
-             * Only prepare wallet page.
-             */
 
             loadWalletUI();
         }
