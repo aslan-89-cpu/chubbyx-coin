@@ -423,11 +423,6 @@ async function startTonConnect() {
              * Telegram Mini App return URL
              */
 
-            tonConnectUI.uiOptions = {
-
-                twaReturnUrl: TWA_RETURN_URL
-
-            };
 
 
             /* ================================
