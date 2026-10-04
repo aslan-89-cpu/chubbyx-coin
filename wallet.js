@@ -1,6 +1,6 @@
 /* =========================================
    CHUBBYX — WALLET.JS
-   TON CONNECT BUTTON VERSION
+   FIXED CONNECT + BLUE BUTTON
 ========================================= */
 
 let tonConnectUI = null;
@@ -20,29 +20,19 @@ const TWA_RETURN_URL =
 
 function walletPage() {
 
-    const page =
-        document.getElementById("wallet-page");
+    const page = document.getElementById("wallet-page");
 
-    if (!page) {
-        console.error(
-            "CHUBBYX: wallet-page not found"
-        );
-        return;
-    }
+    if (!page) return;
 
 
     page.innerHTML = `
-
         <div class="cx-wallet">
 
-            <button
-                id="cx-wallet-back"
-                type="button"
-                class="cx-back"
-            >
+            <button id="cx-wallet-back"
+                    type="button"
+                    class="cx-back">
                 ‹
             </button>
-
 
             <h2>Wallet</h2>
 
@@ -50,70 +40,47 @@ function walletPage() {
                 Connect your TON wallet
             </p>
 
-
             <div class="cx-box">
 
-                <div
-                    id="cx-status"
-                    class="cx-status"
-                >
+                <div id="cx-status" class="cx-status">
                     Not Connected
                 </div>
 
+                <div id="chubbyx-ton-connect"></div>
 
-                <!-- TON CONNECT OWNS THIS BUTTON -->
-
-                <div
-                    id="chubbyx-ton-connect"
-                    class="cx-ton-connect"
-                ></div>
-
-
-                <button
-                    id="cx-disconnect"
-                    type="button"
-                    class="cx-disconnect"
-                    style="display:none;"
-                >
+                <button id="cx-disconnect"
+                        type="button"
+                        class="cx-disconnect"
+                        style="display:none;">
                     Disconnect
                 </button>
 
             </div>
 
-
-            <button
-                id="cx-home"
-                type="button"
-                class="cx-home"
-            >
+            <button id="cx-home"
+                    type="button"
+                    class="cx-home">
                 Back to Home
             </button>
 
         </div>
-
     `;
 
 
     addWalletStyles();
 
 
-    document.getElementById(
-        "cx-wallet-back"
-    ).onclick = goHome;
+    document.getElementById("cx-wallet-back").onclick =
+        goHome;
 
+    document.getElementById("cx-home").onclick =
+        goHome;
 
-    document.getElementById(
-        "cx-home"
-    ).onclick = goHome;
-
-
-    document.getElementById(
-        "cx-disconnect"
-    ).onclick = disconnectWallet;
+    document.getElementById("cx-disconnect").onclick =
+        disconnectWallet;
 
 
     startTonConnect();
-
 }
 
 
@@ -123,22 +90,13 @@ function walletPage() {
 
 function addWalletStyles() {
 
-    if (
-        document.getElementById(
-            "cx-wallet-style"
-        )
-    ) {
+    if (document.getElementById("cx-wallet-style")) {
         return;
     }
 
+    const style = document.createElement("style");
 
-    const style =
-        document.createElement("style");
-
-
-    style.id =
-        "cx-wallet-style";
-
+    style.id = "cx-wallet-style";
 
     style.textContent = `
 
@@ -147,7 +105,6 @@ function addWalletStyles() {
             overflow-x: hidden;
             touch-action: pan-y;
         }
-
 
         .cx-wallet {
             position: relative;
@@ -158,7 +115,6 @@ function addWalletStyles() {
             color: white;
         }
 
-
         .cx-back {
             position: absolute;
             top: 15px;
@@ -167,8 +123,7 @@ function addWalletStyles() {
             height: 45px;
             border: none;
             border-radius: 50%;
-            background:
-                rgba(255,255,255,.12);
+            background: rgba(255,255,255,.12);
             color: white;
             font-size: 34px;
             display: flex;
@@ -179,13 +134,11 @@ function addWalletStyles() {
             touch-action: manipulation;
         }
 
-
         .cx-wallet h2 {
             margin: 0;
             font-size: 28px;
             color: #eeb308;
         }
-
 
         .cx-wallet > p {
             margin-top: 8px;
@@ -193,28 +146,20 @@ function addWalletStyles() {
             font-size: 14px;
         }
 
-
         .cx-box {
             width: 100%;
             max-width: 400px;
             margin: 35px auto 0;
             padding: 25px 20px;
             border-radius: 20px;
-            background:
-                rgba(255,255,255,.07);
+            background: rgba(255,255,255,.07);
         }
-
 
         .cx-status {
             color: white;
             font-size: 15px;
             margin-bottom: 20px;
         }
-
-
-        /*
-         * TON CONNECT BUTTON
-         */
 
         #chubbyx-ton-connect {
             width: 100%;
@@ -224,15 +169,14 @@ function addWalletStyles() {
             justify-content: center;
             position: relative;
             z-index: 100;
-            pointer-events: auto;
+            pointer-events: auto !important;
+            touch-action: manipulation !important;
         }
-
 
         #chubbyx-ton-connect button {
             pointer-events: auto !important;
             touch-action: manipulation !important;
         }
-
 
         .cx-disconnect {
             width: 100%;
@@ -248,7 +192,6 @@ function addWalletStyles() {
             touch-action: manipulation;
         }
 
-
         .cx-home {
             position: absolute;
             left: 20px;
@@ -258,8 +201,7 @@ function addWalletStyles() {
             padding: 15px;
             border: none;
             border-radius: 15px;
-            background:
-                rgba(255,255,255,.12);
+            background: rgba(255,255,255,.12);
             color: white;
             font-size: 16px;
             font-weight: bold;
@@ -270,194 +212,186 @@ function addWalletStyles() {
 
     `;
 
-
     document.head.appendChild(style);
-
 }
 
 
 /* =========================================
-   START TON CONNECT
+   TON CONNECT
 ========================================= */
 
 async function startTonConnect() {
-
-    if (
-        tonConnectUI &&
-        tonConnectReady
-    ) {
-        return tonConnectUI;
-    }
-
 
     if (tonConnectStarting) {
         return tonConnectStarting;
     }
 
+    tonConnectStarting = (async () => {
 
-    tonConnectStarting =
-        (async () => {
+        try {
+
+            if (
+                !window.TON_CONNECT_UI ||
+                !window.TON_CONNECT_UI.TonConnectUI
+            ) {
+                console.error(
+                    "CHUBBYX: TON Connect SDK not loaded"
+                );
+                return null;
+            }
+
+
+            const root =
+                document.getElementById(
+                    "chubbyx-ton-connect"
+                );
+
+            if (!root) {
+                return null;
+            }
+
+
+            /*
+             * Create TON Connect UI
+             */
+
+            tonConnectUI =
+                new window.TON_CONNECT_UI.TonConnectUI({
+
+                    manifestUrl:
+                        MANIFEST_URL,
+
+                    buttonRootId:
+                        "chubbyx-ton-connect"
+
+                });
+
+
+            window.tonConnectUI =
+                tonConnectUI;
+
+
+            /*
+             * Telegram Mini App
+             */
+
+            tonConnectUI.uiOptions = {
+
+                twaReturnUrl:
+                    TWA_RETURN_URL,
+
+                uiPreferences: {
+
+                    colorsSet: {
+
+                        DARK: {
+
+                            connectButton: {
+
+                                background:
+                                    "#2196F3"
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            };
+
+
+            /*
+             * Wallet status
+             */
+
+            tonConnectUI.onStatusChange(
+                function(wallet) {
+
+                    updateWalletUI(wallet);
+
+                }
+            );
+
+
+            /*
+             * Restore connection
+             */
 
             try {
 
-                if (
-                    !window.TON_CONNECT_UI ||
-                    !window.TON_CONNECT_UI.TonConnectUI
-                ) {
+                await tonConnectUI.connectionRestored;
 
-                    console.error(
-                        "CHUBBYX: TON Connect SDK missing"
-                    );
-
-                    return null;
-                }
-
+            } catch (e) {
 
                 console.log(
-                    "CHUBBYX: Creating TON Connect UI"
+                    "CHUBBYX restore:",
+                    e
                 );
-
-
-                tonConnectUI =
-                    new window.TON_CONNECT_UI.TonConnectUI({
-
-                        manifestUrl:
-                            MANIFEST_URL,
-
-                        buttonRootId:
-                            "chubbyx-ton-connect"
-
-                    });
-
-
-                /*
-                 * Make it available to index.html
-                 */
-
-                window.tonConnectUI =
-                    tonConnectUI;
-
-
-                /*
-                 * Telegram Mini App return URL
-                 */
-
-                tonConnectUI.uiOptions = {
-
-                    twaReturnUrl:
-                        TWA_RETURN_URL
-
-                };
-
-
-                /*
-                 * Wallet status
-                 */
-
-                tonConnectUI.onStatusChange(
-                    function(wallet) {
-
-                        console.log(
-                            "CHUBBYX wallet status:",
-                            wallet
-                        );
-
-                        updateWalletUI(
-                            wallet
-                        );
-
-                    }
-                );
-
-
-                /*
-                 * Restore previous connection
-                 */
-
-                try {
-
-                    await tonConnectUI.connectionRestored;
-
-                } catch (e) {
-
-                    console.log(
-                        "CHUBBYX restore:",
-                        e
-                    );
-
-                }
-
-
-                tonConnectReady = true;
-
-
-                updateWalletUI(
-                    tonConnectUI.wallet
-                );
-
-
-                console.log(
-                    "CHUBBYX: TON CONNECT READY"
-                );
-
-
-                return tonConnectUI;
-
-
-            } catch (error) {
-
-                console.error(
-                    "CHUBBYX TON CONNECT ERROR:",
-                    error
-                );
-
-                tonConnectUI = null;
-
-                window.tonConnectUI = null;
-
-                tonConnectReady = false;
-
-                return null;
-
-            } finally {
-
-                tonConnectStarting = null;
 
             }
 
-        })();
+
+            tonConnectReady = true;
+
+            updateWalletUI(
+                tonConnectUI.wallet
+            );
+
+
+            console.log(
+                "CHUBBYX: TON CONNECT READY"
+            );
+
+
+            return tonConnectUI;
+
+        } catch (error) {
+
+            console.error(
+                "CHUBBYX TON CONNECT ERROR:",
+                error
+            );
+
+            tonConnectUI = null;
+
+            window.tonConnectUI = null;
+
+            tonConnectReady = false;
+
+            return null;
+
+        } finally {
+
+            tonConnectStarting = null;
+
+        }
+
+    })();
 
 
     return tonConnectStarting;
-
 }
 
 
 /* =========================================
-   UPDATE WALLET UI
+   UPDATE UI
 ========================================= */
 
 function updateWalletUI(wallet) {
 
     const status =
-        document.getElementById(
-            "cx-status"
-        );
+        document.getElementById("cx-status");
 
     const message =
-        document.getElementById(
-            "cx-message"
-        );
+        document.getElementById("cx-message");
 
     const disconnect =
-        document.getElementById(
-            "cx-disconnect"
-        );
+        document.getElementById("cx-disconnect");
 
 
-    if (!status) {
-        return;
-    }
+    if (!status) return;
 
 
     if (wallet) {
@@ -465,14 +399,12 @@ function updateWalletUI(wallet) {
         status.textContent =
             "Wallet Connected";
 
-
         if (message) {
 
             message.textContent =
                 "TON wallet connected";
 
         }
-
 
         if (disconnect) {
 
@@ -486,14 +418,12 @@ function updateWalletUI(wallet) {
         status.textContent =
             "Not Connected";
 
-
         if (message) {
 
             message.textContent =
                 "Connect your TON wallet";
 
         }
-
 
         if (disconnect) {
 
@@ -503,7 +433,6 @@ function updateWalletUI(wallet) {
         }
 
     }
-
 }
 
 
@@ -520,19 +449,15 @@ async function disconnectWallet(event) {
 
     }
 
-
     try {
 
-        if (!tonConnectUI) {
-            return;
+        if (tonConnectUI) {
+
+            await tonConnectUI.disconnect();
+
+            updateWalletUI(null);
+
         }
-
-
-        await tonConnectUI.disconnect();
-
-
-        updateWalletUI(null);
-
 
     } catch (error) {
 
@@ -542,15 +467,14 @@ async function disconnectWallet(event) {
         );
 
     }
-
 }
 
 
 /* =========================================
-   GO HOME
+   HOME
 ========================================= */
 
-async function goHome(event) {
+function goHome(event) {
 
     if (event) {
 
@@ -558,12 +482,6 @@ async function goHome(event) {
         event.stopPropagation();
 
     }
-
-
-    console.log(
-        "CHUBBYX: Going Home"
-    );
-
 
     try {
 
@@ -577,27 +495,16 @@ async function goHome(event) {
 
         }
 
-    } catch (e) {
-
-        console.log(
-            "CHUBBYX modal close:",
-            e
-        );
-
-    }
-
+    } catch (e) {}
 
     if (
         typeof window.switchPage ===
             "function"
     ) {
 
-        window.switchPage(
-            "home"
-        );
+        window.switchPage("home");
 
     }
-
 }
 
 
@@ -608,14 +515,14 @@ async function goHome(event) {
 window.walletPage =
     walletPage;
 
+window.startTonConnect =
+    startTonConnect;
+
 window.disconnectWallet =
     disconnectWallet;
 
 window.goHome =
     goHome;
-
-window.startTonConnect =
-    startTonConnect;
 
 
 console.log(
