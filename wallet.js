@@ -117,7 +117,7 @@ function createWalletUI() {
                         z-index:999999;
                     "
                 >
-                    ‹
+                    >
                 </button>
 
                 <div
@@ -294,6 +294,33 @@ function createWalletUI() {
 
             </div>
 
+
+            <!-- BACK TO HOME -->
+
+            <button
+                id="chubbyx-back-home"
+                type="button"
+                style="
+                    width:100%;
+                    max-width:420px;
+                    margin-top:18px;
+                    border:none;
+                    border-radius:16px;
+                    padding:15px;
+                    font-size:16px;
+                    font-weight:800;
+                    color:white;
+                    background:rgba(255,255,255,0.10);
+                    cursor:pointer;
+                    touch-action:manipulation;
+                    pointer-events:auto;
+                    position:relative;
+                    z-index:999999;
+                "
+            >
+                Back to Home
+            </button>
+
         </div>
     `;
 
@@ -320,6 +347,45 @@ function createWalletUI() {
 
             console.log(
                 "ChubbyX: BACK clicked"
+            );
+
+            if (
+                typeof window.switchPage ===
+                "function"
+            ) {
+
+                window.switchPage(
+                    "home",
+                    document.getElementById(
+                        "default-nav"
+                    )
+                );
+
+            }
+
+            return false;
+        };
+    }
+
+
+    /* =====================================================
+       BACK TO HOME BUTTON
+       ===================================================== */
+
+    const backHome =
+        document.getElementById(
+            "chubbyx-back-home"
+        );
+
+    if (backHome) {
+
+        backHome.onclick = function(event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            console.log(
+                "ChubbyX: BACK TO HOME clicked"
             );
 
             if (
