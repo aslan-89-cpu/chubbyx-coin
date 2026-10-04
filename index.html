@@ -1,371 +1,1056 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
     <title>ChubbyX Hub</title>
-    <!-- Telegram WebApp SDK -->
+
+
+    <!-- =========================================
+         TELEGRAM WEBAPP SDK
+    ========================================== -->
+
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- TonConnect UI SDK -->
+
+
+    <!-- =========================================
+         TON CONNECT UI SDK
+    ========================================== -->
+
     <script src="https://unpkg.com/@tonconnect/ui@3.0.2/dist/tonconnect-ui.min.js"></script>
+
+
+    <!-- =========================================
+         MAIN CSS
+    ========================================== -->
+
     <style>
+
         * {
+
             box-sizing: border-box;
+
             margin: 0;
+
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                sans-serif;
+
         }
+
+
         body {
+
             background: #130f26;
+
             color: #ffffff;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             height: 100vh;
+
             overflow: hidden;
+
             user-select: none;
+
             -webkit-user-select: none;
+
             touch-action: auto;
+
         }
+
+
+        /* =====================================
+           HOME
+        ===================================== */
+
         #home-layout {
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             width: 100%;
+
             height: 100%;
-            background: url('background.jpg') no-repeat center top -120px;
+
+            background:
+                url('background.jpg')
+                no-repeat
+                center top -120px;
+
             background-size: cover;
+
         }
+
+
+        /* =====================================
+           HEADER
+        ===================================== */
+
         .header-bar {
+
             width: 100%;
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             padding: 20px 20px 0;
+
             z-index: 2500;
+
         }
+
+
         .btn-top {
-            background: rgba(255,255,255,0.1);
+
+            background:
+                rgba(255,255,255,0.1);
+
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.2);
+
+            border:
+                1px solid
+                rgba(255,255,255,0.2);
+
             color: white;
+
             padding: 8px 16px;
+
             border-radius: 20px;
+
             font-size: 14px;
+
             font-weight: bold;
+
             cursor: pointer;
+
         }
+
+
+        /* =====================================
+           HEADER TITLE
+        ===================================== */
+
         .header {
+
             margin-top: 25px;
+
             text-align: center;
+
             z-index: 10;
+
             pointer-events: none;
+
         }
+
+
         .header div {
+
             font-size: 14px;
+
             opacity: 0.8;
+
             letter-spacing: 1px;
+
         }
+
+
         .header h1 {
+
             font-size: 38px;
+
             font-weight: bold;
+
             margin-top: 5px;
+
         }
+
+
+        /* =====================================
+           COIN
+        ===================================== */
+
         .coin-container {
+
             flex: 1;
+
             display: flex;
+
             justify-content: center;
+
             align-items: center;
+
             width: 100%;
+
             position: relative;
+
             z-index: 5;
+
         }
+
+
         .transparent-tap-zone {
+
             position: absolute;
+
             top: 25%;
+
             width: 270px;
+
             height: 270px;
+
             border-radius: 50%;
+
             background: transparent;
+
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
+
+            -webkit-tap-highlight-color:
+                transparent;
+
             z-index: 999;
+
             touch-action: manipulation;
-            transition: transform 0.05s ease;
+
+            transition:
+                transform 0.05s ease;
+
         }
+
+
         .transparent-tap-zone:active {
-            transform: scale(0.93) !important;
+
+            transform:
+                scale(0.93) !important;
+
         }
+
+
+        /* =====================================
+           FLOATING +1
+        ===================================== */
+
         .floating-text {
+
             position: absolute;
+
             color: #eeb308;
+
             font-weight: bold;
+
             font-size: 28px;
+
             pointer-events: none;
+
             z-index: 1000;
-            animation: FloatUp 0.6s ease-out forwards;
-            text-shadow: 0 5px 10px rgba(234,179,8,0.3);
+
+            animation:
+                FloatUp 0.6s ease-out forwards;
+
+            text-shadow:
+                0 5px 10px
+                rgba(234,179,8,0.3);
+
         }
+
+
         @keyframes FloatUp {
+
             0% {
+
                 opacity: 1;
-                transform: translateY(0) scale(1);
+
+                transform:
+                    translateY(0)
+                    scale(1);
+
             }
+
             100% {
+
                 opacity: 0;
-                transform: translateY(-120px) scale(1.3);
+
+                transform:
+                    translateY(-120px)
+                    scale(1.3);
+
             }
+
         }
+
+
+        /* =====================================
+           DYNAMIC PAGES
+        ===================================== */
+
         .dynamic-page {
+
             display: none;
+
             position: fixed;
+
             top: 0;
+
             left: 0;
+
             width: 100vw;
-            height: calc(100vh - 85px);
+
+            height:
+                calc(100vh - 85px);
+
             z-index: 1500;
+
             background: #130f26;
-            padding: 40px 20px 20px;
+
+            padding:
+                40px 20px 20px;
+
             flex-direction: column;
+
             align-items: center;
+
         }
+
+
         .dynamic-page.active {
+
             display: flex;
+
         }
+
+
+        /* =====================================
+           PAGE TITLE
+        ===================================== */
+
         .page-title {
+
             font-size: 26px;
+
             font-weight: bold;
+
             margin-bottom: 25px;
+
             color: #eeb308;
+
             margin-top: 20px;
+
         }
+
+
         .page-content {
+
             width: 100%;
+
             flex: 1;
+
             overflow-y: auto;
+
         }
+
+
+        /* =====================================
+           BOTTOM NAV
+        ===================================== */
+
         .bottom-nav {
+
             width: 100%;
-            border-top: 1px solid rgba(255,255,255,0.1);
+
+            border-top:
+                1px solid
+                rgba(255,255,255,0.1);
+
             background: #05030a;
+
             display: flex;
+
             position: fixed;
+
             bottom: 0;
-            padding: 15px 15px calc(15px + env(safe-area-inset-bottom));
+
+            padding:
+                15px 15px
+                calc(15px + env(safe-area-inset-bottom));
+
             z-index: 2000;
+
         }
+
+
         .nav-link {
+
             flex: 1;
+
             text-align: center;
+
             font-size: 13px;
+
             color: #666;
+
             text-decoration: none;
+
             cursor: pointer;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
         }
+
+
         .nav-link.active {
+
             color: #eeb308;
+
             font-weight: bold;
+
         }
+
+
         .nav-icon {
+
             font-size: 20px;
+
             margin-bottom: 4px;
+
         }
+
+
+        /* =====================================
+           TASK
+        ===================================== */
+
         .task-card {
-            background: rgba(255,255,255,0.06);
+
+            background:
+                rgba(255,255,255,0.06);
+
             padding: 16px;
+
             border-radius: 14px;
+
             margin-bottom: 12px;
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
         }
+
+
         .task-btn {
+
             background: #eeb308;
+
             color: black;
+
             border: none;
+
             padding: 10px 18px;
+
             border-radius: 10px;
+
             font-weight: bold;
+
             cursor: pointer;
+
         }
+
     </style>
+
 </head>
+
+
 <body>
-    <!-- HOME -->
+
+
+    <!-- =========================================
+         HOME
+    ========================================== -->
+
     <div id="home-layout">
+
+
         <div class="header-bar">
-            <button class="btn-top" onclick="switchPage('menu')">
+
+            <button
+                class="btn-top"
+                onclick="switchPage('menu')"
+            >
                 ≡ Menu
             </button>
-            <button class="btn-top" onclick="switchPage('airdrop')">
+
+
+            <button
+                class="btn-top"
+                onclick="switchPage('airdrop')"
+            >
                 🎁 Airdrop
             </button>
+
         </div>
+
+
         <div class="header">
-            <div>CHUBBYX BALANCE</div>
-            <h1 id="main-score">0</h1>
+
+            <div>
+                CHUBBYX BALANCE
+            </div>
+
+            <h1 id="main-score">
+                0
+            </h1>
+
         </div>
-        <div class="coin-container" id="coincontainer">
-            <div class="transparent-tap-zone" id="clickcoin"></div>
+
+
+        <div
+            class="coin-container"
+            id="coincontainer"
+        >
+
+            <div
+                class="transparent-tap-zone"
+                id="clickcoin"
+            ></div>
+
         </div>
+
     </div>
-    <!-- PAGES -->
-    <div id="tasks-page" class="dynamic-page"></div>
-    <div id="invites-page" class="dynamic-page"></div>
-    <div id="games-page" class="dynamic-page"></div>
-    <div id="wallet-page" class="dynamic-page"></div>
-    <div id="menu-page" class="dynamic-page"></div>
-    <div id="airdrop-page" class="dynamic-page"></div>
-    <!-- BOTTOM NAV -->
+
+
+    <!-- =========================================
+         PAGES
+    ========================================== -->
+
+    <div
+        id="tasks-page"
+        class="dynamic-page"
+    ></div>
+
+
+    <div
+        id="invites-page"
+        class="dynamic-page"
+    ></div>
+
+
+    <div
+        id="games-page"
+        class="dynamic-page"
+    ></div>
+
+
+    <div
+        id="wallet-page"
+        class="dynamic-page"
+    ></div>
+
+
+    <div
+        id="menu-page"
+        class="dynamic-page"
+    ></div>
+
+
+    <div
+        id="airdrop-page"
+        class="dynamic-page"
+    ></div>
+
+
+    <!-- =========================================
+         BOTTOM NAV
+    ========================================== -->
+
     <div class="bottom-nav">
-        <div class="nav-link"
-             onclick="switchPage('tasks', this)">
-            <span class="nav-icon">📋</span>
+
+
+        <div
+            class="nav-link"
+            onclick="switchPage('tasks', this)"
+        >
+
+            <span class="nav-icon">
+                📋
+            </span>
+
             Tasks
+
         </div>
-        <div class="nav-link"
-             onclick="switchPage('invites', this)">
-            <span class="nav-icon">👥</span>
+
+
+        <div
+            class="nav-link"
+            onclick="switchPage('invites', this)"
+        >
+
+            <span class="nav-icon">
+                👥
+            </span>
+
             Invites
+
         </div>
-        <div class="nav-link active"
-             id="default-nav"
-             onclick="switchPage('home', this)">
-            <span class="nav-icon">🏠</span>
+
+
+        <div
+            class="nav-link active"
+            id="default-nav"
+            onclick="switchPage('home', this)"
+        >
+
+            <span class="nav-icon">
+                🏠
+            </span>
+
             Home
+
         </div>
-        <div class="nav-link"
-             onclick="switchPage('games', this)">
-            <span class="nav-icon">🎮</span>
+
+
+        <div
+            class="nav-link"
+            onclick="switchPage('games', this)"
+        >
+
+            <span class="nav-icon">
+                🎮
+            </span>
+
             Games
+
         </div>
-        <div class="nav-link"
-             onclick="switchPage('wallet', this)">
-            <span class="nav-icon">💎</span>
+
+
+        <div
+            class="nav-link"
+            onclick="switchPage('wallet', this)"
+        >
+
+            <span class="nav-icon">
+                💎
+            </span>
+
             Wallet
+
         </div>
+
     </div>
-    <!-- MAIN APP -->
+
+
+    <!-- =========================================
+         MAIN APP
+    ========================================== -->
+
     <script>
-        if (window.Telegram && window.Telegram.WebApp) {
+
+
+        /* =====================================
+           TELEGRAM
+        ===================================== */
+
+        if (
+            window.Telegram &&
+            window.Telegram.WebApp
+        ) {
+
             window.Telegram.WebApp.ready();
+
             window.Telegram.WebApp.expand();
+
         }
+
+
+        /* =====================================
+           COIN COUNTER
+        ===================================== */
+
         let count =
-            parseInt(localStorage.getItem('chubby_coins')) || 0;
-        document.getElementById('main-score').innerText =
+            parseInt(
+                localStorage.getItem(
+                    'chubby_coins'
+                )
+            ) || 0;
+
+
+        document.getElementById(
+            'main-score'
+        ).innerText =
             count.toLocaleString();
+
+
         const tapElement =
-            document.getElementById('clickcoin');
+            document.getElementById(
+                'clickcoin'
+            );
+
+
         const coinContainer =
-            document.getElementById('coincontainer');
+            document.getElementById(
+                'coincontainer'
+            );
+
+
         if (tapElement) {
+
             tapElement.addEventListener(
                 'pointerdown',
                 function(e) {
+
                     e.preventDefault();
+
+
                     count++;
+
+
                     document.getElementById(
                         'main-score'
                     ).innerText =
                         count.toLocaleString();
+
+
                     localStorage.setItem(
                         'chubby_coins',
                         count
                     );
-                    if ('speechSynthesis' in window) {
+
+
+                    if (
+                        'speechSynthesis'
+                        in window
+                    ) {
+
                         window.speechSynthesis.cancel();
+
+
                         const utterance =
-                            new SpeechSynthesisUtterance('Chub');
-                        utterance.lang = 'en-US';
-                        utterance.pitch = 1.4;
-                        utterance.rate = 1.6;
+                            new SpeechSynthesisUtterance(
+                                'Chub'
+                            );
+
+
+                        utterance.lang =
+                            'en-US';
+
+
+                        utterance.pitch =
+                            1.4;
+
+
+                        utterance.rate =
+                            1.6;
+
+
                         window.speechSynthesis.speak(
                             utterance
                         );
+
                     }
+
+
                     const textNode =
-                        document.createElement('div');
+                        document.createElement(
+                            'div'
+                        );
+
+
                     textNode.className =
                         'floating-text';
-                    textNode.innerText = '+1';
+
+
+                    textNode.innerText =
+                        '+1';
+
+
                     const rect =
-                        coinContainer.getBoundingClientRect();
+                        coinContainer
+                            .getBoundingClientRect();
+
+
                     textNode.style.left =
-                        (e.clientX - rect.left - 15) + 'px';
+                        (
+                            e.clientX -
+                            rect.left -
+                            15
+                        ) + 'px';
+
+
                     textNode.style.top =
-                        (e.clientY - rect.top - 30) + 'px';
-                    coinContainer.appendChild(textNode);
-                    setTimeout(function() {
-                        textNode.remove();
-                    }, 600);
+                        (
+                            e.clientY -
+                            rect.top -
+                            30
+                        ) + 'px';
+
+
+                    coinContainer.appendChild(
+                        textNode
+                    );
+
+
+                    setTimeout(
+                        function() {
+
+                            textNode.remove();
+
+                        },
+                        600
+                    );
+
                 }
             );
+
         }
-        function switchPage(pageId, element) {
+
+
+        /* =====================================
+           SWITCH PAGE
+        ===================================== */
+
+        function switchPage(
+            pageId,
+            element
+        ) {
+
+
+            console.log(
+                "CHUBBYX switchPage:",
+                pageId
+            );
+
+
+            /* ---------------------------------
+               CLOSE WALLET MODAL IF LEAVING
+            --------------------------------- */
+
+            if (
+                pageId !== 'wallet' &&
+                window.tonConnectUI &&
+                typeof
+                    window.tonConnectUI.closeModal
+                    === 'function'
+            ) {
+
+                try {
+
+                    window.tonConnectUI.closeModal();
+
+                } catch (e) {
+
+                    console.log(
+                        "CHUBBYX modal close:",
+                        e
+                    );
+
+                }
+
+            }
+
+
+            /* ---------------------------------
+               HIDE HOME
+            --------------------------------- */
+
             document.getElementById(
                 'home-layout'
-            ).style.display = 'none';
+            ).style.display =
+                'none';
+
+
+            /* ---------------------------------
+               HIDE ALL PAGES
+            --------------------------------- */
+
             document.querySelectorAll(
                 '.dynamic-page'
-            ).forEach(function(page) {
-                page.classList.remove('active');
-            });
-            if (element) {
-                document.querySelectorAll(
-                    '.nav-link'
-                ).forEach(function(link) {
-                    link.classList.remove('active');
-                });
-                element.classList.add('active');
-            } else {
-                document.querySelectorAll(
-                    '.nav-link'
-                ).forEach(function(link) {
-                    link.classList.remove('active');
-                });
-                if (pageId === 'home') {
-                    document.getElementById(
-                        'default-nav'
-                    ).classList.add('active');
+            ).forEach(
+                function(page) {
+
+                    page.classList.remove(
+                        'active'
+                    );
+
                 }
+            );
+
+
+            /* ---------------------------------
+               NAV ACTIVE
+            --------------------------------- */
+
+            document.querySelectorAll(
+                '.nav-link'
+            ).forEach(
+                function(link) {
+
+                    link.classList.remove(
+                        'active'
+                    );
+
+                }
+            );
+
+
+            if (element) {
+
+                element.classList.add(
+                    'active'
+                );
+
+            } else if (
+                pageId === 'home'
+            ) {
+
+                document.getElementById(
+                    'default-nav'
+                ).classList.add(
+                    'active'
+                );
+
             }
-            if (pageId === 'home') {
+
+
+            /* ---------------------------------
+               HOME
+            --------------------------------- */
+
+            if (
+                pageId === 'home'
+            ) {
+
                 document.getElementById(
                     'home-layout'
-                ).style.display = 'flex';
-            } else {
-                const targetPage =
-                    document.getElementById(
-                        pageId + '-page'
-                    );
-                if (targetPage) {
-                    targetPage.classList.add('active');
-                    if (
-                        pageId === 'invites' &&
-                        typeof updateInviteUI === 'function'
-                    ) {
-                        updateInviteUI();
-                    }
-                }
+                ).style.display =
+                    'flex';
+
+                return;
+
             }
+
+
+            /* ---------------------------------
+               OPEN PAGE
+            --------------------------------- */
+
+            const targetPage =
+                document.getElementById(
+                    pageId + '-page'
+                );
+
+
+            if (!targetPage) {
+
+                console.error(
+                    "CHUBBYX page not found:",
+                    pageId
+                );
+
+                return;
+
+            }
+
+
+            targetPage.classList.add(
+                'active'
+            );
+
+
+            /* ---------------------------------
+               INVITES
+            --------------------------------- */
+
+            if (
+                pageId === 'invites' &&
+                typeof updateInviteUI ===
+                    'function'
+            ) {
+
+                updateInviteUI();
+
+            }
+
+
+            /* ---------------------------------
+               WALLET
+            --------------------------------- */
+
+            if (
+                pageId === 'wallet' &&
+                typeof window.walletPage ===
+                    'function'
+            ) {
+
+                window.walletPage();
+
+            }
+
         }
-        if (
-    pageId === 'wallet' &&
-    typeof walletPage === 'function'
-) {
-    walletPage();
-}
+
+
+        /* =====================================
+           GLOBAL
+        ===================================== */
+
+        window.switchPage =
+            switchPage;
+
+
     </script>
-    <!-- OTHER FEATURES -->
+
+
+    <!-- =========================================
+         OTHER FEATURES
+    ========================================== -->
+
     <script src="game.js"></script>
+
     <script src="tasks.js"></script>
+
     <script src="invite.js"></script>
-    <!-- WALLET -->
-    <script src="wallet.js?v=10"></script>
+
+
+    <!-- =========================================
+         WALLET
+    ========================================== -->
+
+    <script src="wallet.js?v=11"></script>
+
+
+    <!-- =========================================
+         MENU
+    ========================================== -->
+
     <script src="menu.js"></script>
+
+
 </body>
+
 </html>
