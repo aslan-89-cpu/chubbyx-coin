@@ -353,6 +353,12 @@
                 }
             }
         }
+        if (
+    pageId === 'wallet' &&
+    typeof walletPage === 'function'
+) {
+    walletPage();
+}
     </script>
     <!-- OTHER FEATURES -->
     <script src="game.js"></script>
