@@ -1,11 +1,9 @@
 /* =========================================
    CHUBBYX — WALLET.JS
-   TON CONNECT FIXED
 ========================================= */
 
 let tonConnectUI = null;
 let tonConnectStarting = null;
-
 let walletPageCreated = false;
 let walletOpening = false;
 
@@ -25,17 +23,8 @@ function walletPage() {
     const page =
         document.getElementById("wallet-page");
 
-    if (!page) {
-        console.error(
-            "CHUBBYX: wallet-page NOT FOUND"
-        );
-        return;
-    }
+    if (!page) return;
 
-
-    /* =====================================
-       CREATE WALLET PAGE ONCE
-    ===================================== */
 
     if (!walletPageCreated) {
 
@@ -44,11 +33,9 @@ function walletPage() {
 
                 <button
                     id="cx-wallet-back"
-                    type="button"
                     class="cx-back"
-                >
-                    ‹
-                </button>
+                    type="button"
+                >‹</button>
 
                 <h2>Wallet</h2>
 
@@ -65,7 +52,6 @@ function walletPage() {
                         Not Connected
                     </div>
 
-                    <!-- TON CONNECT ROOT -->
                     <div
                         id="cx-ton-root"
                         class="cx-ton-root"
@@ -73,9 +59,9 @@ function walletPage() {
 
                     <button
                         id="cx-disconnect"
-                        type="button"
                         class="cx-disconnect"
-                        style="display:none;"
+                        type="button"
+                        style="display:none"
                     >
                         Disconnect
                     </button>
@@ -84,8 +70,8 @@ function walletPage() {
 
                 <button
                     id="cx-home"
-                    type="button"
                     class="cx-home"
+                    type="button"
                 >
                     Back to Home
                 </button>
@@ -93,81 +79,23 @@ function walletPage() {
             </div>
         `;
 
-
         addWalletStyles();
 
+        document
+            .getElementById("cx-wallet-back")
+            .onclick = goHome;
 
-        /* =================================
-           BACK BUTTON
-        ================================= */
+        document
+            .getElementById("cx-home")
+            .onclick = goHome;
 
-        const backButton =
-            document.getElementById(
-                "cx-wallet-back"
-            );
-
-        if (backButton) {
-
-            backButton.onclick =
-                function(event) {
-
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    console.log(
-                        "CHUBBYX: BACK"
-                    );
-
-                    goHome();
-                };
-        }
-
-
-        /* =================================
-           HOME BUTTON
-        ================================= */
-
-        const homeButton =
-            document.getElementById(
-                "cx-home"
-            );
-
-        if (homeButton) {
-
-            homeButton.onclick =
-                function(event) {
-
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    goHome();
-                };
-        }
-
-
-        /* =================================
-           DISCONNECT
-        ================================= */
-
-        const disconnectButton =
-            document.getElementById(
-                "cx-disconnect"
-            );
-
-        if (disconnectButton) {
-
-            disconnectButton.onclick =
-                disconnectWallet;
-        }
-
+        document
+            .getElementById("cx-disconnect")
+            .onclick = disconnectWallet;
 
         walletPageCreated = true;
     }
 
-
-    /* =====================================
-       START TON CONNECT
-    ===================================== */
 
     startTonConnect();
 }
@@ -183,9 +111,7 @@ function addWalletStyles() {
         document.getElementById(
             "cx-wallet-style"
         )
-    ) {
-        return;
-    }
+    ) return;
 
 
     const style =
@@ -197,64 +123,54 @@ function addWalletStyles() {
 
     style.textContent = `
 
-        /* ================================
-           WALLET PAGE
-        ================================= */
-
         #wallet-page {
+
+            position: fixed !important;
+
+            top: 0 !important;
+            left: 0 !important;
+
+            width: 100vw !important;
+
+            height:
+                calc(100vh - 85px) !important;
 
             overflow: hidden !important;
 
-            overflow-x: hidden !important;
+            background: #130f26 !important;
 
-            overflow-y: hidden !important;
+            z-index: 9999 !important;
+        }
 
-            touch-action: none !important;
+
+        .cx-wallet {
 
             position: relative !important;
 
             width: 100% !important;
 
             height: 100% !important;
-        }
-
-
-        .cx-wallet {
-
-            position: relative;
-
-            width: 100%;
-
-            height: 100%;
-
-            min-height: 100%;
 
             box-sizing: border-box;
 
             padding:
-                70px 20px 110px;
+                70px 20px 90px;
 
             text-align: center;
 
             color: white;
 
-            overflow: hidden;
-
-            touch-action: none;
+            overflow: hidden !important;
         }
 
-
-        /* ================================
-           TITLE
-        ================================= */
 
         .cx-wallet h2 {
 
             margin: 0;
 
-            font-size: 28px;
-
             color: #eeb308;
+
+            font-size: 28px;
         }
 
 
@@ -268,59 +184,39 @@ function addWalletStyles() {
         }
 
 
-        /* ================================
-           BACK
-        ================================= */
-
         .cx-back {
 
             position: absolute;
 
             top: 15px;
-
             left: 15px;
 
             width: 45px;
-
             height: 45px;
-
-            padding: 0;
 
             border: none;
 
             border-radius: 50%;
 
             background:
-                rgba(255,255,255,0.12);
+                rgba(255,255,255,.12);
 
             color: white;
 
             font-size: 34px;
 
-            line-height: 45px;
-
             display: flex;
 
             align-items: center;
-
             justify-content: center;
 
             z-index: 999999;
 
             cursor: pointer;
 
-            pointer-events: auto;
-
             touch-action: manipulation;
-
-            -webkit-tap-highlight-color:
-                transparent;
         }
 
-
-        /* ================================
-           BOX
-        ================================= */
 
         .cx-box {
 
@@ -339,27 +235,19 @@ function addWalletStyles() {
             border-radius: 20px;
 
             background:
-                rgba(255,255,255,0.07);
+                rgba(255,255,255,.07);
         }
 
 
-        /* ================================
-           STATUS
-        ================================= */
-
         .cx-status {
+
+            margin-bottom: 20px;
 
             color: white;
 
             font-size: 15px;
-
-            margin-bottom: 20px;
         }
 
-
-        /* ================================
-           TON ROOT
-        ================================= */
 
         .cx-ton-root {
 
@@ -369,9 +257,9 @@ function addWalletStyles() {
 
             display: flex;
 
-            align-items: center;
-
             justify-content: center;
+
+            align-items: center;
 
             position: relative;
 
@@ -379,25 +267,17 @@ function addWalletStyles() {
         }
 
 
-        /* TON CONNECT GENERATED BUTTON */
-
         .cx-ton-root button {
 
             min-height: 52px !important;
 
-            min-width: 220px !important;
-
             border-radius: 14px !important;
 
-            cursor: pointer !important;
-
             pointer-events: auto !important;
+
+            cursor: pointer !important;
         }
 
-
-        /* ================================
-           DISCONNECT
-        ================================= */
 
         .cx-disconnect {
 
@@ -405,8 +285,7 @@ function addWalletStyles() {
 
             max-width: 320px;
 
-            margin:
-                15px auto 0;
+            margin-top: 15px;
 
             padding: 15px;
 
@@ -421,30 +300,16 @@ function addWalletStyles() {
             font-size: 16px;
 
             font-weight: bold;
-
-            cursor: pointer;
-
-            position: relative;
-
-            z-index: 999999;
-
-            touch-action: manipulation;
         }
 
-
-        /* ================================
-           HOME
-        ================================= */
 
         .cx-home {
 
             position: absolute;
 
             left: 20px;
-
             right: 20px;
-
-            bottom: 20px;
+            bottom: 15px;
 
             width:
                 calc(100% - 40px);
@@ -456,7 +321,7 @@ function addWalletStyles() {
             border-radius: 15px;
 
             background:
-                rgba(255,255,255,0.12);
+                rgba(255,255,255,.12);
 
             color: white;
 
@@ -464,39 +329,11 @@ function addWalletStyles() {
 
             font-weight: bold;
 
-            cursor: pointer;
-
             z-index: 999999;
 
-            pointer-events: auto;
+            cursor: pointer;
 
             touch-action: manipulation;
-
-            -webkit-tap-highlight-color:
-                transparent;
-        }
-
-
-        /* ================================
-           ERROR
-        ================================= */
-
-        .cx-error {
-
-            margin-top: 15px;
-
-            padding: 10px;
-
-            border-radius: 10px;
-
-            background:
-                rgba(255,0,0,0.12);
-
-            color: #ff5555;
-
-            font-size: 12px;
-
-            word-break: break-word;
         }
 
     `;
@@ -507,12 +344,10 @@ function addWalletStyles() {
 
 
 /* =========================================
-   TON CONNECT
+   TON CONNECT START
 ========================================= */
 
 async function startTonConnect() {
-
-    /* ALREADY READY */
 
     if (tonConnectUI) {
 
@@ -523,8 +358,6 @@ async function startTonConnect() {
         return tonConnectUI;
     }
 
-
-    /* ALREADY STARTING */
 
     if (tonConnectStarting) {
 
@@ -537,15 +370,6 @@ async function startTonConnect() {
 
             try {
 
-                console.log(
-                    "CHUBBYX: TON CONNECT START"
-                );
-
-
-                /* =========================
-                   CHECK SDK
-                ========================= */
-
                 if (
                     !window.TON_CONNECT_UI ||
                     !window.TON_CONNECT_UI.TonConnectUI
@@ -557,33 +381,22 @@ async function startTonConnect() {
                 }
 
 
-                /* =========================
-                   ROOT
-                ========================= */
-
                 const root =
                     document.getElementById(
                         "cx-ton-root"
                     );
 
+
                 if (!root) {
 
                     throw new Error(
-                        "TON Connect root not found"
+                        "TON Connect root missing"
                     );
                 }
 
 
-                /*
-                 * Clear root first
-                 */
-
                 root.innerHTML = "";
 
-
-                /* =========================
-                   CREATE TON CONNECT
-                ========================= */
 
                 tonConnectUI =
                     new window.TON_CONNECT_UI.TonConnectUI({
@@ -593,17 +406,12 @@ async function startTonConnect() {
 
                         buttonRootId:
                             "cx-ton-root"
-
                     });
 
 
                 window.tonConnectUI =
                     tonConnectUI;
 
-
-                /* =========================
-                   UI OPTIONS
-                ========================= */
 
                 tonConnectUI.uiOptions = {
 
@@ -620,39 +428,24 @@ async function startTonConnect() {
                 };
 
 
-                /* =========================
-                   STATUS
-                ========================= */
-
                 tonConnectUI.onStatusChange(
                     function(wallet) {
 
-                        console.log(
-                            "CHUBBYX: WALLET STATUS",
-                            wallet
-                        );
-
-                        updateWalletUI(
-                            wallet
-                        );
+                        updateWalletUI(wallet);
                     }
                 );
 
-
-                /* =========================
-                   RESTORE
-                ========================= */
 
                 try {
 
                     await tonConnectUI
                         .connectionRestored;
 
-                } catch (error) {
+                } catch (e) {
 
                     console.log(
-                        "CHUBBYX: RESTORE ERROR",
-                        error
+                        "Wallet restore:",
+                        e
                     );
                 }
 
@@ -662,43 +455,24 @@ async function startTonConnect() {
                 );
 
 
-                console.log(
-                    "CHUBBYX: TON CONNECT READY"
-                );
-
-
                 return tonConnectUI;
-
 
             } catch (error) {
 
                 console.error(
-                    "CHUBBYX: TON CONNECT ERROR",
+                    "TON CONNECT ERROR:",
                     error
                 );
 
+                tonConnectUI = null;
 
-                tonConnectUI =
-                    null;
-
-                window.tonConnectUI =
-                    null;
-
-
-                showWalletError(
-                    error &&
-                    error.message
-                        ? error.message
-                        : String(error)
-                );
-
+                window.tonConnectUI = null;
 
                 return null;
 
             } finally {
 
-                tonConnectStarting =
-                    null;
+                tonConnectStarting = null;
             }
 
         })();
@@ -709,7 +483,7 @@ async function startTonConnect() {
 
 
 /* =========================================
-   UPDATE WALLET UI
+   WALLET STATUS
 ========================================= */
 
 function updateWalletUI(wallet) {
@@ -730,9 +504,7 @@ function updateWalletUI(wallet) {
         );
 
 
-    if (!status) {
-        return;
-    }
+    if (!status) return;
 
 
     if (wallet) {
@@ -740,13 +512,11 @@ function updateWalletUI(wallet) {
         status.textContent =
             "Wallet Connected";
 
-
         if (message) {
 
             message.textContent =
                 "TON wallet connected";
         }
-
 
         if (disconnect) {
 
@@ -759,13 +529,11 @@ function updateWalletUI(wallet) {
         status.textContent =
             "Not Connected";
 
-
         if (message) {
 
             message.textContent =
                 "Connect your TON wallet";
         }
-
 
         if (disconnect) {
 
@@ -773,53 +541,6 @@ function updateWalletUI(wallet) {
                 "none";
         }
     }
-}
-
-
-/* =========================================
-   ERROR
-========================================= */
-
-function showWalletError(message) {
-
-    const box =
-        document.querySelector(
-            ".cx-box"
-        );
-
-    if (!box) {
-        return;
-    }
-
-
-    let errorBox =
-        document.getElementById(
-            "cx-wallet-error"
-        );
-
-
-    if (!errorBox) {
-
-        errorBox =
-            document.createElement(
-                "div"
-            );
-
-        errorBox.id =
-            "cx-wallet-error";
-
-        errorBox.className =
-            "cx-error";
-
-        box.appendChild(
-            errorBox
-        );
-    }
-
-
-    errorBox.textContent =
-        "TON Connect Error: " +
-        message;
 }
 
 
@@ -832,44 +553,31 @@ async function disconnectWallet(event) {
     if (event) {
 
         event.preventDefault();
-
         event.stopPropagation();
     }
 
 
+    if (!tonConnectUI) return;
+
+
     try {
-
-        if (!tonConnectUI) {
-            return;
-        }
-
 
         await tonConnectUI.disconnect();
 
-
         updateWalletUI(null);
-
 
     } catch (error) {
 
         console.error(
-            "CHUBBYX: DISCONNECT ERROR",
+            "DISCONNECT ERROR:",
             error
-        );
-
-
-        showWalletError(
-            error &&
-            error.message
-                ? error.message
-                : String(error)
         );
     }
 }
 
 
 /* =========================================
-   GO HOME
+   BACK TO HOME
 ========================================= */
 
 function goHome(event) {
@@ -877,17 +585,9 @@ function goHome(event) {
     if (event) {
 
         event.preventDefault();
-
         event.stopPropagation();
     }
 
-
-    console.log(
-        "CHUBBYX: GO HOME"
-    );
-
-
-    /* CLOSE TON MODAL */
 
     try {
 
@@ -900,16 +600,8 @@ function goHome(event) {
             tonConnectUI.closeModal();
         }
 
-    } catch (error) {
+    } catch (e) {}
 
-        console.log(
-            "CHUBBYX: CLOSE MODAL ERROR",
-            error
-        );
-    }
-
-
-    /* RETURN TO HOME */
 
     if (
         typeof window.switchPage ===
@@ -937,7 +629,6 @@ window.disconnectWallet =
 window.goHome =
     goHome;
 
-
 console.log(
-    "CHUBBYX: NEW WALLET.JS LOADED"
+    "CHUBBYX WALLET.JS READY"
 );
