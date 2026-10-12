@@ -1,35 +1,20 @@
+
+
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>ChubbyX Hub</title>
 
-
-    <!-- =========================================
-         TELEGRAM WEBAPP SDK
-    ========================================== -->
-
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-
-    <!-- =========================================
-         TON CONNECT UI SDK
-    ========================================== -->
-
     <script src="https://unpkg.com/@tonconnect/ui@3.0.2/dist/tonconnect-ui.min.js"></script>
-
-
-    <!-- =========================================
-         MAIN CSS
-    ========================================== -->
 
     <style>
 
@@ -41,15 +26,9 @@
 
             padding: 0;
 
-            font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Roboto,
-                sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
         }
-
 
         body {
 
@@ -75,11 +54,6 @@
 
         }
 
-
-        /* =====================================
-           HOME
-        ===================================== */
-
         #home-layout {
 
             display: flex;
@@ -92,19 +66,11 @@
 
             height: 100%;
 
-            background:
-                url('background.jpg')
-                no-repeat
-                center top -120px;
+            background: url('background.jpg') no-repeat center top -120px;
 
             background-size: cover;
 
         }
-
-
-        /* =====================================
-           HEADER
-        ===================================== */
 
         .header-bar {
 
@@ -122,17 +88,13 @@
 
         }
 
-
         .btn-top {
 
-            background:
-                rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.1);
 
             backdrop-filter: blur(5px);
 
-            border:
-                1px solid
-                rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
 
             color: white;
 
@@ -148,11 +110,6 @@
 
         }
 
-
-        /* =====================================
-           HEADER TITLE
-        ===================================== */
-
         .header {
 
             margin-top: 25px;
@@ -165,7 +122,6 @@
 
         }
 
-
         .header div {
 
             font-size: 14px;
@@ -176,7 +132,6 @@
 
         }
 
-
         .header h1 {
 
             font-size: 38px;
@@ -186,11 +141,6 @@
             margin-top: 5px;
 
         }
-
-
-        /* =====================================
-           COIN
-        ===================================== */
 
         .coin-container {
 
@@ -210,7 +160,6 @@
 
         }
 
-
         .transparent-tap-zone {
 
             position: absolute;
@@ -227,30 +176,21 @@
 
             cursor: pointer;
 
-            -webkit-tap-highlight-color:
-                transparent;
+            -webkit-tap-highlight-color: transparent;
 
             z-index: 999;
 
             touch-action: manipulation;
 
-            transition:
-                transform 0.05s ease;
+            transition: transform 0.05s ease;
 
         }
-
 
         .transparent-tap-zone:active {
 
-            transform:
-                scale(0.93) !important;
+            transform: scale(0.93) !important;
 
         }
-
-
-        /* =====================================
-           FLOATING +1
-        ===================================== */
 
         .floating-text {
 
@@ -266,15 +206,11 @@
 
             z-index: 1000;
 
-            animation:
-                FloatUp 0.6s ease-out forwards;
+            animation: FloatUp 0.6s ease-out forwards;
 
-            text-shadow:
-                0 5px 10px
-                rgba(234,179,8,0.3);
+            text-shadow: 0 5px 10px rgba(234,179,8,0.3);
 
         }
-
 
         @keyframes FloatUp {
 
@@ -282,9 +218,7 @@
 
                 opacity: 1;
 
-                transform:
-                    translateY(0)
-                    scale(1);
+                transform: translateY(0) scale(1);
 
             }
 
@@ -292,18 +226,11 @@
 
                 opacity: 0;
 
-                transform:
-                    translateY(-120px)
-                    scale(1.3);
+                transform: translateY(-120px) scale(1.3);
 
             }
 
         }
-
-
-        /* =====================================
-           DYNAMIC PAGES
-        ===================================== */
 
         .dynamic-page {
 
@@ -317,15 +244,13 @@
 
             width: 100vw;
 
-            height:
-                calc(100vh - 85px);
+            height: calc(100vh - 85px);
 
             z-index: 1500;
 
             background: #130f26;
 
-            padding:
-                40px 20px 20px;
+            padding: 40px 20px 20px;
 
             flex-direction: column;
 
@@ -333,17 +258,11 @@
 
         }
 
-
         .dynamic-page.active {
 
             display: flex;
 
         }
-
-
-        /* =====================================
-           PAGE TITLE
-        ===================================== */
 
         .page-title {
 
@@ -359,7 +278,6 @@
 
         }
 
-
         .page-content {
 
             width: 100%;
@@ -370,18 +288,11 @@
 
         }
 
-
-        /* =====================================
-           BOTTOM NAV
-        ===================================== */
-
         .bottom-nav {
 
             width: 100%;
 
-            border-top:
-                1px solid
-                rgba(255,255,255,0.1);
+            border-top: 1px solid rgba(255,255,255,0.1);
 
             background: #05030a;
 
@@ -391,14 +302,11 @@
 
             bottom: 0;
 
-            padding:
-                15px 15px
-                calc(15px + env(safe-area-inset-bottom));
+            padding: 15px 15px calc(15px + env(safe-area-inset-bottom));
 
             z-index: 2000;
 
         }
-
 
         .nav-link {
 
@@ -422,7 +330,6 @@
 
         }
 
-
         .nav-link.active {
 
             color: #eeb308;
@@ -430,7 +337,6 @@
             font-weight: bold;
 
         }
-
 
         .nav-icon {
 
@@ -440,15 +346,9 @@
 
         }
 
-
-        /* =====================================
-           TASK
-        ===================================== */
-
         .task-card {
 
-            background:
-                rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.06);
 
             padding: 16px;
 
@@ -463,7 +363,6 @@
             align-items: center;
 
         }
-
 
         .task-btn {
 
@@ -483,204 +382,189 @@
 
         }
 
+        /* INVITE / GAME / AIRDROP */
+
+        .cx-card {
+
+            width: 100%;
+
+            background: rgba(255,255,255,0.06);
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            border-radius: 16px;
+
+            padding: 20px;
+
+            margin-bottom: 14px;
+
+            text-align: center;
+
+        }
+
+        .cx-card h3 {
+
+            color: #ffffff;
+
+            margin-bottom: 12px;
+
+            font-size: 19px;
+
+        }
+
+        .cx-card p {
+
+            color: #c9c5d6;
+
+            line-height: 1.6;
+
+            margin-bottom: 15px;
+
+        }
+
+        .cx-btn {
+
+            width: 100%;
+
+            border: none;
+
+            background: #eeb308;
+
+            color: #130f26;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            border-radius: 11px;
+
+            padding: 13px 16px;
+
+            margin-top: 8px;
+
+            cursor: pointer;
+
+        }
+
+        .cx-btn:disabled {
+
+            opacity: 0.6;
+
+            cursor: not-allowed;
+
+        }
+
+        .cx-message {
+
+            font-size: 13px;
+
+            margin-top: 12px;
+
+            overflow-wrap: anywhere;
+
+        }
+
+        .cx-number {
+
+            font-size: 32px;
+
+            font-weight: bold;
+
+            color: #eeb308;
+
+            margin: 10px 0 18px;
+
+        }
+
     </style>
 
 </head>
 
-
 <body>
 
-
-    <!-- =========================================
-         HOME
-    ========================================== -->
+    <!-- HOME: ORIGINAL DESIGN -->
 
     <div id="home-layout">
 
-
         <div class="header-bar">
 
-            <button
-                class="btn-top"
-                onclick="switchPage('menu')"
-            >
-                ≡ Menu
-            </button>
+            <button class="btn-top" onclick="switchPage('menu')">≡ Menu</button>
 
-
-            <button
-                class="btn-top"
-                onclick="switchPage('airdrop')"
-            >
-                🎁 Airdrop
-            </button>
+            <button class="btn-top" onclick="switchPage('airdrop')">🎁 Airdrop</button>
 
         </div>
-
 
         <div class="header">
 
-            <div>
-                CHUBBYX BALANCE
-            </div>
+            <div>CHUBBYX BALANCE</div>
 
-            <h1 id="main-score">
-                0
-            </h1>
+            <h1 id="main-score">0</h1>
 
         </div>
 
+        <div class="coin-container" id="coincontainer">
 
-        <div
-            class="coin-container"
-            id="coincontainer"
-        >
-
-            <div
-                class="transparent-tap-zone"
-                id="clickcoin"
-            ></div>
+            <div class="transparent-tap-zone" id="clickcoin"></div>
 
         </div>
 
     </div>
 
+    <!-- PAGES -->
 
-    <!-- =========================================
-         PAGES
-    ========================================== -->
+    <div id="tasks-page" class="dynamic-page"></div>
 
-    <div
-        id="tasks-page"
-        class="dynamic-page"
-    ></div>
+    <div id="invites-page" class="dynamic-page"></div>
 
+    <div id="games-page" class="dynamic-page"></div>
 
-    <div
-        id="invites-page"
-        class="dynamic-page"
-    ></div>
+    <div id="wallet-page" class="dynamic-page"></div>
 
+    <div id="menu-page" class="dynamic-page"></div>
 
-    <div
-        id="games-page"
-        class="dynamic-page"
-    ></div>
+    <div id="airdrop-page" class="dynamic-page"></div>
 
-
-    <div
-        id="wallet-page"
-        class="dynamic-page"
-    ></div>
-
-
-    <div
-        id="menu-page"
-        class="dynamic-page"
-    ></div>
-
-
-    <div
-        id="airdrop-page"
-        class="dynamic-page"
-    ></div>
-
-
-    <!-- =========================================
-         BOTTOM NAV
-    ========================================== -->
+    <!-- BOTTOM NAV -->
 
     <div class="bottom-nav">
 
+        <div class="nav-link" onclick="switchPage('tasks', this)">
 
-        <div
-            class="nav-link"
-            onclick="switchPage('tasks', this)"
-        >
-
-            <span class="nav-icon">
-                📋
-            </span>
-
-            Tasks
+            <span class="nav-icon">📋</span>Tasks
 
         </div>
 
+        <div class="nav-link" onclick="switchPage('invites', this)">
 
-        <div
-            class="nav-link"
-            onclick="switchPage('invites', this)"
-        >
-
-            <span class="nav-icon">
-                👥
-            </span>
-
-            Invites
+            <span class="nav-icon">👥</span>Invites
 
         </div>
 
+        <div class="nav-link active" id="default-nav" onclick="switchPage('home', this)">
 
-        <div
-            class="nav-link active"
-            id="default-nav"
-            onclick="switchPage('home', this)"
-        >
-
-            <span class="nav-icon">
-                🏠
-            </span>
-
-            Home
+            <span class="nav-icon">🏠</span>Home
 
         </div>
 
+        <div class="nav-link" onclick="switchPage('games', this)">
 
-        <div
-            class="nav-link"
-            onclick="switchPage('games', this)"
-        >
-
-            <span class="nav-icon">
-                🎮
-            </span>
-
-            Games
+            <span class="nav-icon">🎮</span>Games
 
         </div>
 
+        <div class="nav-link" onclick="switchPage('wallet', this)">
 
-        <div
-            class="nav-link"
-            onclick="switchPage('wallet', this)"
-        >
-
-            <span class="nav-icon">
-                💎
-            </span>
-
-            Wallet
+            <span class="nav-icon">💎</span>Wallet
 
         </div>
 
     </div>
 
-
-    <!-- =========================================
-         MAIN APP
-    ========================================== -->
-
     <script>
 
+        /* TELEGRAM */
 
-        /* =====================================
-           TELEGRAM
-        ===================================== */
-
-        if (
-            window.Telegram &&
-            window.Telegram.WebApp
-        ) {
+        if (window.Telegram && window.Telegram.WebApp) {
 
             window.Telegram.WebApp.ready();
 
@@ -688,175 +572,274 @@
 
         }
 
+        /* COIN COUNTER: UNCHANGED */
 
-        /* =====================================
-           COIN COUNTER
-        ===================================== */
+        let count = parseInt(localStorage.getItem('chubby_coins')) || 0;
 
-        let count =
-            parseInt(
-                localStorage.getItem(
-                    'chubby_coins'
-                )
-            ) || 0;
+        document.getElementById('main-score').innerText =
 
-
-        document.getElementById(
-            'main-score'
-        ).innerText =
             count.toLocaleString();
 
+        const tapElement = document.getElementById('clickcoin');
 
-        const tapElement =
-            document.getElementById(
-                'clickcoin'
-            );
-
-
-        const coinContainer =
-            document.getElementById(
-                'coincontainer'
-            );
-
+        const coinContainer = document.getElementById('coincontainer');
 
         if (tapElement) {
 
-            tapElement.addEventListener(
-                'pointerdown',
-                function(e) {
+            tapElement.addEventListener('pointerdown', function(e) {
 
-                    e.preventDefault();
+                e.preventDefault();
 
+                count++;
 
-                    count++;
+                document.getElementById('main-score').innerText =
 
+                    count.toLocaleString();
 
-                    document.getElementById(
-                        'main-score'
-                    ).innerText =
-                        count.toLocaleString();
+                localStorage.setItem('chubby_coins', count);
 
+                if ('speechSynthesis' in window) {
 
-                    localStorage.setItem(
-                        'chubby_coins',
-                        count
-                    );
+                    window.speechSynthesis.cancel();
 
+                    const utterance = new SpeechSynthesisUtterance('Chub');
 
-                    if (
-                        'speechSynthesis'
-                        in window
-                    ) {
+                    utterance.lang = 'en-US';
 
-                        window.speechSynthesis.cancel();
+                    utterance.pitch = 1.4;
 
+                    utterance.rate = 1.6;
 
-                        const utterance =
-                            new SpeechSynthesisUtterance(
-                                'Chub'
-                            );
-
-
-                        utterance.lang =
-                            'en-US';
-
-
-                        utterance.pitch =
-                            1.4;
-
-
-                        utterance.rate =
-                            1.6;
-
-
-                        window.speechSynthesis.speak(
-                            utterance
-                        );
-
-                    }
-
-
-                    const textNode =
-                        document.createElement(
-                            'div'
-                        );
-
-
-                    textNode.className =
-                        'floating-text';
-
-
-                    textNode.innerText =
-                        '+1';
-
-
-                    const rect =
-                        coinContainer
-                            .getBoundingClientRect();
-
-
-                    textNode.style.left =
-                        (
-                            e.clientX -
-                            rect.left -
-                            15
-                        ) + 'px';
-
-
-                    textNode.style.top =
-                        (
-                            e.clientY -
-                            rect.top -
-                            30
-                        ) + 'px';
-
-
-                    coinContainer.appendChild(
-                        textNode
-                    );
-
-
-                    setTimeout(
-                        function() {
-
-                            textNode.remove();
-
-                        },
-                        600
-                    );
+                    window.speechSynthesis.speak(utterance);
 
                 }
-            );
+
+                const textNode = document.createElement('div');
+
+                textNode.className = 'floating-text';
+
+                textNode.innerText = '+1';
+
+                const rect = coinContainer.getBoundingClientRect();
+
+                textNode.style.left = (e.clientX - rect.left - 15) + 'px';
+
+                textNode.style.top = (e.clientY - rect.top - 30) + 'px';
+
+                coinContainer.appendChild(textNode);
+
+                setTimeout(function() {
+
+                    textNode.remove();
+
+                }, 600);
+
+            });
 
         }
 
+        /* INVITE FALLBACK */
 
-        /* =====================================
-           SWITCH PAGE
-        ===================================== */
+        function renderInviteFallback() {
 
-        function switchPage(
-            pageId,
-            element
-        ) {
+            const page = document.getElementById('invites-page');
 
+            if (!page) return;
 
-            console.log(
-                "CHUBBYX switchPage:",
-                pageId
-            );
+            const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
 
+            const botUsername = 'ChubbyX_Coin_bot';
 
-            /* ---------------------------------
-               CLOSE WALLET MODAL IF LEAVING
-            --------------------------------- */
+            const referralCode = tgUser?.id ? String(tgUser.id) : '';
+
+            const inviteLink = referralCode
+
+                ? `https://t.me/${botUsername}?start=${encodeURIComponent(referralCode)}`
+
+                : `https://t.me/${botUsername}`;
+
+            page.innerHTML = `
+
+                <h2 class="page-title">👥 Invite Friends</h2>
+
+                <div class="page-content">
+
+                    <div class="cx-card">
+
+                        <h3>Invite Friends</h3>
+
+                        <p>Invite your friends to join ChubbyX.</p>
+
+                        <div class="cx-number" id="cx-invite-count">0</div>
+
+                        <p>Invited friends</p>
+
+                        <button class="cx-btn" id="cx-invite-share">Invite Friends</button>
+
+                        <button class="cx-btn" id="cx-invite-copy">Copy Invite Link</button>
+
+                        <div class="cx-message" id="cx-invite-message"></div>
+
+                    </div>
+
+                </div>`;
+
+            document.getElementById('cx-invite-share').onclick = function() {
+
+                const shareUrl =
+
+                    'https://t.me/share/url?url=' +
+
+                    encodeURIComponent(inviteLink) +
+
+                    '&text=' +
+
+                    encodeURIComponent('Join me on ChubbyX!');
+
+                if (window.Telegram?.WebApp?.openTelegramLink) {
+
+                    window.Telegram.WebApp.openTelegramLink(shareUrl);
+
+                } else {
+
+                    window.open(shareUrl, '_blank');
+
+                }
+
+            };
+
+            document.getElementById('cx-invite-copy').onclick = async function() {
+
+                const message = document.getElementById('cx-invite-message');
+
+                try {
+
+                    await navigator.clipboard.writeText(inviteLink);
+
+                    message.textContent = 'Invite link copied!';
+
+                } catch (e) {
+
+                    message.textContent = inviteLink;
+
+                }
+
+            };
+
+        }
+
+        /* GAME FALLBACK */
+
+        function renderGameFallback() {
+
+            const page = document.getElementById('games-page');
+
+            if (!page) return;
+
+            let score = Number(localStorage.getItem('chubby_game_score') || 0);
+
+            page.innerHTML = `
+
+                <h2 class="page-title">🎮 ChubbyX Games</h2>
+
+                <div class="page-content">
+
+                    <div class="cx-card">
+
+                        <h3>Tap Game</h3>
+
+                        <p>Tap the button to earn demo game points.</p>
+
+                        <div class="cx-number" id="cx-game-score">${score}</div>
+
+                        <button class="cx-btn" id="cx-game-tap">TAP +1</button>
+
+                        <div class="cx-message">Game points are stored on this device.</div>
+
+                    </div>
+
+                </div>`;
+
+            document.getElementById('cx-game-tap').onclick = function() {
+
+                score++;
+
+                localStorage.setItem('chubby_game_score', String(score));
+
+                document.getElementById('cx-game-score').textContent = score;
+
+            };
+
+        }
+
+        /* AIRDROP FALLBACK */
+
+        function renderAirdropFallback() {
+
+            const page = document.getElementById('airdrop-page');
+
+            if (!page) return;
+
+            page.innerHTML = `
+
+                <h2 class="page-title">🎁 Airdrop</h2>
+
+                <div class="page-content">
+
+                    <div class="cx-card">
+
+                        <h3>ChubbyX Airdrop</h3>
+
+                        <p>Welcome to the ChubbyX Airdrop page.</p>
+
+                        <p>Follow the official ChubbyX announcements for task details and eligibility.</p>
+
+                        <button class="cx-btn" id="cx-airdrop-channel">Open Telegram Bot</button>
+
+                        <div class="cx-message" id="cx-airdrop-message">
+
+                            Airdrop eligibility and rewards are not verified by this fallback page.
+
+                        </div>
+
+                    </div>
+
+                </div>`;
+
+            document.getElementById('cx-airdrop-channel').onclick = function() {
+
+                const url = 'https://t.me/ChubbyX_Coin_bot';
+
+                if (window.Telegram?.WebApp?.openTelegramLink) {
+
+                    window.Telegram.WebApp.openTelegramLink(url);
+
+                } else {
+
+                    window.open(url, '_blank');
+
+                }
+
+            };
+
+        }
+
+        /* SWITCH PAGE */
+
+        function switchPage(pageId, element) {
+
+            console.log('CHUBBYX switchPage:', pageId);
+
+            /* CLOSE WALLET MODAL IF LEAVING WALLET */
 
             if (
+
                 pageId !== 'wallet' &&
+
                 window.tonConnectUI &&
-                typeof
-                    window.tonConnectUI.closeModal
-                    === 'function'
+
+                typeof window.tonConnectUI.closeModal === 'function'
+
             ) {
 
                 try {
@@ -865,148 +848,123 @@
 
                 } catch (e) {
 
-                    console.log(
-                        "CHUBBYX modal close:",
-                        e
-                    );
+                    console.log('CHUBBYX modal close:', e);
 
                 }
 
             }
 
+            document.getElementById('home-layout').style.display = 'none';
 
-            /* ---------------------------------
-               HIDE HOME
-            --------------------------------- */
+            document.querySelectorAll('.dynamic-page').forEach(function(page) {
 
-            document.getElementById(
-                'home-layout'
-            ).style.display =
-                'none';
+                page.classList.remove('active');
 
+            });
 
-            /* ---------------------------------
-               HIDE ALL PAGES
-            --------------------------------- */
+            document.querySelectorAll('.nav-link').forEach(function(link) {
 
-            document.querySelectorAll(
-                '.dynamic-page'
-            ).forEach(
-                function(page) {
+                link.classList.remove('active');
 
-                    page.classList.remove(
-                        'active'
-                    );
-
-                }
-            );
-
-
-            /* ---------------------------------
-               NAV ACTIVE
-            --------------------------------- */
-
-            document.querySelectorAll(
-                '.nav-link'
-            ).forEach(
-                function(link) {
-
-                    link.classList.remove(
-                        'active'
-                    );
-
-                }
-            );
-
+            });
 
             if (element) {
 
-                element.classList.add(
-                    'active'
-                );
+                element.classList.add('active');
 
-            } else if (
-                pageId === 'home'
-            ) {
+            } else if (pageId === 'home') {
 
-                document.getElementById(
-                    'default-nav'
-                ).classList.add(
-                    'active'
-                );
+                document.getElementById('default-nav').classList.add('active');
+
+            } else if (pageId === 'invites') {
+
+                document.querySelectorAll('.nav-link')[1].classList.add('active');
+
+            } else if (pageId === 'games') {
+
+                document.querySelectorAll('.nav-link')[3].classList.add('active');
 
             }
 
+            if (pageId === 'home') {
 
-            /* ---------------------------------
-               HOME
-            --------------------------------- */
-
-            if (
-                pageId === 'home'
-            ) {
-
-                document.getElementById(
-                    'home-layout'
-                ).style.display =
-                    'flex';
+                document.getElementById('home-layout').style.display = 'flex';
 
                 return;
 
             }
 
-
-            /* ---------------------------------
-               OPEN PAGE
-            --------------------------------- */
-
-            const targetPage =
-                document.getElementById(
-                    pageId + '-page'
-                );
-
+            const targetPage = document.getElementById(pageId + '-page');
 
             if (!targetPage) {
 
-                console.error(
-                    "CHUBBYX page not found:",
-                    pageId
-                );
+                console.error('CHUBBYX page not found:', pageId);
 
                 return;
 
             }
 
+            targetPage.classList.add('active');
 
-            targetPage.classList.add(
-                'active'
-            );
+            /* INVITES */
 
+            if (pageId === 'invites') {
 
-            /* ---------------------------------
-               INVITES
-            --------------------------------- */
+                if (typeof window.updateInviteUI === 'function') {
 
-            if (
-                pageId === 'invites' &&
-                typeof updateInviteUI ===
-                    'function'
-            ) {
+                    window.updateInviteUI();
 
-                updateInviteUI();
+                } else if (typeof window.renderInvitePage === 'function') {
+
+                    window.renderInvitePage();
+
+                } else {
+
+                    renderInviteFallback();
+
+                }
 
             }
 
+            /* GAMES */
 
-            /* ---------------------------------
-               WALLET
-            --------------------------------- */
+            if (pageId === 'games') {
 
-            if (
-                pageId === 'wallet' &&
-                typeof window.walletPage ===
-                    'function'
-            ) {
+                if (typeof window.gamePage === 'function') {
+
+                    window.gamePage();
+
+                } else if (typeof window.renderGame === 'function') {
+
+                    window.renderGame();
+
+                } else {
+
+                    renderGameFallback();
+
+                }
+
+            }
+
+            /* AIRDROP */
+
+            if (pageId === 'airdrop') {
+
+                if (typeof window.renderAirdrop === 'function') {
+
+                    window.renderAirdrop();
+
+                } else {
+
+                    renderAirdropFallback();
+
+                }
+
+            }
+
+            /* WALLET: KEEP EXISTING BEHAVIOUR */
+
+            if (pageId === 'wallet' && typeof window.walletPage === 'function') {
 
                 window.walletPage();
 
@@ -1014,21 +972,17 @@
 
         }
 
+        window.switchPage = switchPage;
 
-        /* =====================================
-           GLOBAL
-        ===================================== */
+        window.renderInviteFallback = renderInviteFallback;
 
-        window.switchPage =
-            switchPage;
+        window.renderGameFallback = renderGameFallback;
 
+        window.renderAirdropFallback = renderAirdropFallback;
 
     </script>
 
-
-    <!-- =========================================
-         OTHER FEATURES
-    ========================================== -->
+    <!-- EXISTING FEATURE FILES -->
 
     <script src="game.js"></script>
 
@@ -1036,20 +990,15 @@
 
     <script src="invite.js"></script>
 
+    <script src="airdrop.js"></script>
 
-    <!-- =========================================
-         WALLET
-    ========================================== -->
+    <!-- WALLET: UNCHANGED -->
 
     <script src="wallet.js?v=99"></script>
 
-
-    <!-- =========================================
-         MENU
-    ========================================== -->
+    <!-- MENU: UNCHANGED -->
 
     <script src="menu.js"></script>
-
 
 </body>
 
