@@ -1,737 +1,260 @@
-/* =========================================
-   CHUBBYX — TON CONNECT WALLET
-   ========================================= */
-
-let tonConnectUI = null;
-let walletPageLoaded = false;
-
-const MANIFEST_URL =
-    "https://aslan-89-cpu.github.io/chubbyx-coin/tonconnect-manifest.json";
-
-const TWA_RETURN_URL =
-    "https://t.me/ChubbyX_Coin_bot/chubbyx";
-
 
 /* =========================================
-   LOAD WALLET PAGE
-   ========================================= */
+   CHUBBYX — TASKS.JS
+   Telegram + X Tasks
+   COIN REWARDS DISABLED
+========================================= */
 
-function loadWalletUI() {
+(function () {
+    "use strict";
 
-    const walletPage =
-        document.getElementById("wallet-page");
+    const tasksPage = document.getElementById("tasks-page");
 
-    if (!walletPage) return;
+    if (!tasksPage) {
+        console.error("ChubbyX: tasks-page not found.");
+        return;
+    }
 
-    walletPage.style.zIndex = "99999";
-    walletPage.style.pointerEvents = "auto";
-    walletPage.style.touchAction = "auto";
+    const TASKS = [
+        {
+            id: "telegram",
+            section: "telegram",
+            icon: "✈️",
+            title: "Join Telegram Channel",
+            description: "Join the official ChubbyX channel.",
+            button: "Join Channel",
+            url: "https://t.me/chubbyx_coin"
+        },
+        {
+            id: "x_follow",
+            section: "x",
+            icon: "𝕏",
+            title: "Follow ChubbyX on X",
+            description: "Follow our official X account.",
+            button: "Follow",
+            url: "https://x.com/chubbyx_coin"
+        }
+    ];
 
+    function openTask(task) {
+        if (!task || !task.url) return;
 
-    if (!walletPageLoaded) {
+        const opened = window.open(
+            task.url,
+            "_blank"
+        );
 
-        walletPage.innerHTML = `
+        // Fallback for browsers that block new windows.
+        if (!opened) {
+            window.location.href = task.url;
+        }
+    }
 
-            <h2 class="page-title">
-                Connect Wallet
-            </h2>
+    function renderTasks() {
+        tasksPage.innerHTML = `
+            <style>
+                .cx-task-wrap {
+                    width: 100%;
+                    max-width: 520px;
+                    margin: 0 auto;
+                    padding-bottom: 25px;
+                }
 
-            <div style="
-                width:100%;
-                flex:1;
-                display:flex;
-                flex-direction:column;
-                justify-content:center;
-                align-items:center;
-                text-align:center;
-                touch-action:auto;
-            ">
+                .cx-task-heading {
+                    color: #eeb308;
+                    font-size: 27px;
+                    font-weight: 800;
+                    text-align: center;
+                    margin: 5px 0 8px;
+                }
 
-                <p
-                    id="wallet-status-text"
-                    style="
-                        color:#ccc;
-                        margin-bottom:25px;
-                        max-width:280px;
-                        font-size:15px;
-                    "
-                >
-                    Connect your TON wallet
+                .cx-task-subtitle {
+                    color: #aaa;
+                    font-size: 13px;
+                    text-align: center;
+                    line-height: 1.6;
+                    margin-bottom: 24px;
+                }
+
+                .cx-task-section {
+                    color: #eeb308;
+                    font-size: 16px;
+                    font-weight: 800;
+                    margin: 22px 0 12px;
+                }
+
+                .cx-task-card {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 14px;
+                    margin-bottom: 12px;
+                    border-radius: 15px;
+                    background: rgba(255,255,255,.055);
+                    border: 1px solid rgba(255,255,255,.09);
+                }
+
+                .cx-task-icon {
+                    width: 44px;
+                    height: 44px;
+                    min-width: 44px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 12px;
+                    background: rgba(238,179,8,.12);
+                    font-size: 22px;
+                }
+
+                .cx-task-info {
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                .cx-task-title {
+                    color: #fff;
+                    font-size: 13px;
+                    font-weight: 750;
+                    margin-bottom: 5px;
+                }
+
+                .cx-task-description {
+                    color: #aaa;
+                    font-size: 11px;
+                    line-height: 1.5;
+                }
+
+                .cx-task-button {
+                    flex-shrink: 0;
+                    border: none;
+                    border-radius: 10px;
+                    padding: 10px 12px;
+                    background: #eeb308;
+                    color: #130f26;
+                    font-size: 12px;
+                    font-weight: 800;
+                    cursor: pointer;
+                }
+
+                .cx-task-button:active {
+                    transform: scale(.96);
+                }
+
+                .cx-task-notice {
+                    margin-top: 20px;
+                    padding: 15px;
+                    border-radius: 14px;
+                    background: rgba(238,179,8,.07);
+                    border: 1px solid rgba(238,179,8,.2);
+                    color: #ccc;
+                    font-size: 12px;
+                    line-height: 1.7;
+                    text-align: center;
+                }
+
+                .cx-task-notice strong {
+                    color: #eeb308;
+                }
+
+                .cx-task-back {
+                    display: block;
+                    width: 100%;
+                    max-width: 240px;
+                    margin: 24px auto 100px;
+                    padding: 12px;
+                    border: 1px solid rgba(255,255,255,.15);
+                    border-radius: 12px;
+                    background: rgba(255,255,255,.08);
+                    color: white;
+                    font-size: 14px;
+                    font-weight: 700;
+                    cursor: pointer;
+                }
+            </style>
+
+            <div class="cx-task-wrap">
+
+                <h2 class="cx-task-heading">
+                    CHUBBYX TASKS
+                </h2>
+
+                <p class="cx-task-subtitle">
+                    Join our community and follow ChubbyX.
                 </p>
 
-                <button
-                    id="chubbyx-connect-button"
-                    type="button"
-                    style="
-                        position:relative;
-                        z-index:999999;
-
-                        width:220px;
-                        height:54px;
-
-                        border:none;
-                        border-radius:14px;
-
-                        background:#0098ea;
-                        color:white;
-
-                        font-size:16px;
-                        font-weight:bold;
-
-                        cursor:pointer;
-                        pointer-events:auto;
-                        touch-action:manipulation;
-
-                        -webkit-user-select:none;
-                        user-select:none;
-                        -webkit-tap-highlight-color:transparent;
-
-                        box-shadow:
-                        0 5px 18px
-                        rgba(0,152,234,0.30);
-                    "
-                >
-                    Connect Wallet
-                </button>
-
-
-                <div
-                    id="wallet-details-box"
-                    style="
-                        display:none;
-                        margin-top:25px;
-                        background:rgba(255,255,255,0.06);
-                        padding:15px;
-                        border-radius:14px;
-                        width:100%;
-                        max-width:280px;
-                    "
-                >
-
-                    <div style="
-                        color:#eeb308;
-                        font-weight:bold;
-                        margin-bottom:7px;
-                    ">
-                        Connected Wallet
-                    </div>
-
-                    <div
-                        id="wallet-address-string"
-                        style="
-                            color:white;
-                            font-size:13px;
-                            word-break:break-all;
-                        "
-                    ></div>
-
-                    <button
-                        id="chubbyx-disconnect-button"
-                        type="button"
-                        style="
-                            margin-top:15px;
-                            width:100%;
-                            padding:10px;
-                            border:none;
-                            border-radius:10px;
-                            background:#e74c3c;
-                            color:white;
-                            font-weight:bold;
-                            cursor:pointer;
-                            touch-action:manipulation;
-                        "
-                    >
-                        Disconnect
-                    </button>
-
+                <div class="cx-task-section">
+                    ✈️ Telegram Tasks
                 </div>
 
+                ${TASKS.filter(t => t.section === "telegram").map(t => `
+                    <div class="cx-task-card">
+                        <div class="cx-task-icon">${t.icon}</div>
 
-                <button
-                    id="chubbyx-back-button"
-                    type="button"
-                    style="
-                        margin-top:30px;
-                        width:100%;
-                        max-width:240px;
-                        padding:12px;
+                        <div class="cx-task-info">
+                            <div class="cx-task-title">${t.title}</div>
+                            <div class="cx-task-description">${t.description}</div>
+                        </div>
 
-                        border:1px solid
-                        rgba(255,255,255,0.2);
+                        <button class="cx-task-button"
+                            data-task="${t.id}">
+                            ${t.button}
+                        </button>
+                    </div>
+                `).join("")}
 
-                        border-radius:20px;
+                <div class="cx-task-section">
+                    𝕏 X Tasks
+                </div>
 
-                        background:
-                        rgba(255,255,255,0.1);
+                ${TASKS.filter(t => t.section === "x").map(t => `
+                    <div class="cx-task-card">
+                        <div class="cx-task-icon">${t.icon}</div>
 
-                        color:white;
+                        <div class="cx-task-info">
+                            <div class="cx-task-title">${t.title}</div>
+                            <div class="cx-task-description">${t.description}</div>
+                        </div>
 
-                        font-size:14px;
-                        font-weight:bold;
+                        <button class="cx-task-button"
+                            data-task="${t.id}">
+                            ${t.button}
+                        </button>
+                    </div>
+                `).join("")}
 
-                        cursor:pointer;
-                        touch-action:manipulation;
-                    "
-                >
-                    ← Back to Home
+                <div class="cx-task-notice">
+                    🔒 <strong>Rewards are coming soon!</strong><br>
+                    Tasks are available, but no coins are awarded yet.
+                    Verification and rewards will be enabled later.
+                </div>
+
+                <button class="cx-task-back" id="cx-task-back">
+                    ‹ Back to Home
                 </button>
 
             </div>
         `;
 
-        walletPageLoaded = true;
+        tasksPage.querySelectorAll("[data-task]").forEach(button => {
+            button.addEventListener("click", function () {
+                const task = TASKS.find(
+                    item => item.id === button.dataset.task
+                );
 
+                openTask(task);
+            });
+        });
 
-        /* CONNECT */
-
-        const connectButton =
-            document.getElementById(
-                "chubbyx-connect-button"
-            );
-
-        if (connectButton) {
-
-            connectButton.addEventListener(
-                "click",
-                function(event) {
-
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    openChubbyXWallet();
-                }
-            );
-        }
-
-
-        /* DISCONNECT */
-
-        const disconnectButton =
-            document.getElementById(
-                "chubbyx-disconnect-button"
-            );
-
-        if (disconnectButton) {
-
-            disconnectButton.addEventListener(
-                "click",
-                async function(event) {
-
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    await disconnectChubbyXWallet();
-                }
-            );
-        }
-
-
-        /* BACK */
-
-        const backButton =
-            document.getElementById(
-                "chubbyx-back-button"
-            );
+        const backButton = document.getElementById("cx-task-back");
 
         if (backButton) {
-
-            backButton.addEventListener(
-                "click",
-                function(event) {
-
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    switchPage("home");
+            backButton.addEventListener("click", function () {
+                if (typeof window.switchPage === "function") {
+                    window.switchPage("home");
                 }
-            );
-        }
-    }
-
-
-    startTonConnect();
-}
-
-
-/* =========================================
-   START TON CONNECT
-   ========================================= */
-
-async function startTonConnect() {
-
-    if (
-        !window.TON_CONNECT_UI ||
-        !window.TON_CONNECT_UI.TonConnectUI
-    ) {
-
-        setWalletMessage(
-            "Loading wallet..."
-        );
-
-        setTimeout(
-            startTonConnect,
-            500
-        );
-
-        return;
-    }
-
-
-    /* Already initialized */
-
-    if (tonConnectUI) {
-
-        updateWalletStatus(
-            tonConnectUI.wallet
-        );
-
-        return;
-    }
-
-
-    try {
-
-        console.log(
-            "ChubbyX: Initializing TON Connect..."
-        );
-
-
-        tonConnectUI =
-            new window.TON_CONNECT_UI.TonConnectUI({
-
-                manifestUrl:
-                    MANIFEST_URL,
-
-                buttonRootId:
-                    null
             });
-
-
-        /*
-         * Telegram Mini App return URL
-         */
-
-        tonConnectUI.uiOptions = {
-
-            twaReturnUrl:
-                TWA_RETURN_URL
-        };
-
-
-        /*
-         * Wallet status listener
-         */
-
-        tonConnectUI.onStatusChange(
-            function(wallet) {
-
-                console.log(
-                    "ChubbyX wallet status:",
-                    wallet
-                );
-
-                updateWalletStatus(
-                    wallet
-                );
-            }
-        );
-
-
-        /*
-         * Modal listener
-         */
-
-        if (
-            typeof tonConnectUI.onModalStateChange ===
-            "function"
-        ) {
-
-            tonConnectUI.onModalStateChange(
-                function(state) {
-
-                    console.log(
-                        "ChubbyX TON modal:",
-                        state
-                    );
-                }
-            );
-        }
-
-
-        /*
-         * Check existing connection
-         */
-
-        updateWalletStatus(
-            tonConnectUI.wallet
-        );
-
-
-        console.log(
-            "ChubbyX: TON Connect initialized"
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "ChubbyX TON initialization error:",
-            error
-        );
-
-        setWalletMessage(
-            "Wallet initialization error."
-        );
-    }
-}
-
-
-/* =========================================
-   OPEN WALLET
-   ========================================= */
-
-async function openChubbyXWallet() {
-
-    const button =
-        document.getElementById(
-            "chubbyx-connect-button"
-        );
-
-
-    if (!tonConnectUI) {
-
-        setWalletMessage(
-            "Loading wallet..."
-        );
-
-        await startTonConnect();
-
-        /*
-         * Give TON Connect a moment
-         */
-
-        await new Promise(
-            function(resolve) {
-
-                setTimeout(
-                    resolve,
-                    300
-                );
-            }
-        );
-    }
-
-
-    if (!tonConnectUI) {
-
-        setWalletMessage(
-            "Wallet is not ready."
-        );
-
-        return;
-    }
-
-
-    /*
-     * Already connected
-     */
-
-    if (
-        tonConnectUI.wallet &&
-        tonConnectUI.wallet.account
-    ) {
-
-        updateWalletStatus(
-            tonConnectUI.wallet
-        );
-
-        return;
-    }
-
-
-    if (button) {
-
-        button.innerText =
-            "Opening Wallet...";
-
-        button.disabled = true;
-        button.style.opacity = "0.7";
-    }
-
-
-    try {
-
-        console.log(
-            "ChubbyX: Opening TON Connect modal..."
-        );
-
-
-        await tonConnectUI.openModal();
-
-
-        console.log(
-            "ChubbyX: TON modal opened."
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "ChubbyX openModal error:",
-            error
-        );
-
-        setWalletMessage(
-            "Could not open wallet."
-        );
-
-    } finally {
-
-        if (button) {
-
-            button.innerText =
-                "Connect Wallet";
-
-            button.disabled = false;
-            button.style.opacity = "1";
         }
     }
-}
 
-
-/* =========================================
-   WALLET STATUS
-   ========================================= */
-
-function updateWalletStatus(wallet) {
-
-    const status =
-        document.getElementById(
-            "wallet-status-text"
-        );
-
-    const box =
-        document.getElementById(
-            "wallet-details-box"
-        );
-
-    const addressElement =
-        document.getElementById(
-            "wallet-address-string"
-        );
-
-
-    if (
-        wallet &&
-        wallet.account &&
-        wallet.account.address
-    ) {
-
-        const address =
-            wallet.account.address;
-
-
-        console.log(
-            "ChubbyX CONNECTED:",
-            address
-        );
-
-
-        if (status) {
-
-            status.innerText =
-                "Wallet connected successfully!";
-        }
-
-
-        if (box) {
-
-            box.style.display =
-                "block";
-        }
-
-
-        if (addressElement) {
-
-            addressElement.innerText =
-                shortenAddress(
-                    address
-                );
-        }
-
-
-        localStorage.setItem(
-            "user_wallet",
-            address
-        );
-
-
-    } else {
-
-        console.log(
-            "ChubbyX: Wallet not connected"
-        );
-
-
-        if (status) {
-
-            status.innerText =
-                "Connect your TON wallet";
-        }
-
-
-        if (box) {
-
-            box.style.display =
-                "none";
-        }
-
-
-        localStorage.removeItem(
-            "user_wallet"
-        );
-    }
-}
-
-
-/* =========================================
-   DISCONNECT
-   ========================================= */
-
-async function disconnectChubbyXWallet() {
-
-    if (!tonConnectUI) return;
-
-
-    try {
-
-        await tonConnectUI.disconnect();
-
-        localStorage.removeItem(
-            "user_wallet"
-        );
-
-
-        updateWalletStatus(
-            null
-        );
-
-
-        setWalletMessage(
-            "Wallet disconnected."
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "ChubbyX disconnect error:",
-            error
-        );
-    }
-}
-
-
-/* =========================================
-   SHORT ADDRESS
-   ========================================= */
-
-function shortenAddress(address) {
-
-    if (!address) return "";
-
-    if (address.length <= 14) {
-
-        return address;
-    }
-
-
-    return (
-        address.substring(0, 7) +
-        "..." +
-        address.substring(
-            address.length - 7
-        )
-    );
-}
-
-
-/* =========================================
-   WALLET MESSAGE
-   ========================================= */
-
-function setWalletMessage(message) {
-
-    const status =
-        document.getElementById(
-            "wallet-status-text"
-        );
-
-    if (status) {
-
-        status.innerText =
-            message;
-    }
-}
-
-
-/* =========================================
-   PAGE SWITCH
-   ========================================= */
-
-const originalSwitchPage =
-    window.switchPage;
-
-
-window.switchPage =
-    function(pageId, element) {
-
-        if (
-            typeof originalSwitchPage ===
-            "function"
-        ) {
-
-            originalSwitchPage(
-                pageId,
-                element
-            );
-        }
-
-
-        if (pageId === "wallet") {
-
-            setTimeout(
-                function() {
-
-                    loadWalletUI();
-
-                },
-                100
-            );
-        }
-    };
-
-
-/* =========================================
-   PAGE LOAD
-   ========================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        if (
-            document.getElementById(
-                "wallet-page"
-            )
-        ) {
-
-            /*
-             * Don't force wallet modal.
-             * Only prepare wallet page.
-             */
-
-            loadWalletUI();
-        }
-    }
-);
+    renderTasks();
+})();
