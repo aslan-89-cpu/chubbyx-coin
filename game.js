@@ -1,9 +1,9 @@
 
 /* =========================================
    CHUBBYX GAMES
-   Normal Spin + VIP Spin UI
+   Daily Spin + VIP Spin
    Server-backed coin balances
-   NEVER resets existing coin balances
+   Preserves existing balances
 ========================================= */
 
 (function () {
@@ -14,13 +14,17 @@
 
     const tg = window.Telegram?.WebApp || null;
 
-    const NORMAL_PRIZES = [0, 5000, 0, 10000, 5000, 15000];
+    const NORMAL_PRIZES = [
+        0, 5000, 0, 10000, 5000, 15000
+    ];
 
+    // Duplicate rewards are deliberately separated.
     const VIP_PRIZES = [
-        25000, 25000, 50000, 50000, 75000, 100000
+        25000, 50000, 25000, 75000, 50000, 100000
     ];
 
     let spinning = false;
+    let spinTimeout = null;
 
     function setBalance(value) {
         const coins = Number(value);
@@ -29,8 +33,7 @@
             return;
         }
 
-        // Update the local display cache only with a valid
-        // server balance. Never initialize the database here.
+        // Display cache only. Never reset the server balance.
         localStorage.setItem("chubby_coins", String(coins));
 
         const score = document.getElementById("main-score");
@@ -40,7 +43,7 @@
         }
     }
 
-    async function apiPost(endpoint) {
+    async function apiPost(endpoint, extra = {}) {
         if (!tg || !tg.initData) {
             throw new Error(
                 "Please reopen ChubbyX from Telegram."
@@ -53,7 +56,8 @@
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                initData: tg.initData
+                initData: tg.initData,
+                ...extra
             })
         });
 
@@ -63,11 +67,7 @@
             const error = new Error(
                 data.message ||
                 data.error ||
-                (
-                    response.status === 501
-                        ? "VIP payment verification is not configured on the server yet."
-                        : "Server request failed."
-                )
+                "Server request failed."
             );
 
             error.status = response.status;
@@ -79,7 +79,7 @@
         return data;
     }
 
-    function showMessage(message, isError) {
+    function showMessage(message, isError = false) {
         const element =
             document.getElementById("cx-game-message");
 
@@ -93,19 +93,18 @@
     async function syncBalance() {
         try {
             const data = await apiPost("/api/me");
+            const coins = Number(data.coins);
 
             if (
-                data.coins !== undefined &&
-                Number.isSafeInteger(Number(data.coins)) &&
-                Number(data.coins) >= 0
+                Number.isSafeInteger(coins) &&
+                coins >= 0
             ) {
-                setBalance(Number(data.coins));
+                setBalance(coins);
 
                 showMessage(
                     "Your balance: " +
-                    Number(data.coins).toLocaleString() +
-                    " coins",
-                    false
+                    coins.toLocaleString() +
+                    " coins"
                 );
             }
         } catch (error) {
@@ -115,7 +114,8 @@
             );
 
             showMessage(
-                error.message || "Could not sync your balance.",
+                error.message ||
+                "Could not sync your balance.",
                 true
             );
         }
@@ -186,7 +186,8 @@
                     border:5px solid #f8d66d;
                     box-sizing:border-box;
                     box-shadow:0 0 22px #eeb30833;
-                    transition:transform 2.5s cubic-bezier(.15,.7,.15,1);
+                    transition:
+                        transform 2.5s cubic-bezier(.15,.7,.15,1);
                 ">
                     ${labels}
 
@@ -216,7 +217,6 @@
 
         if (!page) return;
 
-        // Read existing local display balance without changing it.
         const saved = localStorage.getItem("chubby_coins");
         const parsed = saved === null ? NaN : Number(saved);
 
@@ -282,8 +282,9 @@
                         font-size:12px;
                         opacity:.85;
                     ">
-                        Payment must be verified by the server
-                        before a VIP reward can be credited.
+                        VIP rewards are unavailable until
+                        server-side TON payment verification
+                        is implemented.
                     </div>
                 </div>
 
@@ -301,7 +302,13 @@
         syncBalance();
     }
 
-    async function runSpin(endpoint, buttonId, wheelId, prizes, isVip) {
+    async function runSpin(
+        endpoint,
+        buttonId,
+        wheelId,
+        prizes,
+        isVip
+    ) {
         if (spinning) return;
 
         const button = document.getElementById(buttonId);
@@ -316,30 +323,28 @@
         showMessage(
             isVip
                 ? "Checking VIP payment verification..."
-                : "Checking your daily spin...",
-            false
+                : "Checking your daily spin..."
         );
 
         try {
-            // The server must decide the reward and update
-            // the database. Never award coins in the browser.
+            // The server determines the reward and balance.
             const data = await apiPost(endpoint);
 
             const reward = Number(data.reward);
+            const coins = Number(data.coins);
 
             if (
                 !Number.isSafeInteger(reward) ||
                 !prizes.includes(reward) ||
-                !Number.isSafeInteger(Number(data.coins)) ||
-                Number(data.coins) < 0
+                !Number.isSafeInteger(coins) ||
+                coins < 0
             ) {
                 throw new Error(
                     "The server returned an invalid spin result."
                 );
             }
 
-            // Trust the server's final balance, not a local calculation.
-            setBalance(Number(data.coins));
+            setBalance(coins);
 
             const matchingIndexes = [];
 
@@ -361,19 +366,21 @@
 
             button.textContent = "SPINNING...";
 
-            window.setTimeout(() => {
+            if (spinTimeout) {
+                window.clearTimeout(spinTimeout);
+            }
+
+            spinTimeout = window.setTimeout(() => {
                 showMessage(
                     (isVip ? "VIP Spin: " : "You won ") +
                     reward.toLocaleString() +
-                    " coins!",
-                    false
+                    " coins!"
                 );
             }, 2500);
 
         } catch (error) {
             console.error("ChubbyX spin failed:", error);
 
-            // Only use a balance supplied by the server.
             if (
                 error.data &&
                 Number.isSafeInteger(Number(error.data.coins)) &&
@@ -389,7 +396,7 @@
                 );
             } else if (error.status === 501 && isVip) {
                 showMessage(
-                    "VIP payment verification is not configured on the server yet. No VIP reward was added.",
+                    "VIP payment verification is not configured. No VIP reward was added.",
                     true
                 );
             } else {
@@ -428,9 +435,8 @@
     }
 
     function vipSpin() {
-        // The endpoint must verify a real TON payment and
-        // enforce server-side pricing/replay protection.
-        // The current Worker returns 501 until that is configured.
+        // The current Worker deliberately returns 501
+        // until secure TON payment verification is implemented.
         return runSpin(
             "/api/vip-spin",
             "cx-vip-spin-button",
