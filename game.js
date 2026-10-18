@@ -1,22 +1,16 @@
-/* =========================================
-CHUBBYX GAMES — PURPLE 3D EDITION
-Daily Spin + VIP Spin
-Server-backed coin balances
-Preserves existing balances
-========================================= */
-
-(function () {
-“use strict”;
-
 const API =
     "https://chubbyx-server.aslan89aslan1.workers.dev";
+
 const tg = window.Telegram?.WebApp || null;
+
 const NORMAL_PRIZES = [
     0, 5000, 0, 10000, 5000, 15000
 ];
+
 const VIP_PRIZES = [
     25000, 50000, 25000, 75000, 50000, 100000
 ];
+
 const COLORS = {
     gold: "#C4A7FF",
     blue: "#A78BFA",
@@ -27,38 +21,52 @@ const COLORS = {
     muted: "#CFC3E8",
     red: "#FF8585"
 };
+
 let spinning = false;
 let spinTimeout = null;
+
 /* ---------- SAFE BALANCE DISPLAY ---------- */
+
 function setBalance(value) {
     const coins = Number(value);
+
     if (!Number.isSafeInteger(coins) || coins < 0) {
         return;
     }
+
     // Update the cache only with a valid server balance.
     localStorage.setItem("chubby_coins", String(coins));
+
     const score = document.getElementById("main-score");
+
     if (score) {
         score.textContent = coins.toLocaleString();
     }
+
     const balanceText = document.getElementById("cx-balance");
+
     if (balanceText) {
         balanceText.textContent =
             "Your balance: " + coins.toLocaleString() + " coins";
     }
+
     const message = document.getElementById("cx-game-message");
+
     if (message && !spinning) {
         message.textContent =
             "Your balance: " + coins.toLocaleString() + " coins";
     }
 }
+
 /* ---------- SERVER REQUEST ---------- */
+
 async function apiPost(endpoint, extra = {}) {
     if (!tg || !tg.initData) {
         throw new Error(
             "Please reopen ChubbyX from Telegram."
         );
     }
+
     const response = await fetch(API + endpoint, {
         method: "POST",
         headers: {
@@ -69,33 +77,44 @@ async function apiPost(endpoint, extra = {}) {
             ...extra
         })
     });
+
     const data = await response.json().catch(() => ({}));
+
     if (!response.ok || data.ok === false) {
         const error = new Error(
             data.message ||
             data.error ||
             "Server request failed."
         );
+
         error.status = response.status;
         error.data = data;
+
         throw error;
     }
+
     return data;
 }
+
 /* ---------- MESSAGES ---------- */
+
 function showMessage(message, isError = false) {
     const element =
         document.getElementById("cx-game-message");
+
     if (!element) return;
+
     element.textContent = message;
     element.style.color = isError
         ? COLORS.red
         : COLORS.blue;
 }
+
 async function syncBalance() {
     try {
         const data = await apiPost("/api/me");
         const coins = Number(data.coins);
+
         if (
             Number.isSafeInteger(coins) &&
             coins >= 0
@@ -104,16 +123,20 @@ async function syncBalance() {
         }
     } catch (error) {
         console.error("ChubbyX balance sync failed:", error);
+
         showMessage(
             error.message || "Could not sync your balance.",
             true
         );
     }
 }
+
 /* ---------- PURPLE 3D WHEEL ---------- */
+
 function makeWheel(id, prizes) {
     const segments = prizes.map((prize, index) => {
         const angle = index * 60 + 30;
+
         return `
             <div class="cx-wheel-label" style="
                 transform:
@@ -125,11 +148,14 @@ function makeWheel(id, prizes) {
             </div>
         `;
     }).join("");
+
     return `
         <div class="cx-wheel-wrap">
             <div class="cx-pointer"></div>
+
             <div id="${id}" class="cx-wheel">
                 ${segments}
+
                 <div class="cx-wheel-center">
                     CHUBBYX
                 </div>
@@ -137,16 +163,21 @@ function makeWheel(id, prizes) {
         </div>
     `;
 }
+
 /* ---------- STYLES ---------- */
+
 function addStyles() {
     if (document.getElementById("cx-games-theme")) return;
+
     const style = document.createElement("style");
     style.id = "cx-games-theme";
+
     style.textContent = `
         #games-page {
             color: ${COLORS.white};
             padding-bottom: 28px;
         }
+
         #games-page .page-title {
             color: ${COLORS.blue} !important;
             text-align: center;
@@ -155,6 +186,7 @@ function addStyles() {
             margin: 18px 0 20px;
             text-shadow: 0 0 18px #A78BFA45;
         }
+
         #games-page .page-content {
             width: 100%;
             max-width: 520px;
@@ -162,6 +194,7 @@ function addStyles() {
             padding: 0 12px 22px;
             box-sizing: border-box;
         }
+
         #games-page .cx-card {
             box-sizing: border-box;
             width: 100%;
@@ -182,18 +215,21 @@ function addStyles() {
                 0 12px 32px #00000045,
                 inset 0 1px 0 #FFFFFF12;
         }
+
         #games-page .cx-card h3 {
             color: ${COLORS.white};
             font-size: 25px;
             font-weight: 900;
             margin: 2px 0 12px;
         }
+
         #games-page .cx-card p {
             color: ${COLORS.muted};
             font-size: 16px;
             line-height: 1.7;
             margin: 10px 0 18px;
         }
+
         #games-page .cx-wheel-wrap {
             position: relative;
             width: 240px;
@@ -201,6 +237,7 @@ function addStyles() {
             margin: 28px auto 30px;
             perspective: 800px;
         }
+
         #games-page .cx-wheel {
             position: relative;
             width: 220px;
@@ -228,6 +265,7 @@ function addStyles() {
                 transform 2.8s cubic-bezier(.12,.72,.12,1);
             transform-style: preserve-3d;
         }
+
         #games-page .cx-wheel-label {
             position: absolute;
             top: 50%;
@@ -247,6 +285,7 @@ function addStyles() {
                 0 0 5px #00000090;
             pointer-events: none;
         }
+
         #games-page .cx-wheel-center {
             position: absolute;
             z-index: 3;
@@ -272,6 +311,7 @@ function addStyles() {
             text-align: center;
             text-shadow: 0 0 8px #A78BFA80;
         }
+
         #games-page .cx-pointer {
             position: absolute;
             z-index: 5;
@@ -286,6 +326,7 @@ function addStyles() {
             border-top: 28px solid #C4A7FF;
             filter: drop-shadow(0 3px 5px #0008);
         }
+
         #games-page .cx-btn {
             display: block;
             width: 100%;
@@ -307,13 +348,16 @@ function addStyles() {
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
+
         #games-page .cx-btn:active {
             transform: scale(.985);
         }
+
         #games-page .cx-btn:disabled {
             opacity: .65;
             cursor: wait;
         }
+
         #games-page #cx-vip-spin-button {
             background: linear-gradient(
                 110deg,
@@ -323,6 +367,7 @@ function addStyles() {
             color: #190D2B;
             box-shadow: 0 6px 20px #A78BFA30;
         }
+
         #games-page #cx-back-home {
             display: block;
             width: 100%;
@@ -337,6 +382,7 @@ function addStyles() {
             font-weight: 800;
             cursor: pointer;
         }
+
         #games-page .cx-message {
             min-height: 24px;
             margin-top: 12px;
@@ -345,6 +391,7 @@ function addStyles() {
             line-height: 1.6;
             overflow-wrap: anywhere;
         }
+
         #games-page .cx-vip-note {
             margin-top: 12px;
             padding: 12px;
@@ -355,74 +402,97 @@ function addStyles() {
             font-size: 13px;
             line-height: 1.7;
         }
+
         @media (max-width: 360px) {
             #games-page .cx-wheel-wrap {
                 transform: scale(.9);
                 margin-top: 16px;
                 margin-bottom: 16px;
             }
+
             #games-page .cx-card {
                 padding: 18px 12px;
             }
+
             #games-page .cx-card h3 {
                 font-size: 22px;
             }
         }
     `;
+
     document.head.appendChild(style);
 }
+
 /* ---------- BACK TO HOME ---------- */
+
 function goHome() {
     const homeButton = document.querySelector(
         '[data-page="home"], [data-page="home-page"]'
     );
+
     if (homeButton) {
         homeButton.click();
         return;
     }
+
     const gamesPage = document.getElementById("games-page");
     const homePage =
         document.getElementById("home-page") ||
         document.getElementById("home-layout");
+
     if (gamesPage && homePage) {
         gamesPage.style.display = "none";
         homePage.style.display = "";
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
     }
+
     if (typeof window.showPage === "function") {
         window.showPage("home");
         return;
     }
+
     showMessage(
         "Please use the Home button in the bottom navigation.",
         true
     );
 }
+
 /* ---------- RENDER GAMES PAGE ---------- */
+
 function render() {
     const page = document.getElementById("games-page");
     if (!page) return;
+
     addStyles();
+
     const saved = localStorage.getItem("chubby_coins");
     const parsed = saved === null ? NaN : Number(saved);
+
     const initialBalance =
         Number.isSafeInteger(parsed) && parsed >= 0
             ? parsed
             : null;
+
     page.innerHTML = `
         <h2 class="page-title">🎮 ChubbyX Games</h2>
+
         <div class="page-content">
+
             <button id="cx-back-home" type="button">
                 ← Back to Home
             </button>
+
             <div class="cx-card">
                 <h3>🎰 Daily Spin</h3>
+
                 <p>
                     Spin once per day for a chance to win
                     up to 15,000 coins.
                 </p>
+
                 ${makeWheel("cx-spin-wheel", NORMAL_PRIZES)}
+
                 <button
                     class="cx-btn"
                     id="cx-spin-button"
@@ -430,6 +500,7 @@ function render() {
                 >
                     SPIN NOW
                 </button>
+
                 <div class="cx-message" id="cx-game-message"
                      aria-live="polite">
                     ${
@@ -441,13 +512,17 @@ function render() {
                     }
                 </div>
             </div>
+
             <div class="cx-card">
                 <h3>👑 VIP Spin</h3>
+
                 <p>
                     Win VIP rewards from 25,000 up to
                     100,000 coins.
                 </p>
+
                 ${makeWheel("cx-vip-wheel", VIP_PRIZES)}
+
                 <p>
                     First spin: <strong style="color:${COLORS.gold}">
                     0.25 TON</strong><br>
@@ -455,6 +530,7 @@ function render() {
                     <strong style="color:${COLORS.gold}">
                     0.05 TON</strong> to the previous price.
                 </p>
+
                 <button
                     class="cx-btn"
                     id="cx-vip-spin-button"
@@ -462,6 +538,7 @@ function render() {
                 >
                     VIP SPIN
                 </button>
+
                 <div class="cx-vip-note">
                     VIP rewards require verified TON payment
                     on the server. No payment will be requested
@@ -470,18 +547,24 @@ function render() {
             </div>
         </div>
     `;
+
     document
         .getElementById("cx-back-home")
         .addEventListener("click", goHome);
+
     document
         .getElementById("cx-spin-button")
         .addEventListener("click", normalSpin);
+
     document
         .getElementById("cx-vip-spin-button")
         .addEventListener("click", vipSpin);
+
     syncBalance();
 }
+
 /* ---------- SPIN HANDLER ---------- */
+
 async function runSpin(
     endpoint,
     buttonId,
@@ -490,21 +573,28 @@ async function runSpin(
     isVip
 ) {
     if (spinning) return;
+
     const button = document.getElementById(buttonId);
     const wheel = document.getElementById(wheelId);
+
     if (!button || !wheel) return;
+
     spinning = true;
     button.disabled = true;
     button.textContent = "CHECKING...";
+
     showMessage(
         isVip
             ? "Checking VIP payment verification..."
             : "Checking your daily spin..."
     );
+
     try {
         const data = await apiPost(endpoint);
+
         const reward = Number(data.reward);
         const coins = Number(data.coins);
+
         if (
             !Number.isSafeInteger(reward) ||
             !prizes.includes(reward) ||
@@ -515,23 +605,31 @@ async function runSpin(
                 "The server returned an invalid spin result."
             );
         }
+
         setBalance(coins);
+
         const matchingIndexes = [];
+
         prizes.forEach((value, index) => {
             if (value === reward) {
                 matchingIndexes.push(index);
             }
         });
+
         const index = matchingIndexes[
             Math.floor(Math.random() * matchingIndexes.length)
         ];
+
         const degrees =
             360 * 5 + (360 - (index * 60 + 30));
+
         wheel.style.transform = "rotate(" + degrees + "deg)";
         button.textContent = "SPINNING...";
+
         if (spinTimeout) {
             window.clearTimeout(spinTimeout);
         }
+
         spinTimeout = window.setTimeout(() => {
             showMessage(
                 (isVip ? "VIP Spin: " : "You won ") +
@@ -539,8 +637,10 @@ async function runSpin(
                 " coins!"
             );
         }, 2850);
+
     } catch (error) {
         console.error("ChubbyX spin failed:", error);
+
         if (
             error.data &&
             Number.isSafeInteger(Number(error.data.coins)) &&
@@ -548,6 +648,7 @@ async function runSpin(
         ) {
             setBalance(Number(error.data.coins));
         }
+
         if (error.status === 409 && !isVip) {
             showMessage(
                 "You have already spun today. Try again tomorrow.",
@@ -564,12 +665,16 @@ async function runSpin(
                 true
             );
         }
+
         wheel.style.transform = "rotate(0deg)";
+
     } finally {
         window.setTimeout(() => {
             spinning = false;
+
             const currentButton =
                 document.getElementById(buttonId);
+
             if (currentButton) {
                 currentButton.disabled = false;
                 currentButton.textContent =
@@ -578,6 +683,7 @@ async function runSpin(
         }, 2900);
     }
 }
+
 function normalSpin() {
     return runSpin(
         "/api/normal-spin",
@@ -587,6 +693,7 @@ function normalSpin() {
         false
     );
 }
+
 function vipSpin() {
     return runSpin(
         "/api/vip-spin",
@@ -596,7 +703,6 @@ function vipSpin() {
         true
     );
 }
+
 window.gamePage = render;
 window.renderGame = render;
-
-})();
