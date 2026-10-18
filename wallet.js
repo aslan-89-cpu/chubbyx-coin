@@ -2,7 +2,7 @@
 /* =========================================
    CHUBBYX — TON CONNECT WALLET
    FULL REPLACEMENT
-   Preserves existing coin balances
+   Does not modify coin balances
 ========================================= */
 
 (function () {
@@ -18,6 +18,7 @@
 
     let tonConnectUI = null;
     let initializing = null;
+    let sdkLoading = null;
     let opening = false;
     let disconnecting = false;
 
@@ -41,16 +42,23 @@
         const details = $("wallet-details-box");
         const addressElement = $("wallet-address-string");
         const connectButton = $("chubbyx-connect-button");
+        const disconnectButton = $("chubbyx-disconnect-button");
 
         if (address) {
             setMessage("Wallet connected successfully!");
 
             if (details) details.style.display = "block";
+
             if (addressElement) {
                 addressElement.textContent = shortAddress(address);
             }
+
             if (connectButton) {
                 connectButton.textContent = "Wallet Connected";
+            }
+
+            if (disconnectButton) {
+                disconnectButton.style.display = "block";
             }
 
             try {
@@ -58,7 +66,10 @@
             } catch (_) {}
         } else {
             if (details) details.style.display = "none";
-            if (addressElement) addressElement.textContent = "";
+
+            if (addressElement) {
+                addressElement.textContent = "";
+            }
 
             if (connectButton) {
                 connectButton.textContent = "Connect Wallet";
@@ -67,9 +78,80 @@
             if (!opening && !disconnecting) {
                 setMessage("Connect your TON wallet");
             }
+
+            try {
+                localStorage.removeItem("user_wallet");
+            } catch (_) {}
         }
 
-        // Never modify chubby_coins.
+        // IMPORTANT: Never read, reset or modify chubby_coins.
+    }
+
+    function loadSdkFrom(url) {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+
+            script.src = url;
+            script.async = true;
+
+            script.onload = function () {
+                if (
+                    window.TON_CONNECT_UI &&
+                    typeof window.TON_CONNECT_UI.TonConnectUI === "function"
+                ) {
+                    resolve(window.TON_CONNECT_UI);
+                } else {
+                    reject(new Error(
+                        "The SDK loaded, but TON_CONNECT_UI was not found."
+                    ));
+                }
+            };
+
+            script.onerror = function () {
+                reject(new Error("Could not load TON Connect SDK."));
+            };
+
+            document.head.appendChild(script);
+        });
+    }
+
+    async function getSdk() {
+        if (
+            window.TON_CONNECT_UI &&
+            typeof window.TON_CONNECT_UI.TonConnectUI === "function"
+        ) {
+            return window.TON_CONNECT_UI;
+        }
+
+        if (sdkLoading) return sdkLoading;
+
+        sdkLoading = (async function () {
+            const urls = [
+                "https://cdn.jsdelivr.net/npm/@tonconnect/ui@5.0.0/dist/tonconnect-ui.min.js",
+                "https://unpkg.com/@tonconnect/ui@5.0.0/dist/tonconnect-ui.min.js"
+            ];
+
+            let lastError = null;
+
+            for (const url of urls) {
+                try {
+                    return await loadSdkFrom(url);
+                } catch (error) {
+                    lastError = error;
+                    console.error("TON SDK load failed:", url, error);
+                }
+            }
+
+            throw lastError || new Error(
+                "TON Connect SDK could not be loaded."
+            );
+        })();
+
+        try {
+            return await sdkLoading;
+        } finally {
+            sdkLoading = null;
+        }
     }
 
     async function startTonConnect() {
@@ -77,18 +159,11 @@
         if (initializing) return initializing;
 
         initializing = (async function () {
-            const sdk = window.TON_CONNECT_UI;
-
-            if (!sdk || typeof sdk.TonConnectUI !== "function") {
-                throw new Error(
-                    "TON Connect SDK did not load. Check the SDK script in index.html."
-                );
-            }
+            const sdk = await getSdk();
 
             const ui = new sdk.TonConnectUI({
                 manifestUrl: MANIFEST_URL,
                 language: "en",
-                restoreConnection: true,
                 actionsConfiguration: {
                     twaReturnUrl: TWA_RETURN_URL
                 }
@@ -136,21 +211,21 @@
 
             if (typeof ui.openModal !== "function") {
                 throw new Error(
-                    "TON Connect wallet selector is unavailable."
+                    "Wallet selector is unavailable in this SDK."
                 );
             }
 
             setMessage("Opening TON wallet selector...");
 
-            // Open the wallet selector directly.
-            // Do not call ui.getWallets() first.
             await ui.openModal();
 
             if (!ui.wallet?.account) {
-                setMessage("Choose a TON wallet in the window that opens.");
+                setMessage(
+                    "Select a wallet in the window that opens."
+                );
             }
         } catch (error) {
-            console.error("ChubbyX connect error:", error);
+            console.error("ChubbyX wallet connection failed:", error);
 
             setMessage(
                 "Could not open wallet: " +
@@ -185,14 +260,10 @@
 
             await ui.disconnect();
 
-            try {
-                localStorage.removeItem("user_wallet");
-            } catch (_) {}
-
             updateWallet(null);
             setMessage("Wallet disconnected.");
         } catch (error) {
-            console.error("ChubbyX disconnect error:", error);
+            console.error("ChubbyX wallet disconnect failed:", error);
 
             setMessage(
                 "Could not disconnect: " +
@@ -337,7 +408,7 @@
                 updateWallet(ui.wallet);
             })
             .catch(function (error) {
-                console.error("ChubbyX wallet init error:", error);
+                console.error("ChubbyX wallet initialization failed:", error);
 
                 setMessage(
                     "Wallet initialization failed: " +
@@ -355,20 +426,21 @@
             !$("chubbyx-back-button")
         ) {
             createWalletPage();
-        } else {
-            startTonConnect()
-                .then(function (ui) {
-                    updateWallet(ui.wallet);
-                })
-                .catch(function (error) {
-                    console.error("ChubbyX wallet init error:", error);
-
-                    setMessage(
-                        "Wallet initialization failed: " +
-                        (error?.message || String(error))
-                    );
-                });
+            return;
         }
+
+        startTonConnect()
+            .then(function (ui) {
+                updateWallet(ui.wallet);
+            })
+            .catch(function (error) {
+                console.error("ChubbyX wallet initialization failed:", error);
+
+                setMessage(
+                    "Wallet initialization failed: " +
+                    (error?.message || String(error))
+                );
+            });
     }
 
     window.loadWalletUI = loadWalletUI;
