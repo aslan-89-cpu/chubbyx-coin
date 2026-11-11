@@ -42,6 +42,7 @@
 
     // Automatic ad at natural pauses (after a game, spin, check-in...)
     window.cxAd = async function (placement) {
+        if (window.cxIsVip) return false; // VIP: no automatic ads
         if (showing) return false;
         if (shownCount >= MAX_PER_SESSION) return false;
         if (Date.now() - lastShown < MIN_GAP_MS) return false;
