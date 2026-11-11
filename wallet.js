@@ -1,7 +1,6 @@
-
 /* =========================================
    CHUBBYX — TON CONNECT WALLET
-   FULL REPLACEMENT
+   FULL REPLACEMENT (fixed)
    Does NOT modify coin balances
 ========================================= */
 
@@ -67,12 +66,13 @@
         // IMPORTANT: Never read, reset, or modify chubby_coins.
     }
 
-    function loadSdk() {
+    // FIX: this function is now async (it uses await inside)
+    async function loadSdk() {
         if (
             window.TON_CONNECT_UI &&
             typeof window.TON_CONNECT_UI.TonConnectUI === "function"
         ) {
-            return Promise.resolve(window.TON_CONNECT_UI);
+            return window.TON_CONNECT_UI;
         }
 
         if (sdkPromise) return sdkPromise;
@@ -139,6 +139,20 @@
                 updateWallet(wallet);
             });
 
+            // FIX: register the modal listener once here,
+            // not on every button press.
+            if (typeof ui.onModalStateChange === "function") {
+                ui.onModalStateChange(function (state) {
+                    if (getAddress(ui.wallet)) return;
+
+                    if (state?.status === "closed") {
+                        setMessage(
+                            "Wallet selector closed. Tap Connect Wallet to try again."
+                        );
+                    }
+                });
+            }
+
             updateWallet(ui.wallet);
 
             return ui;
@@ -183,19 +197,6 @@
             await ui.openModal();
 
             setMessage("Choose a TON wallet in the window that opens.");
-
-            if (typeof ui.onModalStateChange === "function") {
-                // Show a useful message if the selector closes.
-                ui.onModalStateChange(function (state) {
-                    if (getAddress(ui.wallet)) return;
-
-                    if (state?.status === "closed") {
-                        setMessage(
-                            "Wallet selector closed. Tap Connect Wallet to try again."
-                        );
-                    }
-                });
-            }
         } catch (error) {
             console.error("ChubbyX wallet error:", error);
             setMessage(
