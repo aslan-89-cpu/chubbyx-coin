@@ -612,8 +612,8 @@
                 </div>
 
                 <div class="cx-card">
-                    <h3>📺 Support ChubbyX</h3>
-                    <p>Watch a short ad to support the project. Thank you! 💜</p>
+                    <h3>📺 Watch & Earn</h3>
+                    <p>Watch a short ad and earn 1,000 coins (up to 5 ads per day). Watch 3 ads for a +2,000 bonus! 💜</p>
                     <button class="cx-btn" id="cx-watch-ad" type="button">WATCH AD</button>
                     <div class="cx-message" id="cx-ad-message"></div>
                 </div>
@@ -639,16 +639,37 @@
             const msg = document.getElementById("cx-ad-message");
             const btn = document.getElementById("cx-watch-ad");
             btn.disabled = true;
+            msg.style.color = COLORS.lightPurple;
             msg.textContent = "Loading ad...";
-            let ok = false;
+
             try {
-                ok = typeof window.cxRewardedAd === "function"
+                // 1) tell the server an ad is starting (also checks daily limit)
+                await apiPost("/api/ad-start", {});
+
+                // 2) show the ad
+                const watched = typeof window.cxRewardedAd === "function"
                     ? await window.cxRewardedAd()
                     : false;
-            } catch (_) {}
-            msg.textContent = ok
-                ? "Thank you for supporting ChubbyX! 💜"
-                : "No ad available right now. Please try again later.";
+
+                if (!watched) {
+                    msg.textContent = "No ad available right now. Please try again later.";
+                    btn.disabled = false;
+                    return;
+                }
+
+                // 3) ask the server for the reward
+                const data = await apiPost("/api/ad-claim", {});
+                if (Number.isSafeInteger(Number(data.coins))) setBalance(Number(data.coins));
+
+                msg.style.color = COLORS.green;
+                msg.textContent = "+" + Number(data.reward).toLocaleString() + " coins! 🎉" +
+                    (Number(data.bonus) > 0 ? " (includes bonus)" : "") +
+                    " Ads left today: " + Number(data.remaining);
+            } catch (error) {
+                msg.style.color = error.status === 409 ? COLORS.muted : COLORS.red;
+                msg.textContent = error.message || "Something went wrong.";
+            }
+
             btn.disabled = false;
         });
 
