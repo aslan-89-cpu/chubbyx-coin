@@ -17,7 +17,7 @@
 
     // Free games are for fun for now. Coins must be given by the
     // server only, so rewards stay OFF until the server supports it.
-    const GAME_REWARDS_ACTIVE = false;
+    const GAME_REWARDS_ACTIVE = true;
 
     const COLORS = {
         lightPurple: "#E2D3FF",
@@ -32,6 +32,24 @@
         try {
             if (typeof window.cxAd === "function") window.cxAd(placement);
         } catch (_) {}
+    }
+
+    async function claimReward(game, score, elId) {
+        const el = document.getElementById(elId);
+        if (!el) return;
+        el.textContent = "Claiming reward...";
+        el.style.color = COLORS.lightPurple;
+        try {
+            const data = await apiPost("/api/game-reward", { game, score });
+            if (Number.isSafeInteger(Number(data.coins))) setBalance(Number(data.coins));
+            el.textContent = Number(data.reward) > 0
+                ? "+" + Number(data.reward).toLocaleString() + " coins! 🎉"
+                : "No coins this time. Try again!";
+            el.style.color = COLORS.green;
+        } catch (error) {
+            el.textContent = error.message || "Could not claim reward.";
+            el.style.color = error.status === 409 ? COLORS.muted : COLORS.red;
+        }
     }
 
     let spinning = false;
@@ -62,8 +80,6 @@
         if (!tg || !tg.initData) {
             throw new Error("Please reopen ChubbyX from Telegram.");
         }
-
-        if (requestController) requestController.abort();
 
         const controller = new AbortController();
         requestController = controller;
@@ -376,8 +392,9 @@
                 <div class="cx-big">${score} / ${order.length}</div>
                 <p>${score === order.length ? "Perfect! You are a crypto pro 🏆"
                     : score >= 3 ? "Great job! 🎉" : "Good try! Play again 💪"}</p>
-                ${rewardNote()}
+                <div class="cx-message" id="cx-quiz-reward"></div>
                 <button class="cx-btn" id="cx-quiz-again" type="button">Play Again</button>`;
+            claimReward("quiz", score, "cx-quiz-reward");
             maybeAd("quiz_end");
             document.getElementById("cx-quiz-again").addEventListener("click", () => {
                 step = 0;
@@ -448,9 +465,10 @@
                                 box.innerHTML = `
                                     <div class="cx-big">🎉 ${moves} moves</div>
                                     <p>You matched all the cards!</p>
-                                    ${rewardNote()}
+                                    <div class="cx-message" id="cx-mem-reward"></div>
                                     <button class="cx-btn" id="cx-mem-again" type="button">Play Again</button>`;
                                 document.getElementById("cx-mem-again").addEventListener("click", start);
+                                claimReward("memory", moves, "cx-mem-reward");
                                 maybeAd("memory_end");
                             }, 500);
                         }
@@ -472,73 +490,74 @@
         document.getElementById("cx-mem-start").addEventListener("click", start);
     }
 
-    /* ---------- DAILY STREAK ---------- */
-
-    function dayKey(date) {
-        return date.getFullYear() + "-" +
-            String(date.getMonth() + 1).padStart(2, "0") + "-" +
-            String(date.getDate()).padStart(2, "0");
-    }
-
-    function readStreak() {
-        try {
-            const raw = JSON.parse(localStorage.getItem("chubbyx_streak") || "{}");
-            const count = Number(raw.count);
-            return {
-                count: Number.isSafeInteger(count) && count > 0 ? count : 0,
-                last: typeof raw.last === "string" ? raw.last : ""
-            };
-        } catch (_) {
-            return { count: 0, last: "" };
-        }
-    }
+    /* ---------- DAILY STREAK (server-side) ---------- */
 
     function initStreak() {
         const box = document.getElementById("cx-streak-box");
         if (!box) return;
 
-        function draw(message) {
-            const data = readStreak();
-            const today = dayKey(new Date());
-            const done = data.last === today;
-            const filled = data.count % 7 === 0 && data.count > 0 ? 7 : data.count % 7;
+        function draw(data, message, isError) {
+            const count = Number(data.count) || 0;
+            const done = !!data.claimedToday;
+            const filled = count > 0 ? ((count - 1) % 7) + 1 : 0;
+            const next = Number(data.nextReward) || 0;
 
             box.innerHTML = `
-                <div class="cx-big">🔥 ${data.count} day${data.count === 1 ? "" : "s"}</div>
+                <div class="cx-big">🔥 ${count} day${count === 1 ? "" : "s"}</div>
                 <div class="cx-days">
                     ${[1, 2, 3, 4, 5, 6, 7].map((d) =>
                         `<div class="cx-day ${d <= filled ? "on" : ""}">${d}</div>`
                     ).join("")}
                 </div>
                 <button class="cx-btn" id="cx-streak-btn" type="button" ${done ? "disabled" : ""}>
-                    ${done ? "CHECKED IN TODAY ✅" : "CHECK IN TODAY"}
+                    ${done ? "CHECKED IN TODAY ✅" : "CHECK IN (+" + next.toLocaleString() + ")"}
                 </button>
-                <div class="cx-message">${message || ""}</div>
-                ${rewardNote()}`;
+                <div class="cx-message" id="cx-streak-msg"></div>`;
+
+            const msg = document.getElementById("cx-streak-msg");
+            if (msg && message) {
+                msg.textContent = message;
+                msg.style.color = isError ? COLORS.red : COLORS.green;
+            }
 
             const btn = document.getElementById("cx-streak-btn");
             if (btn && !done) {
-                btn.addEventListener("click", () => {
-                    const yesterday = new Date();
-                    yesterday.setDate(yesterday.getDate() - 1);
-
-                    const cur = readStreak();
-                    const next = cur.last === dayKey(yesterday) ? cur.count + 1 : 1;
-
+                btn.addEventListener("click", async () => {
+                    btn.disabled = true;
                     try {
-                        localStorage.setItem(
-                            "chubbyx_streak",
-                            JSON.stringify({ count: next, last: today })
-                        );
-                    } catch (_) {}
-
-                    draw("Nice! Come back tomorrow to keep your streak.");
-                    maybeAd("streak");
+                        const res = await apiPost("/api/streak", {});
+                        if (Number.isSafeInteger(Number(res.coins))) setBalance(Number(res.coins));
+                        draw(res, "+" + Number(res.reward).toLocaleString() +
+                            " coins! Come back tomorrow 🔥", false);
+                        maybeAd("streak");
+                    } catch (error) {
+                        if (error.status === 409) {
+                            load();
+                        } else {
+                            btn.disabled = false;
+                            draw(data, error.message, true);
+                        }
+                    }
                 });
             }
         }
 
-        draw("");
+        async function load() {
+            box.innerHTML = '<p>Loading...</p>';
+            try {
+                const data = await apiPost("/api/streak", { action: "status" });
+                draw(data, "", false);
+            } catch (error) {
+                box.innerHTML = "";
+                const p = document.createElement("div");
+                p.className = "cx-message";
+                p.style.color = COLORS.red;
+                p.textContent = error.message || "Could not load streak.";
+                box.appendChild(p);
+            }
+        }
+
+        load();
     }
 
     /* ---------- page ---------- */
@@ -576,13 +595,13 @@
 
                 <div class="cx-card">
                     <h3>🧠 Crypto Quiz</h3>
-                    <p>Answer 5 quick questions about crypto and staying safe.</p>
+                    <p>Answer 5 quick questions about crypto and staying safe. Earn coins once per day!</p>
                     <div id="cx-quiz-box"></div>
                 </div>
 
                 <div class="cx-card">
                     <h3>🃏 Memory Match</h3>
-                    <p>Flip the cards and find all the matching pairs.</p>
+                    <p>Flip the cards and find all the matching pairs. Earn coins once per day!</p>
                     <div id="cx-memory-box"></div>
                 </div>
 
