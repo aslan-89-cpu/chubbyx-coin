@@ -560,6 +560,90 @@
         load();
     }
 
+    /* ---------- VIP (Telegram Stars) ---------- */
+
+    function initVip() {
+        const box = document.getElementById("cx-vip-box");
+        if (!box) return;
+
+        const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+        function say(text, isError) {
+            const el = document.getElementById("cx-vip-msg");
+            if (!el) return;
+            el.textContent = text;
+            el.style.color = isError ? COLORS.red : COLORS.lightPurple;
+        }
+
+        function draw(data) {
+            const active = !!data.vip;
+            window.cxIsVip = active;
+
+            const until = active
+                ? new Date(Number(data.until) * 1000).toLocaleDateString()
+                : "";
+
+            box.innerHTML = `
+                <div class="cx-big">${active ? "👑 VIP active" : Number(data.stars) + " ⭐"}</div>
+                <p>${active ? "Active until " + until : "for " + Number(data.days) + " days"}</p>
+                <button class="cx-btn" id="cx-vip-buy" type="button">
+                    ${active ? "EXTEND VIP (+" + Number(data.days) + " days)" : "GET VIP"}
+                </button>
+                <div class="cx-message" id="cx-vip-msg"></div>`;
+
+            document.getElementById("cx-vip-buy").addEventListener("click", () => buy(data));
+        }
+
+        async function waitForActivation(before) {
+            for (let i = 0; i < 8; i++) {
+                await sleep(1500);
+                try {
+                    const now = await apiPost("/api/vip-status", {});
+                    if (now.vip && Number(now.until) > Number(before.until || 0)) {
+                        draw(now);
+                        say("VIP activated! 👑 Thank you!", false);
+                        return;
+                    }
+                } catch (_) {}
+            }
+            say("Payment received. VIP will activate in a moment, reopen this page.", false);
+        }
+
+        async function buy(before) {
+            const btn = document.getElementById("cx-vip-buy");
+            if (btn) btn.disabled = true;
+            say("Preparing payment...", false);
+
+            try {
+                if (!tg || typeof tg.openInvoice !== "function") {
+                    throw new Error("Please update Telegram to pay with Stars.");
+                }
+
+                const res = await apiPost("/api/vip-invoice", {});
+
+                tg.openInvoice(res.invoiceLink, (status) => {
+                    if (status === "paid") {
+                        say("Payment received! Activating VIP...", false);
+                        waitForActivation(before);
+                    } else {
+                        if (btn) btn.disabled = false;
+                        say(status === "cancelled" ? "Payment cancelled." : "Payment was not completed.", status !== "cancelled");
+                    }
+                });
+            } catch (error) {
+                if (btn) btn.disabled = false;
+                say(error.message || "Could not start the payment.", true);
+            }
+        }
+
+        box.innerHTML = "<p>Loading...</p>";
+        apiPost("/api/vip-status", {})
+            .then(draw)
+            .catch((error) => {
+                box.textContent = error.message || "Could not load VIP.";
+            });
+    }
+
     /* ---------- page ---------- */
 
     function render() {
@@ -619,21 +703,19 @@
                 </div>
 
                 <div class="cx-card">
-                    <h3>👑 VIP Spin</h3>
-                    <p>VIP rewards range from 25,000 up to 100,000 coins.</p>
-                    ${makeWheel("cx-vip-wheel", VIP_PRIZES)}
-                    <p>First spin: <strong style="color:${COLORS.gold}">0.25 TON</strong><br>
-                    Each repeat adds <strong style="color:${COLORS.gold}">0.05 TON</strong>.</p>
-                    <button class="cx-btn" id="cx-vip-spin-button" type="button">VIP SPIN</button>
+                    <h3>👑 VIP Membership</h3>
+                    <p>✨ Double coins from Ads, Quiz, Memory and Streak<br>
+                    📺 Up to 10 rewarded ads per day<br>
+                    🚫 No automatic ads</p>
+                    <div id="cx-vip-box"></div>
                     <div class="cx-vip-note">
-                        VIP rewards are only added after server-side TON payment verification.
+                        Paid with Telegram Stars. VIP is activated automatically after payment.
                     </div>
                 </div>
             </div>`;
 
         document.getElementById("cx-back-home").addEventListener("click", goHome);
         document.getElementById("cx-spin-button").addEventListener("click", normalSpin);
-        document.getElementById("cx-vip-spin-button").addEventListener("click", vipSpin);
 
         document.getElementById("cx-watch-ad").addEventListener("click", async () => {
             const msg = document.getElementById("cx-ad-message");
@@ -673,6 +755,7 @@
             btn.disabled = false;
         });
 
+        initVip();
         initQuiz();
         initMemory();
         initStreak();
