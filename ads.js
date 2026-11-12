@@ -8,8 +8,8 @@
 
     // 1) Create an account at https://partner.adsgram.ai
     // 2) Add your Mini App, create two blocks, then paste the IDs here.
-    const INTERSTITIAL_BLOCK_ID = "int-XXXXX"; // example: "int-12345"
-    const REWARDED_BLOCK_ID     = "XXXXX";     // example: "12346"
+    const INTERSTITIAL_BLOCK_ID = "int-59349";
+    const REWARDED_BLOCK_ID     = "59348";
 
     // Keep ads gentle so users do not leave
     const MIN_GAP_MS = 90 * 1000;   // at least 90s between auto ads
