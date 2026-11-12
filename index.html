@@ -449,6 +449,10 @@ function switchPage(id, element){
 
     page.classList.add("active");
 
+    if(id === "tasks"){
+        if(typeof window.renderTasks === "function") window.renderTasks();
+    }
+
     if(id === "invites"){
         if(typeof window.updateInviteUI === "function"){
             window.updateInviteUI();
@@ -495,7 +499,7 @@ window.renderAirdropFallback = renderAirdropFallback;
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <script src="./ads.js?v=1"></script>
 <script src="./game.js?v=102"></script>
-<script src="./tasks.js"></script>
+<script src="./tasks.js?v=2"></script>
 <script src="./invite.js"></script>
 <script src="./airdrop.js"></script>
 <script src="./wallet.js?v=104"></script>
